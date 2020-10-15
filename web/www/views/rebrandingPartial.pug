@@ -1,0 +1,122 @@
+p= cpWhiteLabelResource.RebrandingDscr
+
+div#rebrandingMainContainer.display-none
+  
+  div.top-indent-big
+    h2.blue-text.spoiler-title= cpWhiteLabelResource.RebrandingCompanySettings
+    a#companySettingsSpoilerLink.link.dotted.spoiler-link= controlPanelResource.HideLink
+
+  div#companySettingsSpoiler.container-base
+    p!= cpWhiteLabelResource.format("RebrandingCompanySettingsDscr", "<a data-id='aboutImg' data-width='788' data-height='396' class='link dotted img-popup-helper'>","</a>")
+    img#aboutImg.img-popup(src=config.makePath("/stylesheets/images/rebranding_about.png"), alt="", onclick="Common.blockUI.hide()")
+
+    div.clear-fix
+      div.left-column
+        div.settings-block
+          div.header-base-small= cpWhiteLabelResource.RebrandingCompanySettingsCompanyName + ":"
+          input#companySettingsCompanyName.textEdit(type="text", maxlength="256", value="" tabindex="1")
+        div.settings-block
+          div.header-base-small= cpWhiteLabelResource.RebrandingCompanySettingsPhone + ":"
+          input#companySettingsPhone.textEdit(type="text", maxlength="256", value="" tabindex="3")
+      div.right-column
+        div.settings-block
+          div.header-base-small= cpWhiteLabelResource.RebrandingCompanySettingsEmail + ":"
+          input#companySettingsEmail.textEdit(type="text", maxlength="256", value="" tabindex="2")
+        div.settings-block
+          div.header-base-small= cpWhiteLabelResource.RebrandingCompanySettingsWebsite + ":"
+          input#companySettingsSite.textEdit(type="text", maxlength="256", value="" tabindex="4")
+    div.settings-block
+      div.header-base-small= cpWhiteLabelResource.RebrandingCompanySettingsAddress + ":"
+      input#companySettingsAddress.textEdit(type="text", maxlength="256", value="" tabindex="5")
+    div.big-button-container
+      button#companySettingsSaveBtn.button.green(type="button" tabindex="6")= controlPanelResource.SaveButton
+      span.splitter-buttons
+      button#companySettingsResetBtn.button.black(type="button" tabindex="7")= cpSsoResource.SsoRestoreDefault
+
+  div.top-indent-big
+    h2.blue-text.spoiler-title= cpWhiteLabelResource.RebrandingAdditionalSettings
+    a#additionalSettingsSpoilerLink.link.dotted.spoiler-link= controlPanelResource.HideLink
+
+  div#additionalSettingsSpoiler.container-base
+    p!= cpWhiteLabelResource.format("RebrandingAdditionalSettingsDscr", "<a data-id='navigationImg' data-width='410' data-height='570' class='link dotted img-popup-helper'>","</a>", "<a data-id='samplesImg' data-width='788' data-height='337' class='link dotted img-popup-helper'>","</a>")
+    img#navigationImg.img-popup(src=config.makePath("/stylesheets/images/rebranding_navigation.png"), alt="", onclick="Common.blockUI.hide()")
+    img#samplesImg.img-popup(src=config.makePath("/stylesheets/images/rebranding_samples.png"), alt="", onclick="Common.blockUI.hide()")
+    h2.attention-header.display-none
+      span.attention-icon
+      =cpWhiteLabelResource.RebrandingAdditionalSettingsDscrNoteHeader + ":"
+    p.attention-text.display-none= cpWhiteLabelResource.RebrandingAdditionalSettingsDscrNoteBody
+    div.settings-block
+      div#additionalSettingsFeedbackAndSupportEnabled.checkBox
+        button.icon(tabindex="8")
+        span= cpWhiteLabelResource.RebrandingAdditionalSettingsFeedbackAndSupport
+      input#additionalSettingsFeedbackAndSupportUrl.textEdit.display-none(type="text", maxlength="256", value="" tabindex="9")
+    div.settings-block.display-none
+      div#additionalSettingsUserForumEnabled.checkBox
+        button.icon(tabindex="10")
+        span= cpWhiteLabelResource.RebrandingAdditionalSettingsUserForum
+      input#additionalSettingsUserForumUrl.textEdit.display-none(type="text", maxlength="256", value="" tabindex="11")
+    div.settings-block
+      div#additionalSettingsStartDocsEnabled.checkBox
+        button.icon(tabindex="12")
+        span= cpWhiteLabelResource.RebrandingAdditionalSettingsStartDocs
+    div.settings-block
+      div#additionalSettingsVideoGuidesEnabled.checkBox
+        button.icon(tabindex="13")
+        span= cpWhiteLabelResource.RebrandingAdditionalSettingsVideoGuides
+      input#additionalSettingsVideoGuidesUrl.textEdit.display-none(type="text", maxlength="256", value="" tabindex="14")
+    div.settings-block
+      div#additionalSettingsHelpCenterEnabled.checkBox
+        button.icon(tabindex="15")
+        span= cpWhiteLabelResource.RebrandingAdditionalSettingsHelpCenter
+    div.settings-block.display-none
+      div.header-base-small= cpWhiteLabelResource.RebrandingAdditionalSettingsSalesEmail + ":"
+      input#additionalSettingsSalesEmail.textEdit(type="text", maxlength="256", value="" tabindex="16")
+    div.settings-block.display-none
+      div#additionalSettingsLicenseAgreementsEnabled.checkBox
+        button.icon(tabindex="17")
+        span= cpWhiteLabelResource.RebrandingAdditionalSettingsLicenseAgreements
+      input#additionalSettingsLicenseAgreementsUrl.textEdit(type="text", maxlength="256", value="" tabindex="18")
+    div.settings-block.display-none
+      div.header-base-small= cpWhiteLabelResource.RebrandingAdditionalSettingsBuyUrl + ":"
+      input#additionalSettingsBuyUrl.textEdit(type="text", maxlength="256", value="" tabindex="19")
+    div.big-button-container
+      button#additionalSettingsSaveBtn.button.green(type="button" tabindex="20")= controlPanelResource.SaveButton
+      span.splitter-buttons
+      button#additionalSettingsResetBtn.button.black(type="button" tabindex="21")= cpSsoResource.SsoRestoreDefault
+
+  div.top-indent-big.display-none
+    h2.blue-text.spoiler-title= cpWhiteLabelResource.RebrandingMailSettings
+    a#mailSettingsSpoilerLink.link.dotted.spoiler-link= controlPanelResource.ShowLink
+
+  div#mailSettingsSpoiler.container-base.display-none
+    p= cpWhiteLabelResource.RebrandingMailSettingsDscr
+    div.settings-block
+      div#mailSettingsFooterEnabled.checkBox
+        button.icon(tabindex="22")
+        span= cpWhiteLabelResource.RebrandingMailSettingsFooter
+    div.settings-block
+      div#mailSettingsFooterSocialEnabled.checkBox
+        button.icon(tabindex="23")
+        span= cpWhiteLabelResource.RebrandingMailSettingsSocialFooter
+    div.clear-fix
+      div.left-column
+        div.settings-block
+          div.header-base-small= cpWhiteLabelResource.RebrandingMailSettingsSiteUrl + ":"
+          input#mailSettingsSiteUrl.textEdit(type="text", maxlength="256", value="" tabindex="24")
+        div.settings-block
+          div.header-base-small= cpWhiteLabelResource.RebrandingMailSettingsSupportUrl + ":"
+          input#mailSettingsSupportUrl.textEdit(type="text", maxlength="256", value="" tabindex="26")
+        div.settings-block
+          div.header-base-small= cpWhiteLabelResource.RebrandingMailSettingsSalesEmail + ":"
+          input#mailSettingsSalesEmail.textEdit(type="text", maxlength="256", value="" tabindex="27")
+      div.right-column
+        div.settings-block
+          div.header-base-small= cpWhiteLabelResource.RebrandingMailSettingsDemoUrl + ":"
+          input#mailSettingsDemoUrl.textEdit(type="text", maxlength="256", value="" tabindex="25")
+        div.settings-block
+        div.header-base-small= cpWhiteLabelResource.RebrandingMailSettingsSupportEmail + ":"
+        input#mailSettingsSupportEmail.textEdit(type="text", maxlength="256", value="" tabindex="28")
+    div.big-button-container
+      button#mailSettingsSaveBtn.button.green(type="button" tabindex="29")= controlPanelResource.SaveButton
+      span.splitter-buttons
+      button#mailSettingsResetBtn.button.black(type="button" tabindex="30")= cpSsoResource.SsoRestoreDefault

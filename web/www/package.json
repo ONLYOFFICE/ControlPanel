@@ -1,0 +1,40 @@
+{
+  "name": "controlpanel",
+  "version": "2.7.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./server.js"
+  },
+  "description": "Control Panel",
+  "author": {
+    "name": "ONLYOFFICE Team"
+  },
+  "dependencies": {
+    "body-parser": "~1.19.0",
+    "co": "^4.6.0",
+    "cookie-parser": "~1.4.5",
+    "etag": "^1.8.1",
+    "express": "~4.17.1",
+    "express-session": "^1.17.1",
+    "formidable": "^1.2.2",
+    "image-size": "^0.8.3",
+    "less": "^3.11.1",
+    "less-middleware": "3.1.0",
+    "moment": "^2.26.0",
+    "morgan": "~1.10.0",
+    "nconf": "^0.10.0",
+    "node-forge": "^0.9.1",
+    "public-ip": "^4.0.1",
+    "pug": "^3.0.0",
+    "request": "^2.88.2",
+    "samlify": "^2.7.4",
+    "semver": "^7.3.2",
+    "serve-favicon": "~2.5.0",
+    "uglify-js": "^3.9.4",
+    "url": "^0.11.0",
+    "uuid": "^8.1.0",
+    "winston": "^3.2.1",
+    "winston-daily-rotate-file": "^4.4.2",
+    "x509.js": "^1.0.0"
+  }
+}

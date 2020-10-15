@@ -1,0 +1,246 @@
+﻿/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+@import "vars";
+
+html, body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background-color: @backgroundColor;
+    color: @textColor;
+    font-size: @textSize;
+    font-family: @fontFamily;
+}
+
+.layoutWrapper {
+    min-height: 100%;
+    position: relative;
+}
+
+.layoutHeader {
+    height: 90px;
+
+    .logo {
+        background-repeat: no-repeat;
+        background-position: 0 50%;
+        float: left;
+        height: 90px;
+        width: 190px;
+        cursor: pointer;
+        display: block;
+
+        img {
+            margin-top: 27px;
+            width: 185px;
+            height: 35px;
+        }
+    }
+
+    .top-panel-btns-container {
+        float: right;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        height: 48px;
+        width: 770px;
+
+        .top-btn {
+            margin-left: 50px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .gift-btn {
+            background-image: url("images/gift-white.svg") !important;
+            background-repeat: no-repeat !important;
+            background-size: 18px 18px !important;
+            background-position: left 18px center !important;
+            padding-left: 48px !important;
+        }
+
+        .top-badge {
+            border-radius: 14px;
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: none;
+            padding: 6px 20px;
+            background: #66BB6A;
+            display: inline-block;
+            color: #FFFFFF;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 345px;
+            text-align: center;
+            margin-left: 50px;
+
+            &.inf {
+                background: #FFD482;
+                color: #333333;
+            }
+
+            &.warn {
+                background: #FCA689;
+                color: #333333;
+            }
+        }
+
+        .top-link {
+            font-weight: 600;
+            font-size: 14px;
+            color: #8C8C8C;
+
+            &.active {
+                color: #333333;
+            }
+        }
+
+        .top-icon-link {
+            margin-left: 45px;
+            background-image: url("images/exit.svg");
+            width: 28px;
+            height: 28px;
+
+            &:hover {
+                background-image: url("images/exit-hover.svg");
+            }
+        }
+    }
+}
+
+
+.layoutContent {
+    width: 960px;
+    margin: 0 auto;
+    position: relative;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.layoutBody {
+    padding-top: 40px;
+    padding-bottom: 180px;
+
+    .layoutLeftSide {
+        float: left;
+        padding: 0 30px 0 0;
+        width: 280px;
+
+        .contact-support {
+            margin-top: 20px;
+        }
+    }
+
+    .layoutRightSide {
+        float: right;
+        padding: 0 0 0 30px;
+        width: 620px;
+
+        p {
+            line-height: 21px;
+        }
+    }
+}
+
+.layoutFooter
+{
+    width: 100%;
+    height: 90px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+
+    .layoutContent {
+        border-top: 1px solid @formsBorderColor;
+    }
+}
+
+#aboutDialog .popup-body {
+    text-align: center;
+
+    .logo {
+        margin-bottom: 10px;
+        width: 185px;
+        height: 35px;
+    }
+
+    .version {
+        font-size: 14px;
+        margin-bottom: 23px;
+    }    
+
+    .licensor {
+        display: inline;
+        font-size: 14px;
+        text-transform: uppercase;
+
+        &:before {
+            background-color: #e1e1e1;
+            content: "";
+            height: 2px;        
+            margin-top: 9px;
+            width: 36%;
+            float: left;
+        }
+
+        &:after {
+            background-color: #e1e1e1;
+            content: "";
+            height: 2px;       
+            margin-top: 9px;
+            width: 36%;
+            float: right;
+        }
+    }
+
+    .about-name {
+        font-size:16px;
+        font-weight: bold;
+        margin-bottom: 9px;
+        margin-top: 17px;
+    }
+
+    .about-info {
+        list-style: none;
+        margin: 0 0 16px 0;
+        padding: 0;
+
+        li {
+            margin-bottom: 6px;
+
+            span.gray-text {
+                margin-right: 6px;
+            }
+        }
+    }
+
+    .copyright {
+        font-size: 11px;
+        margin-top: 48px;
+        color: #666666;
+
+        .link{
+            color: #666666;
+        }
+    }
+}

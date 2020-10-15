@@ -1,0 +1,272 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+@import "vars";
+
+/*******************************************************************************
+    clearfix
+*******************************************************************************/
+.clear-fix {
+    .clearfix;
+}
+/* MSIE6- */
+* html .clear-fix {
+    height: 1%;
+}
+
+/* MSIE7- */
+.clear-fix {
+    zoom: 1;
+    display: block;
+}
+
+
+ul {
+    margin: 0;
+    padding: 0;
+}
+li {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+
+.float-left {
+    float: left;
+}
+
+.float-right {
+    float: right;
+}
+
+.position-relative {
+    position: relative;
+}
+
+.position-absolute {
+    position: absolute;
+}
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+.display-none {
+    display: none;
+}
+
+.hidden {
+    visibility: hidden;
+}
+
+.top-indent {
+    margin-top: 24px;
+}
+
+.textEdit {
+    border: solid 1px #c7c7c7;
+    font-size: 12px;
+    height: 16px;
+    .borderRadius(0);
+}
+
+.pwdLoginTextbox {
+    .borderRadius(3px);
+
+    background-color: #ffffff;
+    border: solid 1px #c7c7c7;
+    color: #434341;
+    font-size: 18px;
+    padding: 8px 20px;
+    width: 358px;
+}
+
+textarea {
+    border: 1px solid #c7c7c7;
+    font-size: 12px;
+}
+
+.comboBox {
+    border: solid 1px #c7c7c7;
+}
+
+select.comboBox {
+     height: 23px;
+}
+
+.comboBoxHiddenBorder {
+    border-width: 0px;
+    margin: 1px;
+}
+.comboBoxHiddenBorder:hover, .comboBoxHiddenBorderFocused {
+    border: solid 1px #c7c7c7;
+    margin: 0px;
+}
+
+:disabled,
+input.disabled, 
+textarea.disabled,
+option.disabled,
+/* fix ie8 */
+input[disabled="disabled"] {
+    background-color: #efefef;
+    color: #666562;
+}
+input:focus {
+    outline: none;
+}
+input[type="text"]:focus, textarea:focus {
+    outline: none;
+    border: solid 1px #3186af;
+}
+/* fix ie10 */
+input[type="checkbox"][disabled="disabled"] {
+    background-color: transparent;
+}
+
+.error-text {
+    color: #f32823;
+    font-size: 13px;
+    display: none;
+}
+
+
+.remove-btn-icon {
+    background: url("images/remove_16.png") no-repeat scroll center top transparent;
+    cursor: pointer;
+    display: inline-block;
+    height: 16px;
+    width: 16px;
+    vertical-align: middle;
+    &:hover:not(.disabled) {
+        background-position: center bottom;
+    }
+    &.disabled {
+        cursor: default;
+    }
+}
+
+.container-base {
+    margin-bottom: 30px;
+    margin-top: 24px;
+
+}
+.container-with-border {
+    border: 1px solid #d1d1d1;
+    .borderRadius(3px);
+    >table {
+        width: 100%;
+        border-collapse: collapse;
+        vertical-align: middle;
+    }
+}
+.big-text {
+    color: #333333;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.middle-text {
+    color: #333333;
+    font-size: 16px;
+    font-weight: 300;
+    font-weight: 400;
+    text-align: center;
+}
+.green-ticket {
+    background: @greenBtnBg;
+    color: @whiteTextColor;
+    padding: 3px 7px 5px;
+    display: inline-block;
+    font-size: 11px;
+    line-height: 11px;
+    vertical-align: middle;
+    .userSelect(none);
+    .borderRadius(3px);
+}
+.view-changes {
+    color: @blackBtnDisabledText;
+    float: right;
+    font-weight: normal;
+    text-decoration: underline;
+}
+
+.base {
+    color: @baseTextColor;
+}
+.white-text {
+    color: @whiteTextColor;
+}
+.blue-text {
+    color: @blueTextColor;
+}
+.gray-text {
+    color: @grayTextColor;
+}
+
+.top-indent-big {
+    margin-top: 40px;
+}
+.top-indent-middle {
+    margin-top: 30px;
+}
+
+.spoiler-link {
+    margin-left: 16px;
+}
+
+.thirdSelectStorageFlexbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+    align-content: space-around;
+    margin: 0;
+}
+
+.flexTextBox {
+    display: flex;
+    flex-wrap: wrap;
+
+    .flexContainer {
+        margin: 10px 0px;
+        width: 48%;
+        
+        &:nth-child(even) {
+            margin-left: 10px;
+        }
+
+        &:nth-child(odd) {
+            margin-right: 10px;
+        }
+    input.textBox {
+        margin-top: 6px;
+        }
+    }
+}
+
+.instructionLink {
+    color: @grayTextColor;
+}
+
+.grayTextInstruction {
+  color: @grayTextColor;
+  margin: auto;
+}

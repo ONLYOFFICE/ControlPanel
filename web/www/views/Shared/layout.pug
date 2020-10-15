@@ -1,0 +1,47 @@
+﻿doctype html
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width")
+    meta(name="keywords", content=controlPanelResource.MetaKeywords)
+    meta(name="description", content=controlPanelResource.MetaDescription)
+    title= title +  " - " + controlPanelResource.ControlPanel
+    link(type="text/css", rel="stylesheet", href="/skins/default/opensansoffline/opensansoffline.css")
+    link(type="text/css", rel='stylesheet', href= config.makePath('/stylesheets/jquery-ui-1.10.4.custom.css'))
+    each link in links
+      link(type="text/css", rel='stylesheet', href=link)
+  body
+    div.layoutWrapper
+      div.layoutHeader.layoutContent
+        a.logo(tabindex="-1", href=config.makePath())
+          img(src=config.makePath("/stylesheets/images/logo.svg"))
+        
+        block loginarea
+
+      div.layoutBody.layoutContent.clear-fix
+        block content
+
+        div#connectionErrorPop.popup
+          div.popup-caption
+            =controlPanelResource.ConnectionErrorHdr
+          div.popup-body
+            div.popup-content
+              div
+                =controlPanelResource.ConnectionErrorText_1
+                br
+                =controlPanelResource.ConnectionErrorText_2
+            a.button.black.cancelbtn
+              =controlPanelResource.Ok
+      div.layoutFooter.display-none
+        block footercontent
+    script(src=config.makePath("resource"))
+  
+    each script in scripts
+      script(src=script)
+
+    script(type="text/javascript").
+      Common.basePath = "#{config.makePath()}";
+      Common.offlineMode = #{config.isOfflineMode};
+      Common.windowsMode = #{!config.isMono};
+  
+    block bodyscripts

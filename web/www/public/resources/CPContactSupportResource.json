@@ -1,0 +1,12 @@
+{
+  "ContactSupportDscr": "Use this form to contact our support team. Please be as precise as possible to describe your problem, do not forget to upload log files or screenshots so that our support team could help you solve the issue in the shortest time.",
+  "Email": "Email",
+  "IncorrectContactSupportFormError": "Some required fields are empty or filled incorrect. Please check the data and try again.",
+  "Message": "Message",
+  "Name": "Your name",
+  "Send": "Send",
+  "SendMsgSuccessfullMessage": "Your message was successfully sent to our support team.",
+  "SendMsgSuccessfullTitle": "Congratulations",
+  "Subject": "Subject",
+  "UploadFile": "Upload file"
+}

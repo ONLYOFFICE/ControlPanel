@@ -1,0 +1,25 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  div#https-view
+    h1.blue-text
+      span.header-icon.https
+      = controlPanelResource.Https
+
+    p!= controlPanelResource.format("HttpsInfo1", "<b>", "</b>")
+
+    - var helpcenter = (config.get("helpcenter") || "")
+    - var type = (config.isMono ? "linux" : "windows" )
+
+    -if(helpcenter){
+    p!= controlPanelResource.format("HttpsInfo2", "<a class=\"link underline\" href=\"" + helpcenter + "/server/enterprise/" + type + "/community/switch-to-https.aspx\" target=\"_blank\">", "</a>")
+    p!= controlPanelResource.format('HttpsInfo3', "<a class=\"link underline\" href=\"" + helpcenter + "/server/" + type + "/community/switch-to-https.aspx\" target=\"_blank\">", "</a>")
+    -}else{
+    p!= controlPanelResource.HttpsInfo4
+    -}
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      $(window).trigger("rightSideReady", null);
+     });

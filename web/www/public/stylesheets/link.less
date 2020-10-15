@@ -1,0 +1,120 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+@import "vars";
+
+a {
+    color: @baseTextColor;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover {
+        text-decoration: underline;
+    }
+
+    &::-moz-focus-inner {   
+        text-decoration: underline;
+    }
+    &:focus {
+        text-decoration: underline;
+    }
+
+    &.selected {
+        font-weight: bold;
+    }
+
+    &.underline {
+        text-decoration: underline;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    &.noline {
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: none;
+        }
+    }
+
+    &.dotted {
+        text-decoration: none;
+        border-bottom: 1px dotted;
+
+        &:hover {
+            text-decoration: none;
+            border-bottom: medium none;
+        }
+    }
+}
+
+.nav-link {
+    color: @baseTextColor;
+    cursor: pointer;
+    position: relative;
+    text-decoration: none;
+    display: inline-block;
+
+    &.disabled {
+        color: @disabledActionText;
+    }
+
+    &.with-green-mark {
+        position: relative;
+
+        &:after {
+            background-color: #66bb6a;
+            content: " ";
+            width: 7px;
+            height: 7px;
+            .borderRadius(4px);
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            margin-top: -2px;
+        }
+    }
+
+    &.with-red-mark {
+        position: relative;
+
+        &:after {
+            background-color: #f32823;
+            content: " ";
+            width: 7px;
+            height: 7px;
+            .borderRadius(4px);
+            position: absolute;
+            right: -14px;
+            top: 50%;
+            margin-top: -2px;
+        }
+    }
+
+    &.nav-link-notpaid:after {
+        background: url("images/icon_payments.png") no-repeat 0 0 transparent;
+        content: " ";
+        display: block;
+        height: 16px;
+        position: absolute;
+        right: -22px;
+        top: 2px;
+        width: 16px;
+    }
+}

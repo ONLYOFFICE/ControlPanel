@@ -1,0 +1,444 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  div
+    h1.blue-text
+      span.header-icon.sso
+      = controlPanelResource.Sso
+
+    - var helpcenter = (config.get("helpcenter") || "")
+
+    p
+      != cpSsoResource.format('SsoDescription', '<b>', '</b>', '') + '&nbsp;'
+      -if (helpcenter) {
+      a.link.underline(href=cpSsoResource.format("SsoHelpCenterUrl", helpcenter), target="_blank")= controlPanelResource.LearnMore
+      -}
+
+    unless errorMessage
+      div.sso-main-container.top-indent-big
+        - var enableSso = currentSettings.enableSso
+        div
+          button#ssoEnableBtn.on-off-button(type="button" class=(enableSso ? 'on' : 'off'))
+          span= cpSsoResource.SsoEnable
+          span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoEnableBtnHelper' }); ")
+          div#ssoEnableBtnHelper.popup_helper
+            p= cpSsoResource.SsoEnableHelper
+
+        div#ssoSettingsTurnOffDialog.popup
+            div.popup-caption
+              span.attention-icon
+              = controlPanelResource.ConfirmationTitle
+            div.popup-body
+              div.popup-content= controlPanelResource.AreYouSureToContinue
+                div.big-button-container
+                  a.button.green.sso-settings-ok= controlPanelResource.Ok
+                  span.splitter-buttons
+                  a.button.black.sso-settings-cancel= controlPanelResource.Cancel
+
+        div.top-indent-big
+          h2.blue-text.sso-spoiler-title= cpSsoResource.SsoSPSettings
+          a#ssoSPSettingsSpoilerLink.link.dotted.sso-spoiler-link(onclick="javascript: Common.spoiler.toggle('#ssoSPSettingsSpoiler', $(this));")= controlPanelResource.HideLink
+
+        div#ssoSPSettingsSpoiler
+
+          div.sso-settings-block
+            div.header-base-small= cpSsoResource.SsoLoadMetadataHdr
+            table(style="width: 100%" cellpadding="0" cellspacing="0")
+              colgroup
+                col
+                col(style="width: 50px")
+                col(style="width: 50px")
+              tbody
+                tr
+                  td
+                    div.inputWithBtn.withUploadBtn
+                      input#ssoUploadMetadataInput.textBox(type="text" placeholder=cpSsoResource.SsoLoadMetadataPlaceholder disabled=(!enableSso) value="")
+                      button#ssoUploadMetadataBtn.button.black(type="button" title=cpSsoResource.SsoLoadData class=(enableSso ? "" : "disabled"))
+                        span.upload
+                  td
+                    div.sso-btn-splitter= cpSsoResource.SsoOr
+                  td
+                    div#ssoSelectMetadataBtn.button.black.uploadBtn(class=(enableSso ? "" : "disabled"))= cpSsoResource.SsoSelectFile
+                      input#ssoSelectMetadataInput(type="file" disabled=(!enableSso) name="metadata" accept=".xml")
+
+          div.sso-settings-block.requiredField
+            span.requiredErrorText= controlPanelResource.EmptyField
+            div.header-base-small
+              span.requiredTitle= cpSsoResource.SsoSPLoginLabel
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoSpLoginLabelHelper' }); ")
+            input#ssoSpLoginLabel.textBox(type="text" value=currentSettings.spLoginLabel disabled=(!enableSso) placeholder=cpSsoResource.SsoSPLoginLabelPlaceholder maxlength="100")
+            div#ssoSpLoginLabelHelper.popup_helper
+              p= cpSsoResource.SsoSPLoginLabelHelper
+
+          div.sso-settings-block.requiredField
+            span.requiredErrorText= controlPanelResource.EmptyField
+            div.header-base-small
+              span.requiredTitle= cpSsoResource.SsoEntityId
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoEntityIdHelper' }); ")
+            input#ssoEntityId.textBox(type="text" value=currentSettings.idpSettings.entityId disabled=(!enableSso) placeholder=cpSsoResource.SsoEntityIdPlaceholder)
+            div#ssoEntityIdHelper.popup_helper
+              p= cpSsoResource.SsoEntityIdHelper
+
+          div.sso-settings-block.requiredField
+            - var isSsoPost = (!currentSettings.idpSettings.ssoBinding || currentSettings.idpSettings.ssoBinding == constants.ssoBindingType.saml20HttpPost)
+            - var isSsoRedirect = (currentSettings.idpSettings.ssoBinding == constants.ssoBindingType.saml20HttpRedirect)
+            div.header-base-small
+              span.requiredTitle= cpSsoResource.SsoSignUrl
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoSignUrlHelper' }); ")
+              span.binding= cpSsoResource.SsoBinding
+              div#ssoSignPostRbx.radioBox.ssoRadio(class=(isSsoPost ? " checked" : "") + (enableSso ? "" : " disabled") data-name='ssoSignUrl' data-value='ssoSignPostUrl' data-bind=constants.ssoBindingType.saml20HttpPost)
+                button.icon(type='button')
+                = cpSsoResource.SsoBindingPost
+              div#ssoSignRedirectRbx.radioBox.ssoRadio(class=(isSsoRedirect ? " checked" : "") + (enableSso ? "" : " disabled") data-name='ssoSignUrl' data-value='ssoSignRedirectUrl' data-bind=constants.ssoBindingType.saml20HttpRedirect)
+                button.icon(type='button')
+                = cpSsoResource.SsoBindingRedirect
+            input#ssoSignPostUrl.textBox(type="text" class=(isSsoPost ? "" : " display-none") value=(isSsoPost ? currentSettings.idpSettings.ssoUrl : "") disabled=(!enableSso) placeholder=cpSsoResource.SsoSignPostUrlPlaceholder)
+            input#ssoSignRedirectUrl.textBox(type="text" class=(isSsoRedirect ? "" : " display-none") value=(isSsoRedirect ? currentSettings.idpSettings.ssoUrl : "") disabled=(!enableSso) placeholder=cpSsoResource.SsoSignRedirectUrlPlaceholder)
+            div#ssoSignUrlHelper.popup_helper
+              p= cpSsoResource.SsoSignUrlHelper
+
+          div.sso-settings-block
+            - var isSloPost = (!currentSettings.idpSettings.sloBinding || currentSettings.idpSettings.sloBinding == constants.ssoBindingType.saml20HttpPost)
+            - var isSloRedirect = (currentSettings.idpSettings.sloBinding == constants.ssoBindingType.saml20HttpRedirect)
+            div.header-base-small
+              span= cpSsoResource.SsoLogoutUrl
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoLogoutUrlHelper' }); ")
+              span.binding= cpSsoResource.SsoBinding
+              div#ssoLogoutPostRbx.radioBox.ssoRadio(class=(isSloPost ? " checked" : "") + (enableSso ? "" : " disabled") data-name='ssoLogoutUrl' data-value='ssoLogoutPostUrl' data-bind=constants.ssoBindingType.saml20HttpPost)
+                button.icon(type='button')
+                = cpSsoResource.SsoBindingPost
+              div#ssoLogoutRedirectRbx.radioBox.ssoRadio(class=(isSloRedirect ? " checked" : "") + (enableSso ? "" : " disabled") data-name='ssoLogoutUrl' data-value='ssoLogoutRedirectUrl' data-bind=constants.ssoBindingType.saml20HttpRedirect)
+                button.icon(type='button')
+                = cpSsoResource.SsoBindingRedirect
+            input#ssoLogoutPostUrl.textBox(type="text" class=(isSloPost ? "" : " display-none") value=(isSloPost ? currentSettings.idpSettings.sloUrl : "") disabled=(!enableSso) placeholder=cpSsoResource.SsoLogoutPostUrlPlaceholder)
+            input#ssoLogoutRedirectUrl.textBox(type="text" class=(isSloRedirect ? "" : " display-none") value=(isSloRedirect ? currentSettings.idpSettings.sloUrl : "") disabled=(!enableSso) placeholder=cpSsoResource.SsoLogoutRedirectUrlPlaceholder)
+            div#ssoLogoutUrlHelper.popup_helper
+              p= cpSsoResource.SsoLogoutUrlHelper
+
+          div.sso-settings-block
+            - var nameIdFormat = currentSettings.idpSettings.nameIdFormat
+            div.header-base-small= cpSsoResource.SsoNameIdFormat
+            div#ssoNameIdFormat.selectBox(class=(enableSso ? "" : "disabled") data-value=nameIdFormat)
+              div.selectBoxValue= nameIdFormat
+              div.selectBoxSwitch
+              div.selectOptionsBox
+                div.selectOptionsInnerBox.fullwidth
+                  each prop in Object.getOwnPropertyNames(constants.ssoNameIdFormatType)
+                    - var type = constants.ssoNameIdFormatType[prop]
+                    div.option(class=(nameIdFormat == type ? "selected" : "") data-value=type)= type
+
+          div.top-indent-big
+            h3.sso-spoiler-title= cpSsoResource.SsoIdPCertificates
+            span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoIdPCertificatesHelper' }); ")
+            div#ssoIdPCertificatesHelper.popup_helper
+              p= cpSsoResource.SsoIdPCertificatesHelper
+            div#ssoIdPCertificateContainer
+            div.small-button-container
+              button#ssoAddIdPCertificateBtn.button.black(type="button" class=(enableSso ? "" : "disabled"))= cpSsoResource.SsoAddCertificate
+              a#ssoIdpCertificateSpoilerLink.link.dotted.sso-spoiler-link(onclick="javascript: Common.spoiler.toggle('#ssoIdpCertificateSpoiler', $(this), null, '"+cpSsoResource.SsoHideAdvancedSettings+"', '"+cpSsoResource.SsoShowAdvancedSettings+"');")= cpSsoResource.SsoShowAdvancedSettings
+
+            div#ssoIdpCertificateSpoiler.display-none
+              div.clear-fix.top-indent-big
+                div.sso-left-column
+                  div
+                    div#ssoVerifyAuthResponsesSignCbx.checkBox(class= (enableSso ? "" : " disabled") + (currentSettings.idpCertificateAdvanced.verifyAuthResponsesSign ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoVerifyAuthResponsesSign
+
+                  div.sso-settings-block
+                    div#ssoVerifyLogoutRequestsSignCbx.checkBox(class= (enableSso ? "" : " disabled") + (currentSettings.idpCertificateAdvanced.verifyLogoutRequestsSign ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoVerifyLogoutRequestsSign
+
+                  div.sso-settings-block
+                    div#ssoVerifyLogoutResponsesSignCbx.checkBox(class= (enableSso ? "" : " disabled") + (currentSettings.idpCertificateAdvanced.verifyLogoutResponsesSign ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoVerifyLogoutResponsesSign
+
+                  div.sso-settings-block.display-none
+                    div#ssoDecryptAssertionsCbx.checkBox(class= (enableSso ? "" : " disabled") + (currentSettings.idpCertificateAdvanced.decryptAssertions ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoEncryptAssertions
+
+                div.sso-right-column
+                  div
+                    div.header-base-small= cpSsoResource.SsoDefaultSignVerifyingAlgorithm
+                    - var verifyingAlgorithm = currentSettings.idpCertificateAdvanced.verifyAlgorithm
+                    div#ssoDefaultSignVerifyingAlgorithm.selectBox(class=(enableSso ? "" : "disabled") data-value=verifyingAlgorithm)
+                      div.selectBoxValue= verifyingAlgorithm.split('#')[1]
+                      div.selectBoxSwitch
+                      div.selectOptionsBox
+                        div.selectOptionsInnerBox.halfwidth
+                          each prop in Object.getOwnPropertyNames(constants.ssoSigningAlgorithmType)
+                            - var type = constants.ssoSigningAlgorithmType[prop]
+                            div.option(class=(verifyingAlgorithm == type ? "selected" : "") data-value=type)= type.split('#')[1]
+
+                  div.sso-settings-block.display-none
+                    div.header-base-small= cpSsoResource.SsoEncryptAlgorithm
+                    - var decryptAlgorithm = currentSettings.idpCertificateAdvanced.decryptAlgorithm
+                    div#ssoDefaultDecryptAlgorithm.selectBox(class=(enableSso ? "" : "disabled") data-value=decryptAlgorithm)
+                      div.selectBoxValue= decryptAlgorithm.split('#')[1]
+                      div.selectBoxSwitch
+                      div.selectOptionsBox
+                        div.selectOptionsInnerBox.halfwidth
+                          each prop in Object.getOwnPropertyNames(constants.ssoEncryptAlgorithmType)
+                            - var type = constants.ssoEncryptAlgorithmType[prop]
+                            div.option(class=(decryptAlgorithm == type ? "selected" : "") data-value=type)= type.split('#')[1]
+
+
+          div.top-indent-big
+            h3.sso-spoiler-title= cpSsoResource.SsoSPCertificates
+            span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoSPCertificatesHelper' }); ")
+            div#ssoSPCertificatesHelper.popup_helper
+              p= cpSsoResource.SsoSPCertificatesHelper
+            div#ssoSPCertificateContainer
+            div.small-button-container
+              button#ssoAddSPCertificateBtn.button.black(type="button" class=(enableSso ? "" : "disabled"))= cpSsoResource.SsoAddCertificate
+              a#ssoSpCertificateSpoilerLink.link.dotted.sso-spoiler-link(onclick="javascript: Common.spoiler.toggle('#ssoSpCertificateSpoiler', $(this), null, '"+cpSsoResource.SsoHideAdvancedSettings+"', '"+cpSsoResource.SsoShowAdvancedSettings+"');")= cpSsoResource.SsoShowAdvancedSettings
+
+            div#ssoSpCertificateSpoiler.display-none
+              div.clear-fix.top-indent-big
+                div.sso-left-column
+                  div
+                    div#ssoSignAuthRequestsCbx.checkBox(class= (enableSso ? "" : " disabled") + (currentSettings.spCertificateAdvanced.signAuthRequests ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoSignAuthRequests
+
+                  div.sso-settings-block
+                    div#ssoSignLogoutRequestsCbx.checkBox(class=(enableSso ? "" : " disabled") + (currentSettings.spCertificateAdvanced.signLogoutRequests ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoSignLogoutRequests
+
+                  div.sso-settings-block
+                    div#ssoSignLogoutResponsesCbx.checkBox(class=(enableSso ? "" : " disabled") + (currentSettings.spCertificateAdvanced.signLogoutResponses ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoSignLogoutResponses
+
+                  div.sso-settings-block
+                    div#ssoEncryptAssertionsCbx.checkBox(class=(enableSso ? "" : " disabled") + (currentSettings.spCertificateAdvanced.encryptAssertions ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoDecryptAssertions
+
+                div.sso-right-column
+                  div
+                    div.header-base-small= cpSsoResource.SsoSigningAlgorithm
+                    - var signingAlgorithm = currentSettings.spCertificateAdvanced.signingAlgorithm
+                    div#ssoSigningAlgorithm.selectBox(class=(enableSso ? "" : "disabled") data-value=signingAlgorithm)
+                      div.selectBoxValue= signingAlgorithm.split('#')[1]
+                      div.selectBoxSwitch
+                      div.selectOptionsBox
+                        div.selectOptionsInnerBox.halfwidth
+                          each prop in Object.getOwnPropertyNames(constants.ssoSigningAlgorithmType)
+                            - var type = constants.ssoSigningAlgorithmType[prop]
+                            div.option(class=(signingAlgorithm == type ? "selected" : "") data-value=type)= type.split('#')[1]
+
+                  div.sso-settings-block
+                    div.header-base-small= cpSsoResource.SsoDefaultDecryptAlgorithm
+                    - var encryptAlgorithm = currentSettings.spCertificateAdvanced.encryptAlgorithm
+                    div#ssoEncryptAlgorithm.selectBox(class=(enableSso ? "" : "disabled") data-value=encryptAlgorithm)
+                      div.selectBoxValue= encryptAlgorithm.split('#')[1]
+                      div.selectBoxSwitch
+                      div.selectOptionsBox
+                        div.selectOptionsInnerBox.halfwidth
+                          each prop in Object.getOwnPropertyNames(constants.ssoEncryptAlgorithmType)
+                            - var type = constants.ssoEncryptAlgorithmType[prop]
+                            div.option(class=(encryptAlgorithm == type ? "selected" : "") data-value=type)= type.split('#')[1]
+
+          div.top-indent-big
+            h3.sso-spoiler-title= cpSsoResource.SsoAttributeMapping
+            span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoAttributeMappingHelper' }); ")
+            div#ssoAttributeMappingHelper.popup_helper
+              p= cpSsoResource.SsoAttributeMappingHelper
+
+            div.clear-fix
+              div.sso-left-column
+                div.sso-settings-block.requiredField
+                  span.requiredErrorText= controlPanelResource.EmptyField
+                  div.header-base-small
+                    span.requiredTitle= cpSsoResource.SsoFirstName
+                  input#ssoFirstName.textBox(type="text" value=currentSettings.fieldMapping.firstName disabled=(!enableSso))
+
+                div.sso-settings-block.requiredField
+                  span.requiredErrorText= controlPanelResource.EmptyField
+                  div.header-base-small
+                    span.requiredTitle= cpSsoResource.SsoLastName
+                  input#ssoLastName.textBox(type="text" value=currentSettings.fieldMapping.lastName disabled=(!enableSso))
+
+                div.sso-settings-block.requiredField
+                  span.requiredErrorText= controlPanelResource.EmptyField
+                  div.header-base-small
+                    span.requiredTitle= cpSsoResource.SsoEmail
+                  input#ssoEmail.textBox(type="text" value=currentSettings.fieldMapping.email disabled=(!enableSso))
+
+              div.sso-right-column
+                div.sso-settings-block
+                  div.header-base-small= cpSsoResource.SsoLocation
+                  input#ssoLocation.textBox(type="text" value=currentSettings.fieldMapping.location disabled=(!enableSso))
+
+                div.sso-settings-block
+                  div.header-base-small= cpSsoResource.SsoTitle
+                  input#ssoTitle.textBox(type="text" value=currentSettings.fieldMapping.title disabled=(!enableSso))
+
+                div.sso-settings-block
+                  div.header-base-small= cpSsoResource.SsoPhone
+                  input#ssoPhone.textBox(type="text" value=currentSettings.fieldMapping.phone disabled=(!enableSso))
+
+          div.top-indent-big
+            h3.sso-spoiler-title= controlPanelResource.AdvancedSettings
+            div.clear-fix
+              div.sso-left-column
+                div.sso-settings-block
+                  div.clear-fix
+                    div#ssoHideAuthPage.checkBox(class=(enableSso ? "" : " disabled") + (currentSettings.hideAuthPage ? " checked" : ""))
+                      button.icon
+                      span= cpSsoResource.SsoHideAuthPage
+                    span.helpCenterSwitcher.ssoHideAuthPageHelperSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoHideAuthPageHelper' }); ")
+                    div#ssoHideAuthPageHelper.popup_helper
+                      p= cpSsoResource.SsoHideAuthPageHelper
+              div.sso-right-column
+
+          div.big-button-container
+            button#ssoSaveBtn.button.green(type="button" class=(enableSso ? "" : "disabled"))= controlPanelResource.SaveButton
+            span.splitter-buttons
+            button#ssoResetBtn.button.black(type="button" class=(enableSso ? "" : "disabled"))= cpSsoResource.SsoRestoreDefault
+
+          div#ssoSettingsInviteDialog.popup
+            div.popup-caption
+              span.attention-icon
+              = controlPanelResource.ConfirmationTitle
+            div.popup-body
+              div.popup-content= controlPanelResource.CancelConfirmMessage
+                div.big-button-container
+                  a.button.green.sso-settings-ok= controlPanelResource.Ok
+                  span.splitter-buttons
+                  a.button.black.sso-settings-cancel= controlPanelResource.Cancel
+
+        div.top-indent-big
+          h2.blue-text.sso-spoiler-title= cpSsoResource.SsoSPMetadata
+          a#ssoSPMetadataSpoilerLink.link.dotted.sso-spoiler-link(onclick="javascript: Common.spoiler.toggle('#ssoSPMetadataSpoiler', $(this));")= controlPanelResource.HideLink
+
+        div#ssoSPMetadataSpoiler
+          div.sso-settings-block
+            div.header-base-small
+              = cpSsoResource.SsoSPEntityId
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoSPEntityIdHelper' });")
+            div.inputWithBtn.withCopyBtn
+              input#ssoSPEntityId.textBox.blocked(type="text" value="" disabled="disabled")
+              div.copyBtn(data-clipboard-text="" title=cpSsoResource.SsoCopyToClipboard)
+            div#ssoSPEntityIdHelper.popup_helper
+              p= cpSsoResource.SsoSPEntityIdHelper
+
+          div.sso-settings-block
+            div.header-base-small
+              = cpSsoResource.SsoSPConsumerUrl
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoSPConsumerUrlHelper' });")
+            div.inputWithBtn.withCopyBtn
+              input#ssoSPConsumerUrl.textBox.blocked(type="text" value="" disabled="disabled")
+              div.copyBtn(data-clipboard-text="" title=cpSsoResource.SsoCopyToClipboard)
+            div#ssoSPConsumerUrlHelper.popup_helper
+              p= cpSsoResource.SsoSPConsumerUrlHelper
+
+          div.sso-settings-block
+            div.header-base-small
+              = cpSsoResource.SsoSPLogoutUrl
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'ssoSPLogoutUrlHelper' });")
+            div.inputWithBtn.withCopyBtn
+              input#ssoSPLogoutUrl.textBox.blocked(type="text" value="" disabled="disabled")
+              div.copyBtn(data-clipboard-text="" title=cpSsoResource.SsoCopyToClipboard)
+            div#ssoSPLogoutUrlHelper.popup_helper
+              p= cpSsoResource.SsoSPLogoutUrlHelper
+
+          div.big-button-container
+            button#ssoDownloadSPMetadataBtn.button.green(type="button" class=(enableSso ? "" : "disabled") data-href="")= cpSsoResource.SsoDownloadSPMetadata
+
+        div#ssoIdpCertificateDialog.popup
+          div.popup-caption
+            span.create-caption= cpSsoResource.SsoNewCertificate
+            span.edit-caption.display-none= cpSsoResource.SsoEditCertificate
+            div.popup-close &times;
+          div.popup-body
+            div.popup-content
+              div.sso-settings-block.requiredField
+                div.header-base-small
+                  span.requiredTitle= cpSsoResource.SsoPublicCertificate
+                textarea#ssoIdpPublicCertificate(rows="3" disabled=(!enableSso))= ""
+
+              div.sso-settings-block.display-none
+                div.header-base-small= cpSsoResource.SsoUsefor
+                div#ssoIdpCertificateActionType.selectBox(class=(enableSso ? "" : "disabled") data-value=constants.ssoIdpCertificateActionType.verification)
+                  div.selectBoxValue= constants.ssoIdpCertificateActionType.verification
+                  div.selectBoxSwitch
+                  div.selectOptionsBox
+                    div.selectOptionsInnerBox.halfwidth
+                      div.option.selected(data-value=constants.ssoIdpCertificateActionType.verification)= constants.ssoIdpCertificateActionType.verification
+                      div.option(data-value=constants.ssoIdpCertificateActionType.decrypt)= constants.ssoIdpCertificateActionType.decrypt
+                      div.option(data-value=constants.ssoIdpCertificateActionType.verificationAndDecrypt)= constants.ssoIdpCertificateActionType.verificationAndDecrypt
+
+              div.big-button-container
+                button#ssoIdpCertificateOkBtn.button.green= controlPanelResource.Ok
+                span.splitter-buttons
+                button.button.black.cancelbtn= controlPanelResource.Cancel
+
+        div#ssoSpCertificateDialog.popup
+          div.popup-caption
+            span.create-caption= cpSsoResource.SsoNewCertificate
+            span.edit-caption.display-none= cpSsoResource.SsoEditCertificate
+            div.popup-close &times;
+          div.popup-body
+            div.popup-content
+              div.sso-settings-block.requiredField
+                div.header-base-small
+                  span.requiredTitle= cpSsoResource.SsoPublicCertificate
+                  a#ssoSpCertificateGenerateBtn.link.dotted= cpSsoResource.SsoGenerateCertificate
+                textarea#ssoSpPublicCertificate(rows="3" disabled=(!enableSso))= ""
+
+              div.sso-settings-block.requiredField
+                div.header-base-small
+                  span.requiredTitle= cpSsoResource.SsoPrivateKey
+                textarea#ssoSpPrivateKey(rows="3" disabled=(!enableSso))= ""
+            
+              div.sso-settings-block
+                div.header-base-small= cpSsoResource.SsoUsefor
+                div#ssoSpCertificateActionType.selectBox(class=(enableSso ? "" : "disabled") data-value=constants.ssoSpCertificateActionType.signing)
+                  div.selectBoxValue= constants.ssoSpCertificateActionType.signing
+                  div.selectBoxSwitch
+                  div.selectOptionsBox
+                    div.selectOptionsInnerBox.halfwidth
+                      div.option.selected(data-value=constants.ssoSpCertificateActionType.signing)= constants.ssoSpCertificateActionType.signing
+                      div.option(data-value=constants.ssoSpCertificateActionType.encrypt)= constants.ssoSpCertificateActionType.encrypt
+                      div.option(data-value=constants.ssoSpCertificateActionType.signingAndEncrypt)= constants.ssoSpCertificateActionType.signingAndEncrypt
+
+              div.big-button-container
+                button#ssoSpCertificateOkBtn.button.green= controlPanelResource.Ok
+                span.splitter-buttons
+                button.button.black.cancelbtn= controlPanelResource.Cancel
+
+        script#certificatesTmpl(type="text/x-jquery-tmpl")
+          |{{each(i, item) items}}{{tmpl(item) "#certificateItemTmpl"}}{{/each}}
+
+        script#certificateItemTmpl(type="text/x-jquery-tmpl")
+          div.crt-data-row.clear-fix
+            |{{if selfSigned}}
+            span.domain= cpSsoResource.SsoSelfSigned
+            |{{else}}
+            span.domain.green ${domainName}
+            |{{/if}}
+            |{{if valid}}
+            span.expires ${startDateStr}-${expiredDateStr}
+            |{{else}}
+            span.expires.red ${startDateStr}-${expiredDateStr}
+            |{{/if}}
+            a.link.dotted.delete= controlPanelResource.ButtonDelete
+            a.link.dotted.edit= controlPanelResource.EditBtn
+            span.action ${action}
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.SsoSettings.init(
+        !{JSON.stringify(currentSettings || null).replace(/<\//g, '<\\/')}, 
+        !{JSON.stringify(defaultSettings || null).replace(/<\//g, '<\\/')}, 
+        !{JSON.stringify(constants || null).replace(/<\//g, '<\\/')}, 
+        !{JSON.stringify(metadata || null).replace(/<\//g, '<\\/')}, 
+        !{JSON.stringify(errorMessage || null).replace(/<\//g, '<\\/')});
+     });

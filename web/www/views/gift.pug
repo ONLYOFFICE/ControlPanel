@@ -1,0 +1,51 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.gift
+    =controlPanelResource.UpgradeToProHeader
+
+  div.banner
+    h2.blue-text=controlPanelResource.UpgradeToProBannerHeader
+    div.banner-item.pro
+      h3=controlPanelResource.UpgradeToProBannerItemProHeader
+      div=controlPanelResource.UpgradeToProBannerItemProDescr
+    div.banner-item.mobile
+      h3=controlPanelResource.UpgradeToProBannerItemMobileHeader
+      div=controlPanelResource.UpgradeToProBannerItemMobileDescr
+    div.banner-item.support
+      h3=controlPanelResource.UpgradeToProBannerItemSupportHeader
+      div=controlPanelResource.UpgradeToProBannerItemSupportDescr
+
+  div.instruction
+    h3=controlPanelResource.UpgradeToProBannerInstructionHeader
+    - var helpcenter = (config.get("helpcenter") || "")
+    -if (helpcenter) {
+    div=controlPanelResource.UpgradeToProBannerInstructionDescr
+    ul
+      li
+        b="- " + controlPanelResource.UpgradeToProBannerInstructionItemDocker + " "
+        a.link.underline(href=controlPanelResource.format("UpgradeToProBannerInstructionItemDockerHelpCenterUrl", helpcenter), target="_blank")=controlPanelResource.UpgradeToProBannerInstructionReadNow
+      li
+        b="- " + controlPanelResource.UpgradeToProBannerInstructionItemLinux + " "
+        a.link.underline(href=controlPanelResource.format("UpgradeToProBannerInstructionItemLinuxHelpCenterUrl", helpcenter), target="_blank")=controlPanelResource.UpgradeToProBannerInstructionReadNow
+      li
+        b="- " + controlPanelResource.UpgradeToProBannerInstructionItemWindows + " "
+        a.link.underline(href=controlPanelResource.format("UpgradeToProBannerInstructionItemWindowsHelpCenterUrl", helpcenter), target="_blank")=controlPanelResource.UpgradeToProBannerInstructionReadNow
+    div!=controlPanelResource.format("UpgradeToProBannerInstructionNote", "<a class='link underline' target='_blank' href='" + controlPanelResource.format("BackupHelpCenterUrl", helpcenter) +"'>", "</a>")
+    -}
+
+  div.information.gray-text
+    div.information-item
+      div!=controlPanelResource.format("UpgradeToProBannerInformationAbout", "<a class='link underline' target='_blank' href='" + mailSettings.siteUrl + "/for-enterprises.aspx'>", "</a>", "<a class='link underline' target='_blank' href='" + additionalSettings.buyUrl + "'>", "</a>")
+      div!=controlPanelResource.format("UpgradeToProBannerInformationDemo", "<a class='link underline' target='_blank' href='" + mailSettings.demoUrl + "'>", "</a>")
+    div.information-item
+      div!=controlPanelResource.format("UpgradeToProBannerInformationPurchase", "<a class='link underline' href='mailto:" + mailSettings.salesEmail + "'>", "</a>", additionalSettings.salesEmail)
+      div!=controlPanelResource.format("UpgradeToProBannerInformationSupport", "<a class='link underline' target='_blank' href='" + mailSettings.supportUrl + "'>", "</a>", additionalSettings.feedbackAndSupportUrl)
+
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.GiftView.init(!{JSON.stringify(errorMessage || null).replace(/<\//g, '<\\/')});
+    });

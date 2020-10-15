@@ -1,0 +1,78 @@
+﻿- var tenantExtraExist = (typeof tenantExtra == "object")
+- var nowDate = (new Date())
+- nowDate.setHours(0)
+- nowDate.setMinutes(0)
+- nowDate.setSeconds(0)
+- nowDate.setMilliseconds(0)
+
+- var dueDate = (new Date(tariff.dueDate))
+- dueDate.setHours(0)
+- dueDate.setMinutes(0)
+- dueDate.setSeconds(0)
+- dueDate.setMilliseconds(0)
+
+- var licenseDate = (new Date(tariff.licenseDate))
+- licenseDate.setHours(0)
+- licenseDate.setMinutes(0)
+- licenseDate.setSeconds(0)
+- licenseDate.setMilliseconds(0)
+
+- var dueDaysСount = parseInt((dueDate - nowDate)/(1000 * 60 * 60 * 24))
+- var licenseDaysСount = parseInt((licenseDate - nowDate)/(1000 * 60 * 60 * 24))
+
+div.top-panel-btns-container
+
+  -if(controlPanelSettings.limitedAccess || !tenantExtraExist){
+  a.button.black(href=portalUrl, tabindex="1")= controlPanelResource.ToPortalBtn
+  -}
+
+  -if(!controlPanelSettings.limitedAccess && tenantExtraExist){
+
+  -if(tenantExtra.enterprise){
+
+  -if(tenantExtra.trial){
+
+  -if(dueDaysСount > 7 && !tariff.dueDateIsMax){
+  - var badgeText = (controlPanelResource.format("TopBottonsTrial", dueDaysСount))
+  span.top-badge(title=badgeText)= badgeText
+  -}
+  -if(dueDaysСount <= 7 && dueDaysСount > 0){
+  - var badgeText = (controlPanelResource.format("TopBottonsTrialWarning", dueDaysСount))
+  span.top-badge.inf(title=badgeText)= badgeText
+  -}
+  -if(dueDaysСount == 0){
+  span.top-badge.inf(title=controlPanelResource.TopBottonsTrialExpiresToday)= controlPanelResource.TopBottonsTrialExpiresToday
+  -}
+  -if(dueDaysСount < 0){
+  span.top-badge.warn(title=controlPanelResource.TopBottonsTrialExpired)= controlPanelResource.TopBottonsTrialExpired
+  -}
+
+  -}
+
+  -if(!tenantExtra.trial){
+
+  -if(licenseDaysСount <= 7 && licenseDaysСount > 0){
+  - var badgeText = (controlPanelResource.format("TopBottonsEnterpriseWarning", tariff.licenseDateStr))
+  span.top-badge.inf(title=badgeText)= badgeText
+  -}
+  -if(licenseDaysСount == 0){
+  span.top-badge.inf(title=controlPanelResource.TopBottonsEnterpriseExpiresToday)= controlPanelResource.TopBottonsEnterpriseExpiresToday
+  -}
+  -if(licenseDaysСount < 0){
+  span.top-badge.warn(title=controlPanelResource.TopBottonsEnterpriseExpired)= controlPanelResource.TopBottonsEnterpriseExpired
+  -}
+
+  -}
+
+  -}
+
+  - var linkText = ((tenantExtra.enterprise && !(tenantExtra.trial || tenantExtra.defaultTariff)) ? controlPanelResource.ActivateRenewSubscription : controlPanelResource.ActivateUpgradeToEnterprise)
+  a.top-link.nav-activate.top-btn(href=config.makePath("activate"), tabindex="1", title=linkText)= linkText
+
+  -if(tenantExtra.opensource){
+  a.button.green.gift-btn.top-btn(href=config.makePath("gift"), tabindex="1", title=controlPanelResource.UpgradeToProHeader)= controlPanelResource.UpgradeToProHeader
+  -}
+
+  a.top-icon-link(href=portalUrl, tabindex="1", title=controlPanelResource.ToPortalBtn)
+
+  -}

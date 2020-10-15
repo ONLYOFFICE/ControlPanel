@@ -1,0 +1,48 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  div#formContentContactSupport
+    h1.blue-text
+      span.header-icon.contactsupport
+      = controlPanelResource.ContactSupport
+    p= cpContactSupportResource.ContactSupportDscr
+  
+    div.top-indent-big.contact-support-form
+      div.container-base
+        input#nameContactSupport.textBox.contact-support-field(type="text" placeholder=cpContactSupportResource.Name)
+  
+      div.container-base
+        input#emailContactSupport.textBox.contact-support-field(type="text" placeholder=cpContactSupportResource.Email)
+  
+      div.container-base
+        input#subjectContactSupport.textBox.contact-support-field(type="text" placeholder=cpContactSupportResource.Subject)
+  
+      div.container-base
+        div.inputWithBtn.withPlusBtn
+          input#attachmentsUploadInput.textBox(type="text" readonly="readonly" placeholder=cpContactSupportResource.UploadFile)
+          div.button.black
+            input#attachmentsUploader(type="file" name="attachments")
+            |+
+  
+      div.container-base
+        textarea#messageContactSupport.contact-support-field(rows="5" placeholder=cpContactSupportResource.Message)
+  
+  
+      div.middle-button-container
+        button#sendContactSupport.button.green(type="button")= cpContactSupportResource.Send
+  
+    div#contactSupportMsgSendSuccessfullPanel.popup
+      div.popup-caption
+         = cpContactSupportResource.SendMsgSuccessfullTitle
+         div.popup-close &times;
+      div.popup-body
+        div.popup-content
+           = cpContactSupportResource.SendMsgSuccessfullMessage
+           div.big-button-container
+            a.button.green.cancelbtn= controlPanelResource.Ok
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.ContactSupportManager.init("#{cpContactSupportResource.IncorrectContactSupportFormError}");
+    });

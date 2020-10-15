@@ -1,0 +1,82 @@
+﻿div.form
+  ul.side-nav
+
+    - var fullAccess = (!controlPanelSettings.limitedAccess)
+
+    -if(fullAccess){
+
+    li.nav-header
+      span.header-text= controlPanelResource.CommonSettings
+      span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'commonSettingsHelper' }); ")
+      div#commonSettingsHelper.popup_helper
+        p= controlPanelResource.CommonSettingsHelper
+
+    -if(config.controllers.includes("https.js")){
+    li.with-icon.https
+      a.nav-link.nav-https(href=config.makePath("https"), tab-index="-1")
+        =controlPanelResource.Https
+    -}
+    li.with-icon.backup
+      a.nav-link.nav-backup(href=config.makePath("backup"), tab-index="-1")
+        =controlPanelResource.Backup
+    li.with-icon.restore
+      a.nav-link.nav-restore(href=config.makePath("restore"), tab-index="-1")
+        =controlPanelResource.Restore
+    li.with-icon.storage
+      a.nav-link.nav-storage(href=config.makePath("storage"), tab-index="-1")
+        =controlPanelResource.Storage
+    -if(config.controllers.includes("update.js")){
+    li.with-icon.update
+      a.nav-link.nav-update(href=config.makePath("update"), tab-index="-1")
+        =controlPanelResource.Update
+    -}
+    li.with-icon.search
+      a.nav-link.nav-search(href=config.makePath("search"), tab-index="-1")
+        =controlPanelResource.Search
+    -if(quota.ssbranding){
+    li.with-icon.rebranding
+      a.nav-link.nav-rebranding(href=config.makePath("rebranding"), tab-index="-1")
+        =controlPanelResource.WhiteLabel
+    -}
+    -if(quota.countPortals > 0){
+    li.with-icon.multiportals
+      a.nav-link.nav-multiportals(href=config.makePath("multiPortals"), tab-index="-1")
+        =multiPortals
+    -}
+
+    -}
+
+    li.nav-header(class=fullAccess ? "top-indent" : "")
+      span.header-text= controlPanelResource.PortalSettings
+      span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'portalSettingsHelper' }); ")
+      div#portalSettingsHelper.popup_helper
+        p= controlPanelResource.PortalSettingsHelper
+
+    -if(quota.privacyroom){
+    li.with-icon.privacyroom
+      a.nav-link.nav-privacyroom(href=config.makePath("privacyRoom"), tab-index="-1")
+        =controlPanelResource.PrivacyRoom
+    -}
+    -if(quota.ldap){
+    li.with-icon.ldap
+      a.nav-link.nav-ldap(href=config.makePath("ldap"), tab-index="-1")
+        =controlPanelResource.Ldap
+    -}
+    -if(quota.sso){
+    li.with-icon.sso
+      a.nav-link.nav-sso(href=config.makePath("sso"), tab-index="-1")
+        =controlPanelResource.Sso
+    -}
+    -if(quota.whiteLabel){
+    li.with-icon.whitelabel
+      a.nav-link.nav-whitelabel(href=config.makePath("whitelabel"), tab-index="-1")
+        =controlPanelResource.WhiteLabel
+    -}
+    -if(quota.audit){
+    li.with-icon.loginhistory
+      a.nav-link.nav-loginhistory(href=config.makePath("loginHistory"), tab-index="-1")
+        =controlPanelResource.LoginHistory
+    li.with-icon.audittrail
+      a.nav-link.nav-audittrail(href=config.makePath("auditTrail"), tab-index="-1")
+        =controlPanelResource.AuditTrail
+    -}

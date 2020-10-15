@@ -1,0 +1,302 @@
+Control Panel uses code from the following 3rd party projects:
+
+====================================================================================================
+npm packages
+====================================================================================================
+
+body-parser - Node.js body parsing middleware. (https://github.com/expressjs/body-parser/blob/master/LICENSE)
+License:        MIT License
+License File:   body-parser.license
+
+body-parser - Node.js body parsing middleware. (https://github.com/expressjs/body-parser/blob/master/LICENSE)
+License:        MIT License
+License File:   body-parser.license
+
+co - Generator based control flow goodness for nodejs and the browser, using promises, letting you write non-blocking code in a nice-ish way. (https://github.com/tj/co/blob/master/LICENSE)
+License:        MIT License
+License File:   co.license
+
+cookie-parser - Parse Cookie header and populate req.cookies with an object keyed by the cookie names. Optionally you may enable signed cookie support by passing a secret string, which assigns req.secret so it may be used by other middleware. (https://github.com/expressjs/cookie-parser/blob/master/LICENSE)
+License:        MIT License
+License File:   cookie-parser.license
+
+cors - CORS is a node.js package for providing a Connect/Express middleware that can be used to enable CORS with various options. (https://github.com/expressjs/cors/blob/master/LICENSE)
+License:        MIT License
+License File:   cors.license
+
+crypto - JavaScript implementations of standard and secure cryptographic algorithms. (https://www.npmjs.com/package/crypto/v/0.0.3)
+License:        ISC License
+License File:   crypto.license
+
+errorhandler - Development-only error handler middleware. (https://github.com/expressjs/errorhandler/blob/master/LICENSE)
+License:        MIT License
+License File:   errorhandler.license
+
+etag - Create simple HTTP ETags (https://github.com/jshttp/etag/blob/master/LICENSE)
+License:        MIT License
+License File:   etag.license
+
+express - Fast, unopinionated, minimalist web framework for node. (https://github.com/expressjs/express/blob/master/LICENSE)
+License:        MIT License
+License File:   express.license
+
+express - Fast, unopinionated, minimalist web framework for node. (https://github.com/expressjs/express/blob/master/LICENSE)
+License:        MIT License
+License File:   express.license
+
+express-handlebars - A Handlebars view engine for Express which doesn't suck. (https://github.com/express-handlebars/express-handlebars/blob/master/LICENSE)
+License:        BSD-3-Clause License
+License File:   express-handlebars.license
+
+express-saml2 - High-level API for Single Sign On (SAML 2.0) (https://github.com/tngan/samlify/blob/master/LICENSE)
+License:        MIT License
+License File:   express-saml2.license
+
+express-session - Create a session middleware with the given options. (https://github.com/expressjs/session/blob/master/LICENSE)
+License:        MIT License
+License File:   express-session.license
+
+express-session - Create a session middleware with the given options. (https://github.com/expressjs/session/blob/master/LICENSE)
+License:        MIT License
+License File:   express-session.license
+
+form-data - A library to create readable "multipart/form-data" streams. Can be used to submit forms and file uploads to other web applications. (https://github.com/form-data/form-data/blob/master/License)
+License:        MIT License
+License File:   form-data.license
+
+formidable - A Node.js module for parsing form data, especially file uploads. (https://github.com/node-formidable/formidable/blob/master/LICENSE)
+License:        MIT License
+License File:   formidable.license
+
+gulp - The streaming build system (https://github.com/gulpjs/gulp/blob/master/LICENSE)
+License:        MIT License
+License File:   gulp.license
+
+gulp-append-prepend - Simple Gulp plugin. (https://github.com/JamesHemery/gulp-append-prepend/blob/master/LICENCE)
+License:        MIT License
+License File:   gulp-append-prepend.license
+
+gulp-just-replace - The gulp-replace is fine. But it's painful to install it on production server as it takes many seconds to install those useless dependencies for me. (https://github.com/caiguanhao/gulp-just-replace/blob/master/LICENSE)
+License:        MIT License
+License File:   gulp-just-replace.license
+
+image-size - A Node module to get dimensions of any image file (https://github.com/image-size/image-size/blob/master/LICENSE)
+License:        MIT License
+License File:   image-size.license
+
+less - This is the JavaScript, official, stable version of Less. (https://github.com/less/less.js/blob/master/LICENSE)
+License:        Apache License 2.0
+License File:   less.license
+
+less-middleware - This middleware was created to allow processing of Less files for Connect JS framework and by extension the Express JS framework. (https://github.com/emberfeather/less.js-middleware/blob/master/license)
+License:        MIT License
+License File:   less-middleware.license
+
+lodash - The modern build of lodash exported as Node.js/io.js modules. (https://github.com/lodash/lodash/blob/master/LICENSE)
+License:        MIT License
+License File:   lodash.license
+
+moment - A lightweight JavaScript date library for parsing, validating, manipulating, and formatting dates. (https://github.com/moment/moment/blob/develop/LICENSE)
+License:        MIT License
+License File:   moment.license
+
+morgan - HTTP request logger middleware for node.js (https://github.com/expressjs/morgan/blob/master/LICENSE)
+License:        MIT License
+License File:   morgan.license
+
+morgan - HTTP request logger middleware for node.js (https://github.com/expressjs/morgan/blob/master/LICENSE)
+License:        MIT License
+License File:   morgan.license
+
+nconf - Hierarchical node.js configuration with files, environment variables, command-line arguments, and atomic object merging. (https://github.com/indexzero/nconf/blob/master/LICENSE)
+License:        MIT License
+License File:   nconf.license
+
+nconf - Hierarchical node.js configuration with files, environment variables, command-line arguments, and atomic object merging. (https://github.com/indexzero/nconf/blob/master/LICENSE)
+License:        MIT License
+License File:   nconf.license
+
+node-forge - A native implementation of TLS (and various other cryptographic tools) in JavaScript. (https://github.com/digitalbazaar/forge/blob/master/LICENSE)
+License:        BSD-3-Clause OR GPL-2.0
+License File:   node-forge.license
+
+node-forge - A native implementation of TLS (and various other cryptographic tools) in JavaScript. (https://github.com/digitalbazaar/forge/blob/master/LICENSE)
+License:        BSD-3-Clause OR GPL-2.0
+License File:   node-forge.license
+
+node-forge - A native implementation of TLS (and various other cryptographic tools) in JavaScript. (https://github.com/digitalbazaar/forge/blob/master/LICENSE)
+License:        BSD-3-Clause OR GPL-2.0
+License File:   node-forge.license
+
+nodemon - For use during development of a node.js based application. (https://github.com/remy/nodemon/blob/master/LICENSE)
+License:        MIT License
+License File:   nodemon.license
+
+node-rsa - Node.js RSA library (https://github.com/rzcoder/node-rsa)
+License:        MIT License
+License File:   node-rsa.license
+
+passport - Simple, unobtrusive authentication for Node.js.  (https://github.com/jaredhanson/passport/blob/master/LICENSE)
+License:        MIT License
+License File:   passport.license
+
+plugin-error - Error handling for Vinyl plugins. (https://github.com/gulpjs/plugin-error/blob/master/LICENSE)
+License:        MIT License
+License File:   plugin-error.license
+
+public-ip - Get your public IP address - very fast! (https://github.com/sindresorhus/public-ip/blob/master/license)
+License:        MIT License
+License File:   public-ip.license
+
+pug - Pug is a high performance template engine heavily influenced byHaml and implemented with JavaScript for Node.js and browsers. For bug reports, feature requests and questions, open an issue. For discussion join the chat room. (https://github.com/pugjs/pug/blob/master/packages/pug/LICENSE)
+License:        MIT License
+License File:   pug.license
+
+request -  Simplified HTTP request client. (https://github.com/request/request/blob/master/LICENSE)
+License:        Apache License 2.0
+License File:   request.license
+
+request -  Simplified HTTP request client. (https://github.com/request/request/blob/master/LICENSE)
+License:        Apache License 2.0
+License File:   request.license
+
+semver - The semver parser for node (the one npm uses) (https://github.com/npm/node-semver/blob/master/LICENSE)
+License:        ISC License
+License File:   semver.license
+
+serve-favicon - Node.js middleware for serving a favicon. (https://github.com/expressjs/serve-favicon/blob/master/LICENSE)
+License:        MIT License
+License File:   serve-favicon.license
+
+serve-favicon - Node.js middleware for serving a favicon. (https://github.com/expressjs/serve-favicon/blob/master/LICENSE)
+License:        MIT License
+License File:   serve-favicon.license
+
+uglify-js - UglifyJS is a JavaScript parser, minifier, compressor and beautifier toolkit. (https://github.com/mishoo/UglifyJS/blob/master/LICENSE)
+License:        BSD-2-Clause
+License File:   uglify-js.license
+
+url - This module has utilities for URL resolution and parsing meant to have feature parity with node.js core url module. (https://github.com/defunctzombie/node-url/blob/master/LICENSE)
+License:        MIT License
+License File:   url.license
+
+uuid - Simple, fast generation of RFC4122 UUIDS. (https://github.com/uuidjs/uuid/blob/master/LICENSE.md)
+License:        MIT License
+License File:   uuid.license
+
+uuid - Simple, fast generation of RFC4122 UUIDS. (https://github.com/uuidjs/uuid/blob/master/LICENSE.md)
+License:        MIT License
+License File:   uuid.license
+
+winston - A multi-transport async logging library for node.js.  (https://github.com/winstonjs/winston/blob/master/LICENSE)
+License:        MIT License
+License File:   winston.license
+
+winston - A logger for just about everything. (https://github.com/winstonjs/winston/blob/master/LICENSE)
+License:        MIT License
+License File:   winston.license
+
+winston-daily-rotate-file - A transport for winston which logs to a rotating file. Logs can be rotated based on a date, size limit, and old logs can be removed based on count or elapsed days. (https://github.com/winstonjs/winston-daily-rotate-file/blob/master/LICENSE)
+License:        MIT License
+License File:   winston-daily-rotate-file.license
+
+winston-daily-rotate-file - A transport for winston which logs to a rotating file. Logs can be rotated based on a date, size limit, and old logs can be removed based on count or elapsed days. (https://github.com/winstonjs/winston-daily-rotate-file/blob/master/LICENSE)
+License:        MIT License
+License File:   winston-daily-rotate-file.license
+
+x509.js - parsing of x509 certificates and keys in javascript (via emscripten) (https://github.com/encharm/x509.js/blob/master/LICENSE)
+License:        MIT License
+License File:   x509.js.license
+
+xml - Fast and simple Javascript-based XML generator/builder for Node projects. (https://github.com/dylang/node-xml/blob/master/LICENSE)
+License:        MIT License
+License File:   xml.license
+
+xml-crypto - Xml digital signature and encryption library for Node.js (https://github.com/yaronn/xml-crypto/blob/master/LICENSE)
+License:        MIT License
+License File:   xml-crypto.license
+
+xml-crypto - Xml digital signature and encryption library for Node.js (https://github.com/yaronn/xml-crypto/blob/master/LICENSE)
+License:        MIT License
+License File:   xml-crypto.license
+
+xmldom - A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module. (https://github.com/xmldom/xmldom/blob/master/LICENSE.md)
+License:        LGPL-2.0 OR MIT
+License File:   xmldom.license
+
+xml-encryption - W3C XML Encryption implementation for node.js (http://www.w3.org/TR/xmlenc-core/) (https://github.com/auth0/node-xml-encryption/blob/master/LICENSE)
+License:        MIT License
+License File:   xml-encryption.license
+
+xml-encryption - W3C XML Encryption implementation for node.js (http://www.w3.org/TR/xmlenc-core/) (https://github.com/auth0/node-xml-encryption/blob/master/LICENSE)
+License:        MIT License
+License File:   xml-encryption.license
+
+xpath - DOM 3 Xpath implemention and helper for node.js (https://github.com/goto100/xpath/blob/master/LICENSE)
+License:        MIT License
+License File:   xpath.license
+
+yargs - Yargs helps you build interactive command line tools, by parsing arguments and generating an elegant user interface. (https://github.com/yargs/yargs/blob/master/LICENSE)
+License:        MIT License
+License File:   yargs.license
+
+====================================================================================================
+javascript plugins
+====================================================================================================
+
+async.js - Async utilities for node and the browser  (https://github.com/caolan/async/blob/master/LICENSE)
+License:        MIT License
+License File:   async.js.license
+
+clipboard.js - A modern approach to copy text to clipboard (https://zenorocha.mit-license.org/)
+License:        MIT License
+License File:   clipboard.js.license
+
+jquery.blockUI.min.js - jQuery BlockUI Plugin (https://github.com/malsup/blockui)
+License:        MIT and GPL licenses
+License File:   jquery.blockUI.min.js.license
+
+jquery.cookies.js - Javascript library for accessing and manipulating HTTP cookies in the web browser.  (https://github.com/JAAulde/cookies/blob/master/LICENSE)
+License:        MIT License
+License File:   jquery.cookies.js.license
+
+jquery.cron.js - Cron jQuery plugin  (https://github.com/arnapou/jqcron/blob/master/LICENSE)
+License:        MIT License
+License File:   jquery.cron.js.license
+
+jquery.fileupload.js - File Upload widget with multiple file selection, drag&drop support, progress bar, validation and preview images, audio and video for jQuery. (https://github.com/blueimp/jQuery-File-Upload/blob/master/LICENSE.txt)
+License:        MIT License
+License File:   jquery.fileupload.js.license
+
+jquery.json.js - Use native JSON.stringify and JSON.parse (https://github.com/Krinkle/jquery-json/blob/master/LICENSE.txt)
+License:        MIT License
+License File:   jquery.json.js.license
+
+jquery.scrollTo.js - Lightweight, cross-browser and highly customizable animated scrolling with jQuery  (https://github.com/flesler/jquery.scrollTo/blob/master/LICENSE)
+License:        MIT License
+License File:   jquery.scrollTo.js.license
+
+jquery.tmpl.js - The original official jQuery Templates plugin. (https://jquery.org/license/)
+License:        MIT License
+License File:   jquery.tmpl.js.license
+
+jquery-1.8.2.min.js - The purpose of jQuery is to make it much easier to use JavaScript on your website. (https://jquery.org/license/)
+License:        MIT License
+License File:   jquery-1.8.2.min.js.license
+
+jquery-ui-1.9.0.min.js - The official jQuery user interface library.  (https://github.com/jquery/jquery-ui/blob/master/LICENSE.txt)
+License:        MIT License
+License File:   jquery-ui-1.9.0.min.js.license
+
+moment.js - Parse, validate, manipulate, and display dates in javascript.  (https://github.com/moment/moment/blob/develop/LICENSE)
+License:        MIT License
+License File:   moment.js.license
+
+socket.io.js - Realtime application framework (client) (https://github.com/socketio/socket.io-client/blob/master/LICENSE)
+License:        MIT License
+License File:   socket.io.js.license
+
+toastr.min.js - Simple javascript toast notifications  (https://github.com/CodeSeven/toastr/blob/master/LICENSE)
+License:        MIT License
+License File:   toastr.min.js.license
+

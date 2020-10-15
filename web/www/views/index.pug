@@ -1,0 +1,28 @@
+﻿extends Shared/layout
+
+block loginarea
+
+block content
+  div#loginView
+    div#loginForm
+      h1.blue-text
+        =controlPanelResource.ControlPanelHeader
+      input#loginPortal.textBox(type="text", placeholder=controlPanelResource.YourRegistrationPortal, tabindex="1")
+      input#loginEmail.textBox(type="text", placeholder=controlPanelResource.YourRegistrationEmail, tabindex="2")
+      input#loginPassword.textBox(type="password", placeholder=controlPanelResource.Password, tabindex="3")
+      button#loginBtn.button.green(tabindex="4")
+        =controlPanelResource.LoginBtn
+      div#loginError.login-toast.toast-container.toast-top-right
+        div.toast.toast-error.clear-fix
+          div.toast-message
+            span#incorrectLoginCombinationError
+              =controlPanelResource.IncorrectLoginCombinationError
+            span#incorrectAccessRightsError
+              =controlPanelResource.IncorrectAccessRightsError
+          div.login-toast-close
+
+block bodyscripts
+  script(type="text/javascript").
+      $(function () {
+        window.LoginView.init();
+      });

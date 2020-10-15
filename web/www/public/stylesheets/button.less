@@ -1,0 +1,325 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+@import "vars";
+
+
+a {
+    &::-moz-focus-inner {   
+        outline: none;
+        -moz-outline: none;
+        border: 0 none;
+    }
+    &:focus {
+        outline: none;
+        -moz-outline: none;
+        border: 0 none;
+    }
+}
+button {
+    font-family: "Open Sans",sans-serif,Arial;
+}
+
+.button, .button:visited, .button:active {
+    cursor: pointer;
+    padding: 0 20px;
+    border: medium none;
+    display: inline-block;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;
+    text-transform: uppercase;
+    height: 48px;
+    line-height: 48px;
+    white-space: nowrap;
+    .userSelect(none);
+    .borderRadius(3px);
+
+    &:hover, &.hover, &:focus {
+        text-decoration: none;
+    }
+
+    &.disabled {
+        cursor: default;
+    }
+
+
+    &::-moz-focus-inner {   
+        outline: none;
+        -moz-outline: none;
+        border: 0 none;
+        .borderRadius(3px);
+    }
+    &:focus {
+        outline: none;
+        -moz-outline: none;
+        border: 0 none;
+        .borderRadius(3px);
+    }
+
+
+    &.green {
+        background: @greenBtnBg;
+        color: @whiteTextColor;
+
+        &:hover, &.hover {
+            background: @greenBtnHoverBg;
+        }
+        &::-moz-focus-inner {
+            background: @greenBtnHoverBg;
+        }
+        &:focus {
+            background: @greenBtnHoverBg;
+        }
+
+        &:active {
+            background: @greenBtnActiveBg;
+        }
+
+        &.disabled {
+            background: @greenBtnDisabledBg;
+            color: @greenBtnDisabledText;
+        }
+    }
+
+    &.black {
+        background: @blackBtnBg;
+        color: @whiteTextColor;
+
+        &:hover, &.hover {
+            background: @blackBtnActiveBack;
+        }
+        &::-moz-focus-inner {
+            background: @blackBtnActiveBack;
+        }
+        &:focus {
+            background: @blackBtnActiveBack;
+        }
+
+        &:active {
+            background: @blackBtnActiveBack;
+        }
+
+        &.disabled {
+            background: @blackBtnDisabledBg;
+            color: @blackBtnDisabledText;
+        }
+    }
+
+    &.grey {
+        background: @greyBtnBg;
+        color: @whiteTextColor;
+
+        &:hover, &.hover {
+            background: @greyBtnActiveBack;
+        }
+        &::-moz-focus-inner {
+            background: @greyBtnActiveBack;
+        }
+        &:focus {
+            background: @greyBtnActiveBack;
+        }
+
+        &:active {
+            background: @greyBtnActiveBack;
+        }
+
+        &.disabled {
+            background: @greyBtnDisabledBg;
+        }
+    }
+
+    &.middle {
+        height: 24px;
+        padding: 7px 25px;
+        font-weight: normal;
+        line-height: 12px;
+        text-transform: none;
+        .borderRadius(2px);
+    }
+
+    &.uploadBtn {
+        position: relative;
+
+        input[type="file"] {
+            position: absolute;
+            height: 48px;
+            left: 0;
+            top: 0;
+            cursor: pointer;
+            width: 100%;
+            opacity: 0;
+        }
+
+        &.disabled input[type="file"] {
+            cursor: default;
+        }
+    }
+}
+
+.dottedButton {
+    display: inline-block;
+    border-bottom: 1px dotted @dottedButtonColor;
+    color: @dottedButtonColor;
+    cursor: pointer;
+}
+
+/*******************************************************************************
+   Button Containers
+*******************************************************************************/
+.small-button-container {
+    margin-top: 24px;
+    position: relative;
+}
+.middle-button-container {
+    margin-top: 30px;
+    position: relative;
+}
+.big-button-container {
+    margin-top: 40px;
+    position: relative;
+}
+.on-off-button {
+    background-color: transparent;
+    background-image: url("images/slider_btn.png");
+    background-position: -1px -25px;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    display: block;
+    height: 22px;
+    width: 47px;
+    padding: 0;
+    border: 0 none;
+    .borderRadius(3px);
+
+    &:active {
+        background-color: #5c9ae0;
+        .borderRadius(3px);
+    }
+
+    &::-moz-focus-inner {
+        outline: none;
+        -moz-outline: none;
+        border: 0 none;
+        .borderRadius(3px);
+        background-color: #5c9ae0;
+    }
+
+    &:focus {
+        outline: none;
+        -moz-outline: none;
+        border: 0 none;
+        .borderRadius(3px);
+        background-color: #5c9ae0;
+    }
+
+
+    &.on {
+        background-position: -1px -25px;
+
+        &.disable {
+            background-position: -1px -121px;
+        }
+
+        &.error {
+            background-position: -1px -73px;
+
+            &.disable {
+                background-position: -1px -169px;
+            }
+        }
+    }
+
+    &.off {
+        background-position: -1px -1px;
+
+        &.disable {
+            background-position: -1px -97px;
+        }
+
+        &.error {
+            background-position: -1px -49px;
+
+            &.disable {
+                background-position: -1px -145px;
+            }
+        }
+    }
+
+    &.error {
+        cursor: pointer;
+    }
+
+    &.disable {
+        cursor: default;
+
+        &:active {
+            background-color: transparent;
+        }
+
+        &::-moz-focus-inner {
+            background-color: transparent;
+        }
+
+        &:focus {
+            background-color: transparent;
+        }
+    }
+
+    .text {
+        padding-left: 59px;
+    }
+}
+
+/*******************************************************************************
+   Horizontal group of buttons
+*******************************************************************************/
+.buttonGroup {
+    border: 1px solid #c4c4c4;
+    border-radius: 3px;
+    display: inline-flex;
+    position: relative;
+  
+    .selectButton {
+        border: 1px solid #c4c4c4;
+        border-width: 0 1px 0 0;
+        color: #666666;
+        cursor: pointer;
+        float: left;
+        line-height: 21px;
+        text-align: center;
+        padding: 0 10px;
+
+        &:last-of-type {
+            border: none;
+        }
+
+        &.checked {
+            background: #999999;
+            border: 1px solid #999999;
+            color: white;
+            &:first-of-type {
+                border-radius: 3px 0 0 3px;
+                padding: 0 10.5px;
+            }
+
+            &:last-of-type {
+                border-radius: 0 3px 3px 0;
+            }
+        }
+    }
+}

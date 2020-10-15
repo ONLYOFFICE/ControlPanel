@@ -1,0 +1,81 @@
+﻿{
+  "version": {
+    "current": "2.9.0",
+    "available-url": "http://download.onlyoffice.com/install/windows/updates.txt"
+  },
+  "core.machinekey": "Vskoproizvolny Salt par Chivreski",
+  "maxFileSize": 5242880,
+  "useDataStorage": true,
+  "googleAnalyticsEnable": false,
+  "check.dns": true,
+  "check.vsyscall": true,
+  "port": 80,
+  "web": {
+    "portal": "http://onlyoffice-community-server",
+    "apiSystem": "http://onlyoffice-community-server/apisystem/api",
+    "appPath": "/controlpanel",
+    "data": "../../Data",
+    "image-path": "images",
+    "rebranding": "rebranding",
+    "https":"certs"
+  },
+  "docker": {
+    "auth": {
+      "hub": "",
+      "login": "",
+      "password": ""
+    },
+    "CommunityServer": {
+      "script": "run-community-server.sh",
+      "container": "onlyoffice-community-server",
+      "image": "onlyoffice/communityserver"
+    },
+    "DocumentServer": {
+      "script": "run-document-server.sh",
+      "container": "onlyoffice-document-server",
+      "image": "onlyoffice/documentserver",
+      "enterpriseImage": "onlyoffice/documentserver-ee"
+    },
+    "MailServer": {
+      "script": "run-mail-server.sh",
+      "container": "onlyoffice-mail-server",
+      "image": "onlyoffice/mailserver"
+    },
+    "ControlPanel": {
+      "script": "run-control-panel.sh",
+      "container": "onlyoffice-control-panel",
+      "image": "onlyoffice/controlpanel"
+    },
+    "MysqlServer": {
+      "container": "onlyoffice-mysql-server",
+      "image": "library/mysql"
+    },
+    "MailServerSqlAuth": {
+      "host": "onlyoffice-mysql-server",
+      "database": "onlyoffice_mailserver",
+      "user": "mail_admin",
+      "password": "Isadmin123"
+    },
+    "DocumentServerServices": {
+      "apiUrl": "/ds-vpath/",
+      "internalUrl": "http://onlyoffice-document-server/",
+      "portalUrl": "http://onlyoffice-community-server/"
+    }
+  },
+  "restore": "restore",
+  "hiddenControllers": ["update.js"],
+  "sso": {
+    "baseUrl": "",
+    "metadataUrl": "/sso/metadata",
+    "entityId": "/sso/metadata",
+    "consumerUrl": "/sso/acs",
+    "logoutUrl": "/sso/slo/callback"
+  },
+  "helpcenter": "http://helpcenter.onlyoffice.com",
+  "product": {
+    "name": "onlyoffice",
+    "hostDir": "/app/${name}",
+    "httpsDir": "/var/www/${name}/Data",
+    "logDir": "/var/log/${name}"
+  }
+}

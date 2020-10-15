@@ -1,0 +1,360 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  div#formContentLdap
+    h1.blue-text
+      span.header-icon.ldap
+      = controlPanelResource.Ldap
+
+    - var helpcenter = (config.get("helpcenter") || "")
+
+    p!= cpLdapResource.LdapSettingsDscr + '&nbsp;'
+      -if (helpcenter) {
+      a.link.underline(href=cpLdapResource.format("LdapHelpCenterUrl", helpcenter), target="_blank")= controlPanelResource.LearnMore
+      -}
+
+    div(class='ldap-settings-main-container top-indent-big ' + (config.isMono ? 'ldap-settings-is-mono' : ''), data-error-message= errorMessage)
+      div.ldap-settings-btn-container
+        -if(enableLdapAuthentication){
+        button#ldapSettingsBtn.on-off-button.on(type="button" tabindex="1")
+        -}else{
+        button#ldapSettingsBtn.on-off-button.off(type="button" tabindex="1")
+        -}
+        span= controlPanelResource.EnableLDAPAuthentication
+        span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'EnableLDAPAuthenticationHelper' }); ")
+        div#EnableLDAPAuthenticationHelper.popup_helper
+          p= cpLdapResource.LdapSettingsEnableLdapAuthenticationHelper
+
+        div#ldapSettingsTurnOffDialog.popup
+            div.popup-caption
+              span.attention-icon
+              = controlPanelResource.ConfirmationTitle
+            div.popup-body
+              div.popup-content= controlPanelResource.AreYouSureToContinue
+                div.big-button-container
+                  a.button.green.ldap-settings-ok= controlPanelResource.Ok
+                  span.splitter-buttons
+                  a.button.black.ldap-settings-cancel= controlPanelResource.Cancel
+
+        div#ldapSettingsCronTurnOffDialog.popup
+            div.popup-caption
+              span.attention-icon
+              = controlPanelResource.ConfirmationTitle
+            div.popup-body
+              div.popup-content= controlPanelResource.AreYouSureToContinue
+                div.big-button-container
+                  a.button.green.ldap-settings-ok= controlPanelResource.Ok
+                  span.splitter-buttons
+                  a.button.black.ldap-settings-cancel= controlPanelResource.Cancel
+
+      div.ldap-settings-spoiler-container.top-indent-big
+        h2.blue-text.ldap-settings-form-title= cpLdapResource.LdapSettings
+        a.link.dotted.ldap-settings-spoiler-link(title=controlPanelResource.ShowLink onclick="javascript: Common.spoiler.toggle('#ldapSettingsSpoiler', $(this));")= controlPanelResource.ShowLink
+
+      div#ldapSettingsSpoiler.display-none
+
+        h2.attention-header
+          span.attention-icon
+          =controlPanelResource.NoteShouldKnowHeader
+   
+        p.attention-text= controlPanelResource.NoteLDAPShouldKnow
+   
+        div(class="ldap-settings-security-container clear-fix " + (!enableLdapAuthentication ? 'ldap-settings-disabled' : ''))
+          div.ldap-settings-column
+            div#ldapSettingsStartTlsCheckbox(class="ldap-settings-label-checkbox custom-checkbox " + (!enableLdapAuthentication ? 'disabled' : '') + (startTls ? ' checked' : ''))
+              button.icon(type="button", tabindex="1")
+              span= cpLdapResource.EnableLDAPStartTLS
+            span.helpCenterSwitcher.enableLDAPStartTLSHelpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'EnableLDAPStartTLSHelper' }); ")
+            div#EnableLDAPStartTLSHelper.popup_helper
+              p= cpLdapResource.LdapSettingsEnableLDAPStartTLSHelper
+          div.ldap-settings-second-column
+            div#ldapSettingsSslCheckbox(class="ldap-settings-label-checkbox custom-checkbox " + (!enableLdapAuthentication ? 'disabled' : '') + (ssl ? ' checked' : ''))
+              button.icon(type="button", tabindex="1")
+              span= cpLdapResource.EnableLdapSSL
+            span.helpCenterSwitcher.enableLDAPSSLHelpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'EnableLdapSSLHelper' }); ")
+            div#EnableLdapSSLHelper.popup_helper
+              p= cpLdapResource.LdapSettingsEnableLdapSSLHelper
+
+        div(class="ldap-settings-user-container clear-fix " + (!enableLdapAuthentication ? 'ldap-settings-disabled' : ''))
+          div.ldap-settings-column
+            div.ldap-settings-block.requiredField(style="margin: 0")
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsServer
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsServerHelper' }); ")
+              input#ldapSettingsServer.requiredInputError.textBox(type="text" value=server)
+            div#LdapSettingsServerHelper.popup_helper
+              p= cpLdapResource.LdapSettingsServerHelper
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsUserDN
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsUserDNHelper' }); ")
+              input#ldapSettingsUserDN.textBox(type="text" value=userDN)
+            div#LdapSettingsUserDNHelper.popup_helper
+              p= cpLdapResource.LdapSettingsUserDNHelper
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsLoginAttribute
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsLoginAttributeHelper' }); ")
+              input#ldapSettingsLoginAttribute.textBox(type="text" value=loginAttribute)
+            div#LdapSettingsLoginAttributeHelper.popup_helper
+              p= cpLdapResource.LdapSettingsLoginAttributeHelper
+          div.ldap-settings-second-column
+            div.ldap-settings-block.requiredField(style="margin: 0")
+              span#ldapSettingsPortNumberError.requiredErrorText
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsPortNumber
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsPortNumberHelper' }); ")
+              input#ldapSettingsPortNumber.textBox(type="text" value=portNumber)
+            div#LdapSettingsPortNumberHelper.popup_helper
+              p= cpLdapResource.LdapSettingsPortNumberHelper
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsUserFilter
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsUserFilterHelper' }); ")
+              textarea#ldapSettingsUserFilter.textBox
+                = userFilter
+            div#LdapSettingsUserFilterHelper.popup_helper
+              p= cpLdapResource.LdapSettingsUserFilterHelper
+
+        div.ldap-settings-user-container
+          div.clear-fix
+            h3.ldap-mapping-header= cpLdapResource.LdapAttributeHeader
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsMappingDestHelper' }); ")
+            div#LdapSettingsMappingDestHelper.popup_helper
+              p= cpLdapResource.LdapSettingsMappingDestHelper
+          div#ldapMappingSettings(data-value=(ldapMapping ? JSON.stringify(ldapMapping) : ""))
+          div.small-button-container
+            button#ldapMappingAdd.button.black(type="button")= controlPanelResource.AddAttr
+        
+        div.ldap-settings-btn-container
+          button#ldapSettingsGroupBtn(type="button", class="on-off-button " + (groupMembership ? 'on' : 'off') + (!enableLdapAuthentication ? ' disable' : ''))
+          span= cpLdapResource.LdapSettingsGroupMembership
+          span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsGroupMembershipHelper' }); ")
+          div#LdapSettingsGroupMembershipHelper.popup_helper
+            p= cpLdapResource.LdapSettingsGroupMembershipHelper
+        div(class="ldap-settings-group-container clear-fix " + (!enableLdapAuthentication || !groupMembership ? 'ldap-settings-disabled' : ''))
+          div.ldap-settings-column
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsGroupDN
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsGroupDNHelper' }); ")
+              input#ldapSettingsGroupDN.textBox(type="text" value=groupDN)
+            div#LdapSettingsGroupDNHelper.popup_helper
+              p= cpLdapResource.LdapSettingsGroupDNHelper
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsUserAttribute
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsUserAttributeHelper' }); ")
+              input#ldapSettingsUserAttribute.textBox(type="text" value=userAttribute)
+            div#LdapSettingsUserAttributeHelper.popup_helper
+              p= cpLdapResource.LdapSettingsUserAttributeHelper
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsGroupNameAttributes
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsGroupNameAttributeHelper' }); ")
+              input#ldapSettingsGroupNameAttribute.textBox(type="text" value=groupNameAttribute)
+            div#LdapSettingsGroupNameAttributeHelper.popup_helper
+              p= cpLdapResource.LdapSettingsGroupNameAttributeHelper
+          div.ldap-settings-second-column
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsGroupFilter
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsGroupFilterHelper' }); ")
+              textarea#ldapSettingsGroupFilter.textBox
+                = groupFilter
+            div#LdapSettingsGroupFilterHelper.popup_helper
+              p.requiredTitle= cpLdapResource.LdapSettingsGroupFilterHelper
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsGroupAttribute
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsGroupAttributeHelper' }); ")
+              input#ldapSettingsGroupAttribute.textBox(type="text" value=groupAttribute)
+            div#LdapSettingsGroupAttributeHelper.popup_helper
+              p= cpLdapResource.LdapSettingsGroupAttributeHelper
+
+        div.ldap-settings-user-container.display-none
+          div.clear-fix
+            h3.ldap-mapping-header= cpLdapResource.LdapSecurityHeader
+              span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSecurityHelper' }); ")
+            div#LdapSecurityHelper.popup_helper
+              p= cpLdapResource.LdapSecurityHelper
+          div#ldapMappingSecurity(data-value=(accessRights ? JSON.stringify(accessRights) : ""))
+          div.middle-button-container
+            button#ldapMappingAddAccess.button.black(type="button")= controlPanelResource.AddAccess
+
+        div.ldap-settings-btn-container
+          button#ldapSettingsAuthenticationBtn(type="button" class="on-off-button " + (authentication ? 'on' : 'off') + (!enableLdapAuthentication ? ' disable' : ''))
+          span= cpLdapResource.LdapSettingsAuthentication
+          span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsAuthenticationHelper' }); ")
+          div#LdapSettingsAuthenticationHelper.popup_helper
+            p= cpLdapResource.LdapSettingsAuthenticationHelper
+
+        div(class="ldap-settings-auth-container clear-fix " + (!enableLdapAuthentication || !authentication ? 'ldap-settings-disabled' : ''))
+          div.ldap-settings-column
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= cpLdapResource.LdapSettingsLogin
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsUserNameHelper' }); ")
+              input#ldapSettingsLogin.textBox(type="text" value=login)
+          div#LdapSettingsUserNameHelper.popup_helper
+            p= cpLdapResource.format('LdapSettingsUserNameHelper', config.isMono ? cpLdapResource.LdapSettingsMonoLogin : cpLdapResource.LdapSettingsLogin)
+          div.ldap-settings-second-column
+            div.ldap-settings-block.requiredField
+              span.requiredErrorText= controlPanelResource.EmptyField
+              div.header-base-small
+                span.requiredTitle= controlPanelResource.Password
+                span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsPasswordHelper' }); ")
+              input#ldapSettingsPassword.textBox(type="password" autocomplete="new-password")
+            div#LdapSettingsPasswordHelper.popup_helper
+              p= cpLdapResource.LdapSettingsPasswordHelper
+
+        div(class="ldap-settings-advanced-container " + (!enableLdapAuthentication ? 'ldap-settings-disabled' : ''))
+          h3.ldap-mapping-header= controlPanelResource.AdvancedSettings
+          div.clear-fix
+            div.ldap-settings-column
+              div.clear-fix
+                div#ldapSettingsSendWelcomeEmail(class="ldap-settings-label-checkbox custom-checkbox " + (!enableLdapAuthentication ? 'disabled' : '') + (sendWelcomeEmail ? ' checked' : ''))
+                  button.icon(type="button", tabindex="1")
+                  span= cpLdapResource.LdapSettingsSendWelcomeEmail
+                span.helpCenterSwitcher.ldapSettingsSendWelcomeEmailHelperSwitcher(onclick="$(this).helper({ BlockHelperID: 'ldapSettingsSendWelcomeEmailHelper' }); ")
+                div#ldapSettingsSendWelcomeEmailHelper.popup_helper
+                  p= cpLdapResource.LdapSettingsSendWelcomeEmailHelper
+            div.ldap-settings-second-column
+
+        div
+          button#ldapSettingsSaveBtn.button.green.disabled(type="button" title=controlPanelResource.LdapSettingsSaveSettings)= controlPanelResource.SaveButton
+          span.splitter-buttons
+          button#ldapSettingsRestoreBtn(type="button" class="button black " + (isDefault ? 'disabled' : ''), title=cpLdapResource.LdapSettingsRestoreDefaultSettings)= cpLdapResource.LdapSettingsRestoreDefault
+   
+        div.ldap-settings-progressbar-container(style="visibility: hidden;")
+          div.asc-progress-wrapper
+            div.asc-progress-value(style="width: 0;")
+          div.text-medium-describe(style="padding-top: 2px;")
+            span#ldapSettingsPercent
+            | &nbsp;
+            span#ldapSettingsStatus 
+            | &nbsp;
+            span#ldapSettingsSource
+        div#ldapSettingsError.error-text
+
+      h2.blue-text.top-indent-middle= cpLdapResource.LdapSettingsSyncDataHeader
+
+      div.top-indent-middle.ldap-settings-sync-container
+        p= cpLdapResource.LdapSettingsSyncDescription
+        div#ldapCronCont
+          div.ldap-settings-btn-container.clear-fix
+            button#ldapSettingsAutoSyncBtn(type="button" class="on-off-button " + (cron && enableLdapAuthentication ? 'on' : 'off') + (!enableLdapAuthentication ? ' disable' : ''))
+            span= cpLdapResource.LdapSettingsAutoSync
+            span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'LdapSettingsAutoSyncHelper' }); ")
+            a#ldapCronEditLink.link.dotted.display-none= controlPanelResource.EditBtn
+          span#ldapCronHumanText
+            br
+            = cpLdapResource.LdapNextSync + " "
+            span.cronHumanReadable
+          div#LdapSettingsAutoSyncHelper.popup_helper
+            p= cpLdapResource.LdapSettingsAutoSyncHelper
+        button#ldapSettingsSyncBtn(type="button" class="button green top-indent-big " + (!enableLdapAuthentication ? 'disabled' : '') tabindex="4" title=controlPanelResource.LdapSettingsSyncLdapSettings)= controlPanelResource.LdapSettingsSyncLdap
+
+      div.ldap-settings-sync-progressbar-container(style="visibility: hidden;")
+        div.asc-progress-wrapper
+          div.asc-progress-value(style="width: 0;")
+        div.text-medium-describe(style="padding-top: 2px;")
+          span#ldapSettingsSyncPercent
+          | &nbsp;
+          span#ldapSettingsSyncStatus
+          | &nbsp;
+          span#ldapSettingsSyncSource
+      div#ldapSettingsSyncError.error-text
+
+      div#ldapSettingsInviteDialog.popup
+        div.popup-caption
+          span.attention-icon
+          = controlPanelResource.ConfirmationTitle
+        div.popup-body
+          div.popup-content= controlPanelResource.CancelConfirmMessage
+            div.big-button-container
+              a.button.green.ldap-settings-ok= controlPanelResource.Ok
+              span.splitter-buttons
+              a.button.black.ldap-settings-cancel= controlPanelResource.Cancel
+      div#ldapSettingsImportConfirmationPanel.popup
+        div.popup-caption= cpLdapResource.LdapSettingsImportConfirmationTitle
+        div.popup-body
+          div.popup-content= cpLdapResource.LdapSettingsImportConfirmation
+            div.big-button-container
+              button.button.green.ldap-settings-ok(type="button")= controlPanelResource.Ok
+              span.splitter-buttons
+              button.button.black.ldap-settings-cancel(type="button")= controlPanelResource.Cancel
+      div#ldapSettingsCronDialog.popup
+        div.popup-caption= cpLdapResource.LdapSettingsAutoSync
+        div.popup-body
+          div.popup-content= cpLdapResource.LdapSettingsAutoSyncDialog
+            div.clear-fix.top-indent-middle
+              div#ldapSettingsAutoSyncCron
+              input#ldapSettingsAutoSyncCronInput(type="hidden" value= (cron || ""))
+              br
+              span.header-base-small-light= cpLdapResource.LdapNextSync + " "
+                span.cronHumanReadable
+            div.big-button-container
+              button.button.green.ldap-settings-ok(type="button")= controlPanelResource.SaveButton
+              span.splitter-buttons
+              button.button.black.ldap-settings-cancel(type="button")= controlPanelResource.Cancel
+      div#ldapSettingsCertificateValidationDialog.popup
+        div.popup-caption= controlPanelResource.CertificateConfirm
+        div.popup-body
+          div.popup-content
+            div.ldap-settings-crt-details.ldap-settings-crt-serial-number= cpLdapResource.LdapSettingsSerialNumber
+              span.ldap-settings-crt-details-val.ldap-settings-serial-number
+            div.ldap-settings-crt-details= cpLdapResource.LdapSettingsIssuerName
+              span.ldap-settings-crt-details-val.ldap-settings-issuer-name
+            div.ldap-settings-crt-details= cpLdapResource.LdapSettingsSubjectName
+              span.ldap-settings-crt-details-val.ldap-settings-subject-name
+            div.ldap-settings-crt-details= cpLdapResource.LdapSettingsValidFrom
+              span.ldap-settings-crt-details-val.ldap-settings-valid-from
+            div.ldap-settings-crt-details= cpLdapResource.LdapSettingsValidUntil
+              span.ldap-settings-crt-details-val.ldap-settings-valid-until
+            div.ldap-settings-crt-details.ldap-settings-crt-details-last= cpLdapResource.LdapSettingsUniqueHash
+              span.ldap-settings-crt-details-val.ldap-settings-unique-hash
+            = controlPanelResource.AddCertificateToStoreConfirmation
+            div.big-button-container
+              button.button.green.ldap-settings-ok(type="button")= controlPanelResource.Ok
+              span.splitter-buttons
+              button.button.black.ldap-settings-cancel(type="button")= controlPanelResource.Cancel
+
+    script#ldapCrtErrorTmpl(type="text/x-jquery-tmpl")
+      div.ldap-settings-crt-errors
+       |{{each errors}}
+       div.toast-container
+         div.toast.toast-error(style="display: block;")
+           div.toast-message ${message}
+       |{{/each}}
+
+    script#ldapMappingFieldTmpl(type="text/x-jquery-tmpl")
+      div.ldap-mapping-row.clear-fix.requiredField
+        div.selectBox(data-value= "${key}")
+          div.selectBoxValue
+            | ${humanKey}
+          div.selectBoxSwitch
+          div.selectOptionsBox
+            div.selectOptionsInnerBox.fullwidth
+              | {{html options}}
+        span.requiredErrorText= controlPanelResource.EmptyField
+        input.textBox(value= "${value}" type="text" placeholder= "${placeholder}")
+        |{{if !required}}
+        div.ldap-mapping-remove-row.remove-btn-icon
+        |{{/if}}
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.LdapSettings.init();
+     });

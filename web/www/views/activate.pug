@@ -1,0 +1,131 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  -if(tenantExtra.enterprise && (tenantExtra.trial || tenantExtra.defaultTariff)){
+  h1.blue-text
+    span.header-icon.upgrade
+    =controlPanelResource.ActivateSwithToProHeader
+  -}
+  -if(tenantExtra.enterprise && !(tenantExtra.trial || tenantExtra.defaultTariff)){
+  h1.blue-text
+    span.header-icon.upgrade
+    =controlPanelResource.ActivateRenewSubscriptionHeader
+  -}
+  -if(tenantExtra.opensource){
+  h1.blue-text
+    span.header-icon.upgrade
+    =controlPanelResource.ActivateUpgradeToProHeader
+  -}
+
+  -if(tenantExtra.enterprise && tenantExtra.defaultTariff){
+  div.tariff
+    h3!=controlPanelResource.ActivateTariffEnterpriseDefaulDescr
+  -}
+  -if(tenantExtra.enterprise && !tenantExtra.defaultTariff && tenantExtra.trial){
+  div.tariff
+    h3!=controlPanelResource.ActivateTariffEnterpriseTrialDescr
+    -if(!tariff.dueDateIsMax || !tariff.licenseDateIsMax){
+    div!=controlPanelResource.format("ActivateTariffEnterpriseTrialExpiration", tariff.dueDateIsMax ? tariff.licenseDateStr : tariff.dueDateStr)
+    -}
+  -}
+  -if(tenantExtra.enterprise && !tenantExtra.defaultTariff && !tenantExtra.trial){
+  div.tariff
+    h3!=controlPanelResource.ActivateTariffEnterpriseDescr
+    -if(!tariff.dueDateIsMax || !tariff.licenseDateIsMax){
+    div!=controlPanelResource.format("ActivateTariffEnterpriseExpiration", tariff.dueDateIsMax ? tariff.licenseDateStr : tariff.dueDateStr)
+    -}
+  -}
+  -if(tenantExtra.opensource){
+  div.tariff
+    h3!=documentServerInstalled ? controlPanelResource.ActivateTariffOpensourceWorkspaceDescr : controlPanelResource.ActivateTariffOpensourceGroupsDescr
+  -}
+
+  -if(tenantExtra.opensource || (tenantExtra.enterprise && (tenantExtra.trial || tenantExtra.defaultTariff))){
+  div.banner
+    -if(tenantExtra.opensource){
+    h2.blue-text=controlPanelResource.ActivateToProBannerHeader
+    -}
+    -if(tenantExtra.enterprise){
+    h2.blue-text=controlPanelResource.ActivateToProBannerHeaderTrial
+    -}
+    div.banner-item.pro
+      h3=controlPanelResource.UpgradeToProBannerItemProFunctionalityHeader
+      div=controlPanelResource.UpgradeToProBannerItemProDescr
+    div.banner-item.scalability
+      h3=controlPanelResource.UpgradeToProBannerItemScalabilityHeader
+      div=controlPanelResource.UpgradeToProBannerItemScalabilityDescr
+    div.banner-item.mobile
+      h3=controlPanelResource.UpgradeToProBannerItemMobileEditingHeader
+      div=controlPanelResource.UpgradeToProBannerItemMobileDescr
+    div.banner-item.license
+      h3=controlPanelResource.UpgradeToProBannerItemLicenseHeader
+      div=controlPanelResource.UpgradeToProBannerItemLicenseDescr
+    div.banner-item.support
+      h3=controlPanelResource.UpgradeToProBannerItemSupportHeader
+      div=controlPanelResource.UpgradeToProBannerItemSupportDescr
+  -}
+
+  div.purchase
+    -if(tenantExtra.opensource || (tenantExtra.enterprise && (tenantExtra.trial || tenantExtra.defaultTariff))){
+    div=controlPanelResource.ActivatePurchaseBuyLicense
+    -}
+    -if(tenantExtra.enterprise && !(tenantExtra.trial || tenantExtra.defaultTariff)){
+    div=controlPanelResource.ActivatePurchaseRenewLicense
+    -}
+    div.small-button-container
+      a.button.green(href=additionalSettings.buyUrl, target="_blank")=controlPanelResource.ActivatePurchaseBuyNow
+
+  -if(tenantExtra.opensource){
+  div.instruction
+    h3=controlPanelResource.ActivateToProBannerInstructionHeader
+    - var helpcenter = (config.get("helpcenter") || "")
+    -if (helpcenter) {
+    ul
+      li
+        b="- " + controlPanelResource.UpgradeToProBannerInstructionItemDocker + " "
+        a.link.underline(href=controlPanelResource.format("UpgradeToProBannerInstructionItemDockerHelpCenterUrl", helpcenter), target="_blank")=controlPanelResource.UpgradeToProBannerInstructionReadNow
+      li
+        b="- " + controlPanelResource.UpgradeToProBannerInstructionItemLinux + " "
+        a.link.underline(href=controlPanelResource.format("UpgradeToProBannerInstructionItemLinuxHelpCenterUrl", helpcenter), target="_blank")=controlPanelResource.UpgradeToProBannerInstructionReadNow
+      li
+        b="- " + controlPanelResource.UpgradeToProBannerInstructionItemWindows + " "
+        a.link.underline(href=controlPanelResource.format("UpgradeToProBannerInstructionItemWindowsHelpCenterUrl", helpcenter), target="_blank")=controlPanelResource.UpgradeToProBannerInstructionReadNow
+    div!=controlPanelResource.format("UpgradeToProBannerInstructionNote", "<a class='link underline' target='_blank' href='" + controlPanelResource.format("BackupHelpCenterUrl", helpcenter) +"'>", "</a>")
+    -}
+  -}
+
+  -if(tenantExtra.enterprise){
+  div.activation
+    -if(!(tenantExtra.trial || tenantExtra.defaultTariff)){
+    div.renewal-terms!=controlPanelResource.format("ActivateRenewDescr", "<a class='link underline' href='mailto:" + mailSettings.salesEmail + "'>", "</a>", additionalSettings.salesEmail)
+    -}
+    div.upload-descr=(tenantExtra.trial || tenantExtra.defaultTariff) ? controlPanelResource.ActivateUploadDescr : controlPanelResource.ActivateUploadRenewalDescr
+    -if(!tenantExtra.licenseAccept && additionalSettings.licenseAgreementsEnabled){
+    div#agreementsCbx.checkBox
+      button.icon
+      span!=controlPanelResource.format("ActivateAgreement", "<a class='link underline' target='_blank' href='" + additionalSettings.licenseAgreementsUrl + "'>", "</a>")
+    -}
+    div.inputWithBtn.withUploadBtn
+      input#activateInput.textBox(type="text" placeholder="" value="" readonly="readonly")
+      div.button.black.uploadBtn=controlPanelResource.ActivateUploadFile
+        input#activateFile(type="file" name="license" accept=".lic")
+    div.small-button-container
+      button#activateBtn.button.green.disabled=controlPanelResource.Activate
+  -}
+
+  div.information.gray-text
+    -if(tenantExtra.opensource){
+    div.information-item
+      div!=controlPanelResource.format("UpgradeToProBannerInformationAboutShort", "<a class='link underline' target='_blank' href='" + mailSettings.siteUrl + "/for-enterprises.aspx'>", "</a>")
+      div!=controlPanelResource.format("UpgradeToProBannerInformationDemo", "<a class='link underline' target='_blank' href='" + mailSettings.demoUrl + "'>", "</a>")
+    -}
+    div.information-item
+      div!=controlPanelResource.format("UpgradeToProBannerInformationPurchase", "<a class='link underline' href='mailto:" + mailSettings.salesEmail + "'>", "</a>", additionalSettings.salesEmail)
+      div!=controlPanelResource.format("UpgradeToProBannerInformationSupport", "<a class='link underline' target='_blank' href='" + mailSettings.supportUrl + "'>", "</a>", additionalSettings.feedbackAndSupportUrl)
+
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.ActivateView.init(!{JSON.stringify(errorMessage || null).replace(/<\//g, '<\\/')});
+    });

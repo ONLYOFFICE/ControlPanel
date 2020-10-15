@@ -1,0 +1,33 @@
+extends Shared/homeLayout
+
+block rightSide
+
+  h1.blue-text
+    span.header-icon.whitelabel
+    = controlPanelResource.WhiteLabel
+
+  p= cpWhiteLabelResource.RebrandingWarningMessage
+
+  div#tabContainer.tab-container
+    div.tab-switcher
+      a.tab-item-link.selected= cpWhiteLabelResource.RebrandingTabHeaderBasic
+      a.tab-item-link= cpWhiteLabelResource.RebrandingTabHeaderAdvanced
+
+    div.tab-item-content.selected
+      include whitelabelPartial
+
+    div.tab-item-content
+      include rebrandingPartial
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.WhiteLabelManager.init("#{cpWhiteLabelResource.SuccessfullySaveWhiteLabelSettingsMessage}", true)
+      window.RebrandingManager.init(
+        "#{cpWhiteLabelResource.RebrandingSettingsSuccessfullySavedMessage}",
+        !{JSON.stringify(companySettings || null).replace(/<\//g, '<\\/')}, 
+        !{JSON.stringify(additionalSettings || null).replace(/<\//g, '<\\/')}, 
+        !{JSON.stringify(mailSettings || null).replace(/<\//g, '<\\/')}, 
+        !{JSON.stringify(errorMessage || null).replace(/<\//g, '<\\/')}
+      );
+    });

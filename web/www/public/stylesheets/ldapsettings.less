@@ -1,0 +1,204 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+@import "vars";
+
+.ldap-settings-user-container, .ldap-settings-group-container,
+.ldap-settings-auth-container, .ldap-settings-mail-container {
+    clear: both;
+}
+
+.ldap-settings-spoiler-container {
+    .ldap-settings-spoiler-link, 
+    .ldap-settings-form-title {
+        display: inline;
+    }
+
+    .ldap-settings-spoiler-link {
+        margin-left: 16px;
+    }
+}
+
+.ldap-settings-user-container, .ldap-settings-group-container, .ldap-settings-auth-container {
+    margin: 0 0 32px 0;
+}
+
+.ldap-settings-advanced-container {
+    margin: 0 0 16px 0;
+}
+
+.ldap-settings-column {
+    float: left;
+    margin: 0 20px 0 0;
+    width: 300px;
+}
+
+.ldap-settings-second-column {
+    float: left;
+    width: 300px;
+}
+
+.ldap-settings-title {
+    margin: 0 0 20px 0;
+}
+
+.ldap-settings-empty-field, .ldap-settings-incorrect-number {
+    float: right;
+}
+
+.ldap-settings-disabled, .ldap-settings-disabled-all {
+    color: #d1d1d1;
+    cursor: default;
+    .noneUserSelect;
+}
+
+.ldap-settings-label-checkbox {
+    margin: 0 2px 22px 0;
+    float: left;
+    clear: both;
+}
+
+.ldap-settings-label-checkbox input {
+    margin: 0 3px 2px 0;
+    vertical-align: middle;
+}
+
+.ldap-settings-block {
+    margin: 20px 0 0 0;
+}
+
+.ldap-settings-main-container .textBox {
+    width: 300px;
+}
+
+.ldap-settings-helper-help-class, .enableLDAPStartTLSHelpCenterSwitcher {
+    float: left;
+}
+
+.ldap-settings-progressbar-container,
+.ldap-settings-sync-progressbar-container {
+    margin: 20px 0 0 0;
+
+    #ldapSettingsSyncPercent,
+    #ldapSettingsPercent,
+    #ldapSettingsSyncSource,
+    #ldapSettingsSource,
+    #ldapSettingsSyncStatus,
+    #ldapSettingsStatus {
+       color: #333;
+    }
+}
+
+.ldap-settings-btn-container {
+    margin-top: 40px;
+}
+
+#ldapSettingsBtn,
+#ldapSettingsGroupBtn,
+#ldapSettingsAuthenticationBtn,
+#ldapSettingsAutoSyncBtn {
+    float: left;
+    margin-right: 12px;
+    margin-top: -1px;
+}
+
+.ldap-settings-crt-details {
+    font-weight: bold;
+    margin: 15px 0;
+}
+
+.ldap-settings-crt-details-val {
+    font-weight: normal;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+    -ms-word-break: break-all;
+}
+
+.ldap-settings-crt-serial-number {
+    margin-top: 0;
+}
+
+.ldap-settings-crt-errors {
+    margin: 24px 0;
+}
+
+.ldap-settings-sync-container {
+    p {
+        margin: 0;
+    }
+}
+
+#ldapSettingsUserFilter, #ldapSettingsGroupFilter {
+    height: 142px;
+    resize: none;
+}
+
+.ldap-mapping-header {
+    width: 300px;
+    display: inline-block;
+    margin-bottom: 20px;
+}
+
+.ldap-mapping-row {
+    margin-bottom: 20px;
+    line-height: 48px;
+    position: relative;
+
+    .selectBox {
+        width: 300px;
+        float: left;
+        height: 48px;
+        box-sizing: border-box;
+        color: #333;
+
+        .selectOptionsBox {
+            width: 300px;
+            box-sizing: border-box;
+        }
+    }
+
+    input {
+        width: 300px;
+        float: right;
+    }
+
+    .ldap-mapping-remove-row {
+        position: absolute;
+        right: -32px;
+        top: 16px;
+    }
+
+    .requiredErrorText {
+        position: absolute;
+        right: 16px;
+    }
+}
+
+#ldapCronEditLink {
+	margin-left: 16px;
+}
+
+#ldapSettingsCronDialog {
+    font-size: 16px;
+}
+
+#ldapCronHumanText {
+    display: none;
+}

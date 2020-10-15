@@ -1,0 +1,152 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+@import "vars";
+
+.sso-main-container {
+    .on-off-button {
+        float: left;
+        margin-right: 12px;
+        margin-top: -1px;
+    }
+
+    .sso-spoiler-title {
+        display: inline;
+    }
+
+    .sso-spoiler-link {
+        display: inline;
+        margin-left: 16px;
+    }
+
+    .sso-settings-block {
+        margin: 20px 0 0 0;
+    }
+
+    .selectOptionsInnerBox.fullwidth {
+        .option {
+            width: 570px;
+        }
+    }
+
+    .selectOptionsInnerBox.halfwidth {
+        .option {
+            width: 250px;
+        }
+    }
+
+    .binding {
+        margin: 0px 0px 0 24px;
+    }
+
+    .radioBox {
+        margin: 0px 0px 0 8px;
+    }
+
+    .checkBox {
+        margin: 0 0 4px 0;
+    }
+
+    .sso-left-column {
+        float: left;
+        margin: 0 20px 0 0;
+        width: 300px;
+    }
+
+    .sso-right-column {
+        float: left;
+        width: 300px;
+    }
+
+    .sso-btn-splitter {
+        padding: 0 20px;
+        display: inline-block;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        height: 48px;
+        line-height: 48px;
+        white-space: nowrap;
+    }
+
+    .crt-data-row {
+        margin-top: 16px;
+
+        * {
+            display: inline-block;
+        }
+
+        .domain {
+            margin-right: 8px;
+            width: 150px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            float: left;
+
+            &.green {
+                color: #66bb6a;
+            }
+        }
+
+        .expires {
+            margin-right: 8px;
+            float: left;
+
+            &.red {
+                color: #bf3703;
+            }
+        }
+
+        .action {
+            margin-left: 8px;
+            float: right;
+            width: 150px;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .delete {
+            margin-left: 8px;
+            float: right;
+        }
+
+        .edit {
+            margin-left: 8px;
+            float: right;
+        }
+    }
+
+    .ssoHideAuthPageHelperSwitcher{
+        padding: 0;
+    }
+}
+
+.popup-content {
+    .sso-settings-block {
+        margin: 0 0 20px 0;
+    }
+
+    #ssoSpCertificateGenerateBtn{
+        float: right;
+    }
+}
+
+.radioBox.ssoRadio {
+    width: auto;
+}

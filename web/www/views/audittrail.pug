@@ -1,0 +1,54 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.audittrail
+    = controlPanelResource.AuditTrail
+
+  div#audittrail-view.display-none
+    
+    div#lifetime-period
+      p= controlPanelResource.AuditLatestText
+      div.header-base-small= controlPanelResource.StoragePeriod + ":"
+      div.audit-settings-block
+        input#lifetime-input.textBox(type="text" disabled=true value="" maxlength="3")
+        button#save-settings-btn.button.black(type="button" class="disabled")= controlPanelResource.SaveButton
+
+    p#download-report-text= controlPanelResource.AuditDownloadText
+
+    table#events-table.table-list.height32
+      thead
+        tr
+          th.user
+            span= controlPanelResource.UserCol
+          th.date
+            span= controlPanelResource.DateCol
+          th.action
+            span= controlPanelResource.ActionCol
+      tbody
+    
+    div#events-table-dscr.gray-text= controlPanelResource.TotalAuditItems + ":"
+      span
+  
+    a#download-report-btn.button.green.uppercase(href="#generate" target="_blank")= controlPanelResource.DownloadReportBtn
+    span#generate-text.display-none= controlPanelResource.GenerateText
+  
+    div#empty-screen.empty-screen
+      div.empty-screen-image
+      div.empty-screen-title= controlPanelResource.NoAuditEventsTitle
+      div.empty-screen-description= controlPanelResource.NoAuditEventsDescription
+
+  script#auditEventTmpl(type="text/x-jquery-tmpl")
+    tr
+      td.user
+        span ${user}
+      td.date
+        span ${displayDate}
+      td.action
+        span ${action}
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.AuditTrailView.init();
+     });

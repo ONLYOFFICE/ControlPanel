@@ -1,0 +1,53 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  div#https-view
+    h1.blue-text
+      span.header-icon.https
+      = controlPanelResource.Https
+
+    p= controlPanelResource.HttpsDscr
+
+    div#formHttps.top-indent-big.view
+      div.container-base
+        div.table-header= controlPanelResource.GeneratedDomain
+        div#currentDomain.content-block
+      button#deleteDomainBtn.button.black(type="button" tabindex="4")= controlPanelResource.ButtonDelete
+
+    div#formHttpsCreate.top-indent-big.view
+      div.container-base
+        div.table-header= controlPanelResource.GeneratingSelfSignedCertificateHeader
+        p.describe-block= controlPanelResource.GeneratingSelfSignedCertificateText
+        div.middle-button-container
+          button#generate-self-signed-certificate-btn.button.black(type="button" tabindex="5")= controlPanelResource.GenerateSelfSignedCertificateBtn
+
+      div.container-base
+        div.table-header= controlPanelResource.SRTCertificate
+          span.helpCenterSwitcher(onclick=" $(this).helper({ BlockHelperID: 'SRTCertificateHelper' }); ")
+        div#SRTCertificateHelper.popup_helper
+          p!= controlPanelResource.SRTCertificateHelpDscr
+        div.inputWithBtn.withPlusBtn
+          input#certificateInput.textBox(type="text" readonly="readonly" placeholder=controlPanelResource.UploadHttpsCertificatePlaceholder)
+          div.button.black
+            input#certificateUploader(type="file")
+            |+
+
+      div.container-base
+        div.table-header= controlPanelResource.HttpsKey
+          span.helpCenterSwitcher(onclick=" $(this).helper({ BlockHelperID: 'HttpsKeyHelper' }); ")
+        div#HttpsKeyHelper.popup_helper
+          p!= controlPanelResource.HttpsKeyHelpDscr
+        div.inputWithBtn.withPlusBtn
+          input#keyInput.textBox(type="text" readonly="readonly" placeholder=controlPanelResource.UploadHttpsKeyPlaceholder)
+          div.button.black
+            input#keyUploader(type="file")
+            |+
+
+      div.container-base
+        button#apply-certificate-btn.button.green.disabled(type="button" tabindex="6")= controlPanelResource.ApplyCertificateBtn
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.HttpsView.init()
+     });

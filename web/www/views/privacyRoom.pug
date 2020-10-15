@@ -1,0 +1,28 @@
+extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.privacyroom
+    =controlPanelResource.PrivacyRoom
+
+  p= controlPanelResource.PrivacyRoomDescription1
+
+  p!= controlPanelResource.format("PrivacyRoomDescription2", "<a href='" + controlPanelResource.PrivacyRoomDescriptionEditorsUrl  + "' target='_blank' class='link underline'>", "</a>", "<a href='" + controlPanelResource.PrivacyRoomDescriptionHelpUrl  + "' target='_blank' class='link underline'>", "</a>")
+
+  h2.attention-header
+    span.attention-icon
+    = controlPanelResource.AttentionBlockHeader
+  p.attention-text= controlPanelResource.PrivacyRoomWarningMsg
+
+  div#privacyRoomSettingsView.display-none
+    a#privacyRoomSettingsSwitch.on-off-button
+      span.text
+
+    div.middle-button-container
+      button#privacyRoomSettingsBtn.button.green= controlPanelResource.SaveButton
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.PrivacyRoom.init();
+     });

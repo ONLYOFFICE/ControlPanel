@@ -1,0 +1,131 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+@import "vars";
+
+#backupTeamlabStorageFolderSelectorPopup {
+    .popup-body {
+        padding: 0;
+    }
+}
+
+.teamlabFolderSelectorIframe {
+    width: 400px;
+    height: 555px;
+    border: none;
+    
+    .mainPageLayout {
+        min-width: 0;
+    }
+}
+
+#backupView {
+    .storageHeader {
+        font-weight: bold;
+        margin-bottom: 14px;
+        margin-top: 26px;
+    }
+
+    .storageBox {
+        border: 1px solid #e0e0e0;
+        padding: 29px 35px;
+
+        li {
+            display: block;
+            clear: both;
+            margin: 0;
+            padding: 0;
+
+            &.disabled {
+                color: #808080;
+
+                .expl {
+                    display: inline-block;
+                    padding: 0;
+                    margin: 0 0 -3px 0;
+                }
+            }
+        }
+    }
+
+    .consumerStorageSettingsBox {
+        margin-top: 10px;
+    }
+
+    .amazonStorageSettingsBox {
+        margin-top: 24px;
+
+        .amazonStorageSettingsParam {
+            margin-bottom: 10px;
+
+            &.accessKeyId {
+                float: left;
+                width: 48%;
+                margin-right: 4%;
+            }
+
+            &.secretAccessKey {
+                width: 48%;
+            }
+        }
+    }
+
+    #backupWithMailCheck, #scheduleWithMail {
+        margin-top: 15px;
+        margin-bottom: 0;
+    }
+
+    #backupProgressBox {
+        display: none;
+        margin-bottom: 10px;
+        padding: 20px 0 0 0;
+
+        .text-medium-describe {
+            padding-top: 2px;
+        }
+    }
+
+    #backupResultLinkBox {
+        display: none;
+        margin-top: 30px;
+    }
+
+    .backup-settings_auto-params {
+        margin-top: 26px;
+
+        .backup-settings_title {
+            margin-bottom: 5px;
+        }
+    }
+
+
+    #scheduleBox {
+        margin-top: 40px;
+
+        #scheduleSwitch {
+            margin-bottom: 28px;
+        }
+
+        #maxStoredCopiesCount {
+            width: 80px;
+        }
+    }
+}
+
+.radioBox {
+    width: 31%;
+  }

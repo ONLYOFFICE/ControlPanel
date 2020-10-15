@@ -1,0 +1,511 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+@import "vars";
+
+input[type="text"],
+input[type="password"],
+textarea {
+    border-color: @borderBaseColor;
+    border-width: 1px;
+    border-style: solid;
+    .boxSizing;
+    margin: 0;
+    font-size: @formsTextSize;
+    padding: 14px;
+    width: 100%;
+    max-width: 100%;
+    .placeholder(@placeholderColor, @formsTextSize, @formsTextSize);
+    font-family: @fontFamily;
+
+    .borderRadius(3px);
+
+     &.error, &.invalid {
+        border-color: @inputErrorBorder !important;
+    }
+
+    &::-moz-focus-inner {
+        outline-width: 1px;
+        -moz-outline-width: 1px;
+        border-style: solid;
+        border-color: #5c9ae0;
+        .borderRadius(3px);
+    }
+    &:focus {
+       outline-width: 1px;
+        -moz-outline-width: 1px;
+        border-style: solid;
+        border-color: #5c9ae0;
+        .borderRadius(3px);
+    }
+}
+
+input[type="text"],
+input[type="password"] {
+    height: 54px;
+
+    &.single {
+        .borderRadius(3px);
+    }
+}
+
+.upload-container {
+    font-size: 30px;
+    height: 54px;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    input[type="file"] {
+        position: absolute;
+        width: 100%;
+        opacity: 0;
+        cursor: pointer;
+        height: 52px;
+    }
+
+    .upload-btn {
+        background: @blackBtnBg;
+        border: 1px solid @blackBtnBg;
+        color: @whiteTextColor;
+        .borderRadius(3px);
+        height: 52px;
+        line-height: 52px;
+        text-align: center;
+        padding: 0 20px;
+    }
+}
+
+.splitter-buttons {
+    height: 0;
+    padding: 0 5px 0 0;
+    width: 0;
+}
+
+input[type="text"].textBox,
+input[type="password"].textBox {
+    display: block;
+    margin: 0;
+    padding: 10px 14px;
+    height: 48px;
+    line-height: 26px;
+    font-size: @formsTextSize;
+    .boxSizing;
+    border: 1px solid @formsBorderColor;
+
+    .placeholder(@formsPlaceholderColor, @formsTextSize, 26px);
+
+    &.display-none {
+        display: none;
+    }
+
+    &.withError {
+        border-color: @borderErrorColor;
+    }
+
+    &:disabled {
+        background-color: @formsDisabledColor;
+    }
+
+    &::-moz-focus-inner {
+        outline-width: 1px;
+        -moz-outline-width: 1px;
+        border-style: solid;
+        border-color: #5c9ae0;
+        .borderRadius(3px);
+    }
+    &:focus {
+       outline-width: 1px;
+        -moz-outline-width: 1px;
+        border-style: solid;
+        border-color: #5c9ae0;
+        .borderRadius(3px);
+    }
+}
+
+.selectBox {
+    display: block;
+    margin: 0;
+    padding: 10px 14px;
+    height: 26px;
+    line-height: 26px;
+    font-size: @formsTextSize;
+    border: 1px solid @formsBorderColor;
+    cursor: pointer;
+    .borderRadius(3px);
+
+    &.display-none {
+        display: none;
+    }
+
+    &.withError {
+        border-color: @borderErrorColor;
+    }
+
+    &.disabled {
+        background-color: @formsDisabledColor;
+        cursor: default;
+    }
+
+    .selectBoxValue {
+        float: left;
+    }
+
+    .selectBoxSwitch {
+        float: right;
+        width: 0;
+        height: 0;
+        margin-top: 11px;
+        border-style: solid;
+        border-width: 4px 4px 0 4px;
+        border-color: #4c4c4c transparent transparent transparent;
+    }
+
+    .selectOptionsBox {
+        display: none;
+        position: absolute;
+        padding: 5px;
+        background-color: @backgroundColor;
+        border: 1px solid @formsBorderColor;
+        .borderRadius(2px);
+        .boxShadow(1px, 1px, 8px, rgba(0,0,0,.2));
+        z-index: 1000;
+
+        .selectOptionsInnerBox {
+            max-height: 200px;
+            padding-right: 20px;
+            overflow-y: auto;
+            
+            .option {
+                display: block;
+                text-decoration: none;
+                padding: 2px 14px 2px 4px;
+                min-width: 50px;
+
+                &:hover {
+                    background-color: @selectOptionsHoverColor;
+                    cursor: pointer;
+                }
+
+                &.selected {
+                    color: @selectOptionsSelectedColor;
+                }
+            }
+        }
+    }
+}
+
+.radioBox, .custom-radio {
+    display: inline-block;
+    margin: 6px 14px 6px 0;
+    cursor: pointer;
+
+    .icon {
+        background-color: transparent;
+        background-image: url("images/common.png");
+        background-position: -57px -135px;
+        background-repeat: no-repeat;
+        float: left;
+        margin: 1px 8px 1px 0;
+        height: 16px;
+        width: 16px;
+        border: 0 none;
+        padding: 0;
+
+        &:active {
+            outline-width: 1px;
+            -moz-outline-width: 1px;
+            border-style: solid;
+            border-color: #5c9ae0;
+            .borderRadius(8px);
+        }
+
+        &::-moz-focus-inner {
+            outline: none;
+            -moz-outline: none;
+            border: 0 none;
+        }
+
+        &:focus {
+            outline: none;
+            -moz-outline: none;
+            border: 0 none;
+        }
+    }
+
+    &.disabled {
+        cursor: default;
+        color: @shadowColor;
+
+        .icon {
+            background-position: -83px -135px;
+        }
+    }
+
+    &.checked {
+        .icon {
+            background-position: -5px -135px;
+        }
+
+        &.disabled {
+            .icon {
+                background-position: -31px -135px;
+            }
+        }
+    }
+}
+
+.checkBox, .custom-checkbox {
+    display: inline-block;
+    margin: 6px 14px 6px 0;
+    cursor: pointer;
+
+    .icon {
+        background-color: transparent;
+        float: left;
+        margin: 0 8px 0 0;
+        height: 22px;
+        width: 22px;
+        background-image: url("images/common.png");
+        background-position: -2px -28px;
+        background-repeat: no-repeat;
+        border: 0 none;
+        padding: 0;
+
+
+        &:active {
+            background-color: #5c9ae0;
+            .borderRadius(2px);
+        }
+
+        &::-moz-focus-inner {
+            outline: none;
+            -moz-outline: none;
+            border: 0 none;
+            .borderRadius(2px);
+            background-color: #5c9ae0;
+        }
+
+        &:focus {
+            outline: none;
+            -moz-outline: none;
+            border: 0 none;
+            .borderRadius(2px);
+            background-color: #5c9ae0;
+        }
+    }
+
+    span {
+        vertical-align: middle;
+    }
+
+    &.disabled {
+        cursor: default;
+
+        .icon {
+            background-position: -80px -28px;
+        }
+    }
+
+    &.checked {
+        .icon {
+            background-position: -28px -28px;
+        }
+
+        &.disabled {
+            .icon {
+                background-position: -54px -28px;
+            }
+        }
+    }
+}
+
+div.inputWithBtn {
+    .clearfix();
+    position: relative;
+    width: 100%;
+
+    input[type="text"] {
+        width: 100%;
+        height: 48px;
+        padding: 10px 14px;
+        font-size: 16px;
+        .borderRadius(3px);
+    }
+
+    .button {
+        white-space: nowrap;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+
+    div.button {
+        font-size: 14px;
+
+        input[type="file"] {
+            position: absolute;
+            left: 0px;
+            width: 48px;
+            height: 48px;
+            opacity: 0;
+            cursor: pointer;
+        }
+    }
+
+    &.withPlusBtn {
+        .button {
+            font-size: 24px;
+            font-weight: 400;
+            padding: 0 17px;
+        }
+
+        input[type="text"] {
+            padding-right: 75px;
+        }
+    }
+
+    &.withUploadBtn {
+        .button {
+            padding: 0 16px;
+
+            &.disabled .upload{
+                background-position: -16px 0;
+            }
+        }
+
+        .upload {
+            background-image: url(images/sso-sprite.png);
+            background-repeat: no-repeat;
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            margin-top: 16px;
+        }
+
+        input[type="text"] {
+            padding-right: 75px;
+        }
+    }
+
+    &.withCopyBtn {
+        div.copyBtn {
+            position: absolute;
+            top: 18px;
+            right: 18px;
+            width: 16px;
+            height: 16px;
+            background-image: url(images/sso-sprite.png);
+            background-repeat: no-repeat;
+            background-position: 0 -16px;
+            cursor: pointer;
+        }
+
+        input[type="text"] {
+            padding-right: 44px;
+        }
+
+        textarea {
+            padding-right: 44px;
+        }
+    }
+}
+
+.textEditCalendar, input[type="text"].textEditCalendar {
+    background-image: url("images/calendar.png");
+    background-position: 75px center;
+    background-repeat: no-repeat;
+    border: 1px solid #AFB2B7;
+    .boxSizing(content-box);
+    font-size: 11px;
+    height: 18px;
+    line-height: 18px;
+    width: 70px;
+    padding-right: 18px;
+    padding-left: 5px;
+    .borderRadius(3px);
+}
+
+
+.datetimeSelectorBox {
+    .clearfix();
+
+    .selectBox {
+        float: left;
+        .boxSizing;
+        height: 48px;
+
+        &.typeSelector {
+            width: 40%;
+            margin-right: 5%;
+        }
+
+        &.daysSelector, &.daysweekSelector {
+            display: none;
+            width: 30%;
+            margin-right: 5%;
+        }
+
+        &.hoursSelector {
+            width: 20%;
+            margin-right: 0;
+        }
+    }
+}
+
+.header-base-small {
+    margin-bottom: 8px;
+    color: #333333;
+}
+
+.header-base-small-light {
+    margin-bottom: 8px;
+    color: #999999;
+    font-size: 12px;
+}
+
+.header-base {
+    color: #333333;
+    font-size: 18px;
+    font-weight: normal;
+  }
+
+.formBlock {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: @backgroundColor;
+    opacity: .7;
+    cursor: wait;
+    z-index: 1000;
+}
+
+.formBlockLoader {
+    position: absolute;
+    top: 0;
+    left: 0;  
+    background: url('images/loader.gif') no-repeat scroll 10px 50% #fff;
+    cursor: wait;
+    z-index: 1001;
+    border: 1px solid #bfbfbf;
+    color: #999;
+    padding: 8px 24px 8px 48px;
+    line-height: 24px;
+    height: 24px;
+    .borderRadius(3px);
+    .boxShadow(0, 0, 8px, rgba(0,0,0,.2));
+}

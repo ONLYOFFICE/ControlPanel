@@ -1,0 +1,61 @@
+﻿div.layoutContent
+  - var settings = (whiteLabelSettings ? whiteLabelSettings : [])
+  - var licensor = (settings.find(function(item){return item.isLicensor}))
+  - var companyName = (licensor ? licensor.companyName : "")
+  - var year = new Date().getFullYear()
+  -if (companyName) {
+  div.copyright.
+    © #{companyName} #{year}. #{controlPanelResource.Copyright}
+  -}
+  div.links
+    a#aboutLink= controlPanelResource.AboutLink
+  div#aboutDialog.popup
+    div.popup-caption
+      = controlPanelResource.AboutHeader
+      div.popup-close ×
+    div.popup-body
+      img.logo(src=config.makePath("/stylesheets/images/logo.svg"))
+      div.version.gray-text= (controlPanelResource.AboutCompanyVersion + " " + config.get("version:current"))
+      each item, index in settings
+        -if (index==0) {
+
+        -if (item.isLicensor) {
+        div.licensor= controlPanelResource.AboutCompanyLicensor
+        -}
+        -if (item.companyName) {
+        div.about-name= item.companyName
+        -}
+        ul.about-info
+          -if (item.address) {
+          li
+            span.gray-text= (controlPanelResource.AboutCompanyAddressTitle + ":")
+            span= item.address
+          -}
+          -if (item.email) {
+          li
+            span.gray-text= (controlPanelResource.AboutCompanyEmailTitle + ":")
+            a.link(href=("mailto:" + item.email))= item.email
+          -}
+          -if (item.phone) {
+          li
+            span.gray-text= (controlPanelResource.AboutCompanyTelTitle + ":")
+            span= item.phone
+          -}
+          -if (item.site) {
+          li
+            a.link(href=item.site target="_blank")= item.site
+          -}
+
+        -} else {
+
+        -if (item.isLicensor) {
+        div.copyright
+          = controlPanelResource.format("AboutCopyright", year, item.companyName) + " "
+          a.link(href=item.site target="_blank")= item.site
+        -}
+
+        -}
+
+      br
+      div!= controlPanelResource.format("AboutLicensedUnderApache", "<a href='" + controlPanelResource.AboutLicensedUnderApacheUrl  + "' target='_blank' class='link underline'>", "</a>")
+      div!= controlPanelResource.format("AboutSourceCode", "<a href='" + controlPanelResource.AboutSourceCodeUrl  + "' target='_blank' class='link underline'>", "</a>")

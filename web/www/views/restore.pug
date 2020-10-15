@@ -1,0 +1,125 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  div.header
+    span.header-icon.restore
+    = controlPanelResource.DataRestoreHeader
+  p= controlPanelResource.DataRestoreDescription
+  div#restoreView.top-indent-big.display-none
+    div#restoreForm
+      div.restoreOptionsHeader= controlPanelResource.DataRestoreSource + ":"
+      div.buttonGroup
+            div#selfSource.selectButton.checked(data-name="restoreSource", data-value="0")
+              span= controlPanelResource.DocumentsModule
+
+            div#consumerSource.selectButton(data-name='restoreSource', data-value='5')
+              span= controlPanelResource.BackupConsumerStorage
+              
+            #localSource.selectButton(data-name='restoreSource', data-value="3")
+              span= controlPanelResource.ComputerFile
+
+      div#consumerStorageSettingsBox.display-none.consumerStorageSettingsBox
+
+      div#sourceFileSelector.inputWithBtn.withPlusBtn
+        div.restoreOptionsHeader= controlPanelResource.ChooseStorageLocationMsg + ":"
+        input.textBox(type="text" readonly="readonly")
+        div#sourceFileSelectorBtn.button.black +
+
+      div#localFileSelector.inputWithBtn.withPlusBtn.display-none
+        div.restoreOptionsHeader= controlPanelResource.ChooseStorageLocationMsg + ":"
+        input#localFileSelectorInput.textBox(type="text", readonly="readonly")
+        div.button.black
+          input#localFileSelectorBtn(type="file", name="backup")
+          = '+'
+      div: div#showBackupHistoryBtn.dottedButton= controlPanelResource.ShowBackupListBtn
+      
+      div#sendNotificationCheck.checkBox.checked
+        button.icon
+        span= controlPanelResource.SendNotificationsAboutBackupMsg
+
+      h2.attention-header
+        span.attention-icon 
+        = controlPanelResource.AttentionBlockHeader
+      p.attention-text= controlPanelResource.DataRestoreWarningMsg
+    
+      div.middle-button-container
+        button#startRestoreBtn.button.green(type="button")= controlPanelResource.StartDataRestoreBtn
+
+    div#restoreProgressBox.display-none
+      div.asc-progress-wrapper
+        div#restoreProgressValue.asc-progress-value
+
+      div.text-medium-describe
+        span#restoreProgressTitle= controlPanelResource.MakingRestore
+        span#restoreProgressText
+
+    div#sourceFileSelectorPopup.popup
+      div.popup-caption
+         = controlPanelResource.SelectFilePopupHeader
+         div.popup-close.
+           &times;
+      div.popup-body
+        div.popup-content
+
+    div#backupHistoryPopup.popup
+      div.popup-caption
+        = controlPanelResource.BackupListHeader
+        div.popup-close.
+          &times;
+
+      div.popup-body
+        div.popup-content
+          p#backupHistoryMsg !{controlPanelResource.format('BackupHistoryDscr', '<span id="deleteBackupHistoryBtn" class="dottedButton">', '</span>')}
+          p#noBackupHistoryMsg.display-none= controlPanelResource.NoBackupHistoryMsg
+
+    script#backupHistoryTmpl(type="text/x-jquery-tmpl")
+      div.backupHistoryContainer
+        table#backupHistoryTable.table-list.height32
+          |{{each history}}
+          tr(data-backupid="${id}" data-backuppath="${fileName}")
+            td ${fileName}
+            td.restore
+              div= controlPanelResource.RestoreBtn
+            td.trash
+          |{{/each}}
+
+append bodyscripts
+  script#consumerSettingsTmpl(type="text/x-jquery-tmpl").
+    <div class="thirdSelectStorageFlexbox" id = "thirdSelectStorageBox">
+      {{each storages}}
+          <div class="radioBox {{if !isSet}}disabled{{/if}}"  data-value="${id}" {{if dataFolderId}}title="${boxTitle}" {{/if}}>
+            <button class="icon" type="button"></button>
+            <span>${title}</span>
+          </div>
+      {{/each}}
+    </div>
+
+    {{each storages}}
+    <div data-id="${id}" class="display-none">
+        {{each properties}}
+        <div class = 'flexContainer' data-id='${name}'>
+            <span>${title}</span>
+        {{if description}}
+            <span class = "helpCenterSwitcher"></span>
+        {{/if}}
+        {{if !isSet}} 
+            <input class='textBox disabled' type='text' disabled>
+        {{else}}
+            <input class='textBox' type='text'>
+        {{/if}}
+        </div>
+        {{/each}}
+    </div>
+    {{/each}}
+
+  script#consumerHelpBox(type="text/x-jquery-tmpl").
+   <div class="popup_helper" id="${descriptionId}">
+      <p>${description}</p>
+      <div class="cornerHelpBlock pos_top">
+      </div>
+    </div>
+    
+  script(type="text/javascript").
+    $(function() {
+      window.RestoreView.init('#{portalUrl}');
+     });

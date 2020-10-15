@@ -1,0 +1,169 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.backup
+    = controlPanelResource.Backup
+  - var helpcenter = (config.get("helpcenter") || "")
+  - var portal = (config.get("web:portal") || "")
+  p!= controlPanelResource.BackupText + '&nbsp;'
+    -if (helpcenter) {
+      a.link.underline(href=controlPanelResource.format("BackupHelpCenterUrl", helpcenter), target="_blank")= controlPanelResource.LearnMore
+      -}
+  div#backupView.display-none
+    div#backupBox.backupBox
+      h2.blue-text.top-indent-big= controlPanelResource.DataBackup
+      p(style="margin-top: 17px;")= controlPanelResource.DataBackupText
+
+      div#backupForm
+        div.storageHeader= controlPanelResource.SelectStorageMsg + ' :'
+        div#backupStorageBox.buttonGroup
+            div#backupTempStorage.selectButton.checked(data-name='backupStorageSelector', data-value='4')
+              span= controlPanelResource.BackupTempTeamlab
+            div#backupTeamlabStorage.selectButton(data-name='backupStorageSelector', data-value='0')
+              span= controlPanelResource.BackupSelfStorage
+            div#backupConsumerStorage.selectButton(data-name='backupStorageSelector', data-value='5')
+              span= controlPanelResource.BackupConsumerStorage
+            div#localSource.selectButton(data-name='backupStorageSelector', data-value="3")
+              span= controlPanelResource.ComputerFile
+
+        p
+          p.grayTextInstruction.display-none!= controlPanelResource.format("BackupThirdStorageInstruction1", "<a class=\"link underline instructionLink\" href=\"" + portalUrl + "/Management.aspx?type=9\" target=\"_blank\">", "</a>")  
+          p.grayTextInstruction.display-none!= controlPanelResource.format("BackupThirdStorageInstruction2", "<a class=\"link underline instructionLink\" href=\"" + portalUrl + "/Products/Files/#setting=thirdparty\" target=\"_blank\">", "</a>")
+        div#backupConsumerStorageSettingsBox.display-none.consumerStorageSettingsBox
+
+        div.teamlabStorageFolderSelectorBox.inputWithBtn.withPlusBtn.display-none
+          div.storageHeader= controlPanelResource.ChooseStorageLocationMsg + ' :'
+          input#backupTeamlabStorageFolderSelector.teamlabStorageFolderSelector.textBox(type="text", readonly="readonly")
+          div#backupTeamlabStorageFolderSelectorBtn.button.black +
+        
+        div#localFileSelector.display-none.localSettingsBox
+          div.storageHeader= controlPanelResource.ChooseStorageLocationMsg + " :"
+          input#localFileSelectorInput.localFileSelectorInput.textBox(type="text")
+
+        div#backupWithMailCheck.checkBox
+          button.icon(type="button")
+          span= controlPanelResource.BackupMakeWithMail
+
+        -if (quota.docs) {
+        h2.attention-header
+          span.attention-icon 
+          = controlPanelResource.AttentionBlockHeader
+        p.attention-text= controlPanelResource.DataBackupWarningMsg
+        -}
+
+        div.middle-button-container
+          button#startBackupBtn.button.green= controlPanelResource.BackupMakeCopyBtn
+        div#backupProgressBox
+          div.asc-progress-wrapper
+            div#backupProgressValue.asc-progress-value
+          div.text-medium-describe
+            = controlPanelResource.CreatingBackup
+            span#backupProgressText
+        div#backupResultLinkBox
+          p= controlPanelResource.BackupReadyText
+          a#backupResultLink.link.gray-text.dotline(target="_blank")= controlPanelResource.BackupDownloadByLink
+      div#backupTeamlabStorageFolderSelectorPopup.teamlabStorageFolderSelectorPopup.popup
+        div.popup-caption= controlPanelResource.SelectFolderPopupHeader
+          div.popup-close &times;
+        div.popup-body
+          div.popup-content
+    div#scheduleBox.backupBox
+      h2.blue-text.top-indent-big= controlPanelResource.AutomaticDataBackup
+      p(style="margin-top: 17px")= controlPanelResource.ScheduleBackupDscr
+      div#scheduleForm
+        a#scheduleSwitch.on-off-button
+          span.text
+        div#scheduleSettingsBox
+          div.storageHeader= controlPanelResource.SelectStorageMsg + ":"
+          div#scheduleStorageBox.buttonGroup
+            div#scheduleTeamlabStorage.selectButton(data-name='scheduleStorageSelector', data-value='0')
+              span= controlPanelResource.BackupSelfStorage
+
+            div#scheduleConsumerStorage.selectButton(data-name='scheduleStorageSelector', data-value='5')
+              span= controlPanelResource.BackupConsumerStorage
+              
+            div#scheduleLocalSource.selectButton(data-name='scheduleStorageSelector', data-value="3")
+              span= controlPanelResource.ComputerFile
+
+          p
+            p.grayTextInstruction.display-none!= controlPanelResource.format("BackupThirdStorageInstruction1", "<a class=\"link underline instructionLink\" href=\"" + portalUrl + "/Management.aspx?type=9\" target=\"_blank\">", "</a>")  
+            p.grayTextInstruction.display-none!= controlPanelResource.format("BackupThirdStorageInstruction2", "<a class=\"link underline instructionLink\" href=\"" + portalUrl + "/Products/Files/#setting=thirdparty\" target=\"_blank\">", "</a>")
+        
+
+          div#backupConsumerStorageScheduleSettingsBox.display-none.consumerStorageSettingsBox
+         
+          div#scheduleTeamlabStorageBox.teamlabStorageFolderSelectorBox.inputWithBtn.withPlusBtn.display-none
+            div.storageHeader= controlPanelResource.ChooseStorageLocationMsg + ":"
+            input#scheduleTeamlabStorageSelector.teamlabStorageFolderSelector.textBox(type="text", readonly="readonly")
+            div#scheduleTeamlabStorageSelectorBtn.button.black +
+
+          div#scheduleLocalFileSelector.display-none.localSettingsBox
+            div.storageHeader= controlPanelResource.ChooseStorageLocationMsg + ":"
+            input#scheduleLocalFileSelectorInput.localFileSelectorInput.textBox(type="text")
+
+          div.storageHeader= controlPanelResource.ConfigureStorageTimeMsg + ":"
+          include dateTimeSelector
+          div.backup-settings_auto-params
+            div.storageHeader= controlPanelResource.BackupCopyCount + ":"
+            div#maxStoredCopiesCount.selectBox(data-value="10")
+              div.selectBoxValue 10
+              div.selectBoxSwitch
+              div.selectOptionsBox
+                div.selectOptionsInnerBox
+                  -for (var i = 1; i < 31; i++)  {
+                      -if (i == 10) {
+                        div.option.selected(data-value=i)= i
+                      -} else {
+                        div.option(data-value=i)= i
+                      -}
+                  -}
+
+          div#scheduleWithMail.checkBox
+            button.icon(type="button")
+            span= controlPanelResource.BackupMakeWithMail
+
+        div.middle-button-container
+          button#saveSettingsBtn.button.green= controlPanelResource.SaveButton
+
+
+append bodyscripts
+  script#consumerSettingsTmpl(type="text/x-jquery-tmpl").
+    <div class="thirdSelectStorageFlexbox" id = "thirdSelectStorageBox">
+      {{each storages}}
+          <div class="radioBox {{if !isSet}}disabled{{/if}}"  data-value="${id}" {{if dataFolderId}}title="${boxTitle}" {{/if}}>
+            <button class="icon" type="button"></button>
+            <span>${title}</span>
+          </div>
+      {{/each}}
+    </div>
+
+    {{each storages}}
+    <div data-id="${id}" class="display-none">
+        {{each properties}}
+        <div class = 'flexContainer' data-id='${name}'>
+            <span>${title}</span>
+        {{if description}}
+            <span class = "helpCenterSwitcher"></span>
+        {{/if}}
+        {{if !isSet}} 
+            <input class='textBox disabled' type='text' disabled>
+        {{else}}
+            <input class='textBox' type='text'>
+        {{/if}}
+        </div>
+        {{/each}}
+    </div>
+    {{/each}}
+
+  script#consumerHelpBox(type="text/x-jquery-tmpl").
+   <div class="popup_helper" id="${descriptionId}">
+      <p>${description}</p>
+      <div class="cornerHelpBlock pos_top">
+      </div>
+    </div>
+
+  script(type="text/javascript").
+    $(function() {
+      window.BackupView.init('#{portalUrl}');
+     });

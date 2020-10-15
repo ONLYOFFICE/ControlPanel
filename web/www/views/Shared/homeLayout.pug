@@ -1,0 +1,25 @@
+﻿extends layout
+
+block loginarea
+  include topButtons
+
+block content
+  div.layoutLeftSide
+    include leftSide
+  div.layoutRightSide
+    block rightSide
+  
+  script#errorBlockTmpl(type="text/x-jquery-tmpl")
+    div.toast-container
+      div.toast.toast-error(style="display: block;")
+        div.toast-message  {{if typeof(content) != "undefined" && content}}${content}{{/if}}{{if typeof(htmlcontent) != "undefined" && htmlcontent}}{{html htmlcontent}}{{/if}}
+
+block footercontent
+  include footer
+
+block bodyscripts
+  script(type="text/javascript").
+      $(function () {
+        window.HomeView.init();
+        setTimeout(window.versionManager.isUpdatesAvailable, 3000);
+      });

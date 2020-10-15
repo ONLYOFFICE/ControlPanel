@@ -1,0 +1,50 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  div#win-https-view
+    h1.blue-text
+      span.header-icon.https
+      = controlPanelResource.Https
+  
+    p= controlPanelResource.HttpsDscr
+       
+    div.top-indent-big
+      div.container-base
+        div.table-header= controlPanelResource.HttpsPassword
+          span.helpCenterSwitcher(onclick="$(this).helper({ BlockHelperID: 'HttpsPasswordHelper' }); ")
+        div#HttpsPasswordHelper.popup_helper
+          p!= controlPanelResource.HttpsPasswordHelpDscr
+        div
+          input#certificatePassword(type="password")
+  
+      div.container-base
+        div.table-header= controlPanelResource.HttpsCertificate
+          span.helpCenterSwitcher(onclick=" $(this).helper({ BlockHelperID: 'HttpsCertificateHelper' }); ")
+        div#HttpsCertificateHelper.popup_helper
+          p!= controlPanelResource.HttpsCertificateHelpDscr
+        div.inputWithBtn.withPlusBtn
+          input#certificateInput.textBox(type="text" readonly="readonly" placeholder=controlPanelResource.UploadWinHttpsCertificatePlaceholder)
+          div.button.black
+            input#certificateUploader(type="file")
+            |+
+  
+      div.container-base
+        a#saveWinCertificate.button.green.disabled= controlPanelResource.ApplyCertificateBtn
+  
+    div#checkAttachmentDialog.popup
+      div.popup-caption
+         = controlPanelResource.HttpsCertificateAttachmentHeader
+         div.popup-close &times;
+      div.popup-body
+        div.popup-content
+          = ControlPanelResource.HttpsCertificateAttachmentBody
+          div.big-button-container
+            a.button.green.okbtn= controlPanelResource.Ok
+            span.splitter-buttons
+            a.button.black.cancelbtn= controlPanelResource.Cancel
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.WinHttpsView.init();
+     });

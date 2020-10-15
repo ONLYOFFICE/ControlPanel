@@ -1,0 +1,258 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2020
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
+/*нормальный стиль*/
+@fontFamily: 'Open Sans', sans-serif, Arial;
+
+@backgroundColor: #ffffff;
+
+
+@textSize: 13px;
+@textColor: #333;
+
+@headerSize: 28px;
+@headerColor: #3d4a6b;
+
+@formsTextSize: 16px;
+@formsTextColor: #333;
+@formsBorderColor: #c1c1c1;
+@formsPlaceholderColor: #c1c1c1;
+@formsDisabledColor: #f4f4f4;
+
+@errorColor: #bf3703;
+@warningColor: #bf3703;
+@borderErrorColor: #bf3703;
+
+@dottedButtonColor: #83888d;
+
+@selectOptionsHoverColor: #e9e9e9;
+@selectOptionsSelectedColor: #2e94c9;
+
+
+@whiteTextColor: #ffffff;
+@baseTextColor: #333333;
+@blueTextColor: #3d4a6b;
+@grayTextColor: #666666;
+
+@borderBaseColor: #c1c1c1;
+@toggledBlockBorderColor: #d1d1d1;
+
+@shadowColor: #aaaaaa;
+@placeholderColor: #999999;
+
+@greenBtnBg: #66bb6a;
+@greenBtnHoverBg: #78c27c;
+@greenBtnActiveBg: #5baf5f;
+@greenBtnDisabledBg: #66bb6a;
+@greenBtnDisabledText: #b5dbb7;
+
+
+@blackBtnBg: #4c4c4c;
+@blackBtnHoverBg: #575757;
+@blackBtnActiveBack: #444444;
+@blackBtnDisabledBg: #4c4c4c;
+@blackBtnDisabledText: #999999;
+
+
+@greyBtnBg: #808080;
+@greyBtnHoverBg: #888888;
+@greyBtnActiveBack: #747474;
+@greyBtnDisabledBg: #808080;
+
+
+@inputErrorBorder: #bf3703;
+
+@loaderBorder: #bfbfbf;
+@loaderText: #999999;
+
+@blueBorderColor: #3d96c6;
+
+@disabledActionText: #999999;
+
+/* mixins
+---------------------------------- */
+.borderRadius(@size: 5px) {
+    -moz-border-radius: @size;
+    -webkit-border-radius: @size;
+    border-radius: @size;
+}
+
+.borderRadiusDetailed(@topleft: 5px, @topright: 5px, @bottomright: 5px, @bottomleft: 5px) {
+    -moz-border-radius: @topleft @topright @bottomright @bottomleft;
+    -webkit-border-radius: @topleft @topright @bottomright @bottomleft;
+    border-radius: @topleft @topright @bottomright @bottomleft;
+}
+
+.borderTopRadius(@radius: 5px) {
+    -moz-border-top-right-radius: @radius;
+    -webkit-border-top-right-radius: @radius;
+    border-top-right-radius: @radius;
+    -moz-border-top-left-radius: @radius;
+    -webkit-border-top-left-radius: @radius;
+    border-top-left-radius: @radius;
+}
+
+.borderBottomRadius(@radius: 5px) {
+    -moz-border-bottom-right-radius: @radius;
+    -webkit-border-bottom-right-radius: @radius;
+    border-bottom-right-radius: @radius;
+    -moz-border-bottom-left-radius: @radius;
+    -webkit-border-bottom-left-radius: @radius;
+    border-bottom-left-radius: @radius;
+}
+
+.borderRightRadius(@radius: 5px) {
+    -moz-border-top-right-radius: @radius;
+    -webkit-border-top-right-radius: @radius;
+    border-top-right-radius: @radius;
+    -moz-border-bottom-left-radius: @radius;
+    -webkit-border-bottom-left-radius: @radius;
+    border-bottom-left-radius: @radius;
+    -webkit-border-bottom-right-radius: @radius;
+    border-bottom-right-radius: @radius;
+}
+
+.borderLeftRadius(@radius: 5px) {
+    -moz-border-top-left-radius: @radius;
+    -webkit-border-top-left-radius: @radius;
+    border-top-left-radius: @radius;
+    -moz-border-bottom-left-radius: @radius;
+    -webkit-border-bottom-left-radius: @radius;
+    border-bottom-left-radius: @radius;
+}
+
+.boxShadow(@hShadow: 1px, @vShadow: 1px, @spread: 8px, @color: #aaa) {
+    -moz-box-shadow: @hShadow @vShadow @spread @color;
+    -webkit-box-shadow: @hShadow @vShadow @spread @color;
+    box-shadow: @hShadow @vShadow @spread @color;
+}
+.noShadow {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+.backgroundLinearGradient(@topColor, @bottomColor)
+{
+    background: -webkit-gradient(top, @topColor, @bottomColor) repeat scroll 0 0 @bottomColor;
+    background: -webkit-linear-gradient(top, @topColor, @bottomColor) repeat scroll 0 0 @bottomColor;
+    background: -moz-linear-gradient(top, @topColor, @bottomColor) repeat scroll 0 0 @bottomColor;
+    background: -ms-linear-gradient(top, @topColor, @bottomColor) repeat scroll 0 0 @bottomColor;
+    background: -o-linear-gradient(top, @topColor, @bottomColor) repeat scroll 0 0 @bottomColor;
+    background: linear-gradient(top, @topColor, @bottomColor) repeat scroll 0 0 @bottomColor;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr=@topColor, endColorstr=@bottomColor);
+}
+
+.textOverflow(@maxWidth) {
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    -moz-text-overflow: ellipsis;
+    -webkit-text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: @maxWidth;
+}
+
+.userSelect(@userSelect) {
+    -webkit-touch-callout: @userSelect;
+    -webkit-user-select: @userSelect;
+    -khtml-user-select: @userSelect;
+    -moz-user-select: @userSelect;
+    -ms-user-select: @userSelect;
+    user-select: @userSelect;
+}
+
+.noneUserSelect() {
+    -moz-user-select:-moz-none;
+    -moz-user-select: none;
+    -o-user-select:none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.placeholder(@color, @fontSize, @lineHeight) {
+    &::-webkit-input-placeholder
+    {
+        color: @color;
+        font-size: @fontSize;
+        line-height: @lineHeight;
+    }
+
+    &::-moz-placeholder
+    {
+        color: @color;
+        font-size: @fontSize;
+        height: @fontSize;
+        line-height: @lineHeight;
+    }
+
+    &:-moz-placeholder
+    {
+        color: @color;
+        font-size: @fontSize;
+        line-height: @lineHeight;
+    }
+
+    &:-ms-input-placeholder
+    {
+        color: @color;
+        font-size: @fontSize;
+        line-height: @lineHeight;
+    }
+}
+
+.limitedSingleText(@maxWidth) {
+    display: inline-block;
+    max-width: @maxWidth;
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    vertical-align: top;
+}
+
+.clearfix {
+    &:after {
+        content: ".";
+        display: block;
+        height: 0;
+        clear: both;
+        visibility: hidden;
+    }
+}
+
+.opacityStyle(@op:60) {
+	filter:alpha(opacity=@op);
+	-moz-opacity:@op/100;
+	-khtml-opacity:@op/100;
+    -webkit-opacity: @op/100;
+	opacity:@op/100;
+}
+
+.calcWidth(@expression) {
+    width: -moz-calc(@expression);
+    width: -webkit-calc(@expression);
+    width: calc(@expression);
+}
+.boxSizing(@value: border-box) {
+    -moz-box-sizing: @value;
+    -webkit-box-sizing: @value;
+    box-sizing: @value;
+}

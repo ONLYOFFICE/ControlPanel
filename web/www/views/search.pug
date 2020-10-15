@@ -1,0 +1,55 @@
+extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.search
+    =controlPanelResource.Search
+  p=controlPanelResource.SearchText
+    div#searchView.display-none
+
+      div.middle-button-container
+        button.button.green= controlPanelResource.SaveButton
+
+    div#searchTableView.display-none
+      h2.blue-text.top-indent-big=controlPanelResource.ReindexHeader
+      p!= controlPanelResource.format("ReindexDescription", "<br/>")
+
+      div.middle-button-container
+        button.button.green= controlPanelResource.ReindexAll
+
+      table#searchTable.table-list.height32.display-none
+        thead
+          tr
+            th.index
+              span= controlPanelResource.IndexCol
+            th.docsCount
+              span= controlPanelResource.DocsCountCol
+            th.storeSize
+              span= controlPanelResource.StoreSizeCol
+            th.reindex
+        tbody
+
+append bodyscripts
+  script#searchTmpl(type="text/x-jquery-tmpl").
+    <div class="checkBox {{if enabled}}checked{{/if}}" id=${id}>
+      <button class="icon" type="button"></button>
+      <span>${title}</span>
+      <span class="helpCenterSwitcher"></span>
+      <div id="${id}SettingsHelper" class="popup_helper">
+        <p>${Resource.SearchItemHelp.format(id)}</p>
+      </div>
+    </div>
+  script#searchDataTmpl(type="text/x-jquery-tmpl")
+    tr(data-id="${index}")
+      td.index
+        span ${index}
+      td.docsCount
+        span ${docsCount}
+      td.storeSize
+        span ${storeSize}
+      td.reindex
+        button.button.black.middle ${Resource.Reindex}
+  script(type="text/javascript").
+    $(function() {
+      window.SearchView.init();
+     });

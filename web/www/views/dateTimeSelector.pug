@@ -1,0 +1,45 @@
+﻿div.datetimeSelectorBox
+  div.selectBox.typeSelector(data-value="0")
+    div.selectBoxValue= controlPanelResource.EveryDay
+    div.selectBoxSwitch
+                    
+    div.selectOptionsBox
+      div.selectOptionsInnerBox
+        div.option.selected(data-value="0")= controlPanelResource.EveryDay
+        div.option(data-value="1")= controlPanelResource.EveryWeek
+        div.option(data-value="2")= controlPanelResource.EveryMonth
+    
+  div.selectBox.daysSelector(data-value="1")
+    div.selectBoxValue 1
+    div.selectBoxSwitch 
+    div.selectOptionsBox
+      div.selectOptionsInnerBox
+        div.option.selected(data-value="1") 1
+        - for (var i = 2; i < 32; i++) {
+        div.option(data-value=i)= i
+        - }
+  div.selectBox.daysweekSelector(data-value=days[0].index % 7 + 1)
+    div.selectBoxValue= days[0].name
+    div.selectBoxSwitch
+    div.selectOptionsBox
+      div.selectOptionsInnerBox
+        div.option.selected(data-value=days[0].index  % 7 + 1)= days[0].name
+        - for (var i = 1; i < days.length; i++)  {
+          div.option(data-value=days[i].index + 1)= days[i].name
+        - }
+  div.selectBox.hoursSelector(data-value="12")
+    div.selectBoxValue 12:00
+    div.selectBoxSwitch
+    div.selectOptionsBox
+      div.selectOptionsInnerBox
+       - for (var i = 0; i < 24; i++) {
+         - if (i == 12)  {
+            div.option.selected(data-value="12") 12:00
+         - } else {
+              - if (i < 10)  {
+                  div.option(data-value=i)= '0' + i + ':00'
+              -} else {
+                  div.option(data-value=i)= i + ':00'
+              -}
+         - }
+       - }

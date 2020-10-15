@@ -1,0 +1,398 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    <Name>ASC.ControlPanel</Name>
+    <RootNamespace>ASC.ControlPanel</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{a253483c-81bb-417a-8fa6-d09808e15efe}</ProjectGuid>
+    <ProjectHome>.</ProjectHome>
+    <StartupFile>server.js</StartupFile>
+    <SearchPath>
+    </SearchPath>
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <ProjectTypeGuids>{3AF33F2E-1136-4D97-BBB7-1795711AC8B8};{349c5851-65df-11da-9384-00065b846f21};{9092AA53-FB77-4645-B42D-1CCCA6BD08BD}</ProjectTypeGuids>
+    <ProjectView>ShowAllFiles</ProjectView>
+    <NodejsPort>3000</NodejsPort>
+    <StartWebBrowser>False</StartWebBrowser>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="app.js" />
+    <Compile Include="app\apiRequestManager.js" />
+    <Compile Include="app\bundle.js" />
+    <Compile Include="app\controllers\audittrail.js" />
+    <Compile Include="app\controllers\backup.js" />
+    <Compile Include="app\controllers\base.js" />
+    <Compile Include="app\controllers\contactSupport.js" />
+    <Compile Include="app\controllers\https.js" />
+    <Compile Include="app\controllers\httpsWin.js" />
+    <Compile Include="app\controllers\index.js" />
+    <Compile Include="app\controllers\ldap.js" />
+    <Compile Include="app\controllers\loginHistory.js" />
+    <Compile Include="app\controllers\multiPortals.js" />
+    <Compile Include="app\controllers\rebranding.js" />
+    <Compile Include="app\controllers\resource.js" />
+    <Compile Include="app\controllers\restore.js" />
+    <Compile Include="app\controllers\sso.js" />
+    <Compile Include="app\controllers\update.js" />
+    <Compile Include="app\controllers\gift.js" />
+    <Compile Include="app\controllers\whitelabel.js" />
+    <Compile Include="app\executeHelper.js" />
+    <Compile Include="app\dnsChecker.js" />
+    <Compile Include="app\fileManager.js" />
+    <Compile Include="app\log.js" />
+    <Compile Include="app\middleware\auth.js" />
+    <Compile Include="app\middleware\payment.js" />
+    <Compile Include="app\middleware\quota.js" />
+    <Compile Include="app\middleware\resource.js" />
+    <Compile Include="app\model\backup.js" />
+    <Compile Include="app\model\base.js" />
+    <Compile Include="app\model\ldap.js" />
+    <Compile Include="app\model\rebranding.js" />
+    <Compile Include="app\model\sso.js" />
+    <Compile Include="app\model\update.js" />
+    <Compile Include="app\model\updateAction.js" />
+    <Compile Include="app\model\updateActionType.js" />
+    <Compile Include="app\portalManager.js" />
+    <Compile Include="app\quota.js" />
+    <Compile Include="config\index.js" />
+    <Compile Include="public\javascripts\asc.socketio.js" />
+    <Compile Include="public\javascripts\common.js" />
+    <Compile Include="public\javascripts\plugins\countries.js" />
+    <Compile Include="public\javascripts\plugins\jquery.dropdownToggle.js" />
+    <Compile Include="public\javascripts\plugins\jquery.helper.js" />
+    <Compile Include="public\javascripts\plugins\jquery.tlcombobox.js" />
+    <Compile Include="public\javascripts\plugins\phonecontroller.js" />
+    <Compile Include="public\javascripts\third-party\async.js" />
+    <Compile Include="public\javascripts\third-party\clipboard.js" />
+    <Compile Include="public\javascripts\third-party\jquery-1.8.2.min.js" />
+    <Compile Include="public\javascripts\third-party\jquery-ui-1.9.0.min.js" />
+    <Compile Include="public\javascripts\third-party\jquery.blockUI.min.js" />
+    <Compile Include="public\javascripts\third-party\jquery.cookies.js" />
+    <Compile Include="public\javascripts\third-party\jquery.fileupload.js" />
+    <Compile Include="public\javascripts\third-party\jquery.json.js" />
+    <Compile Include="public\javascripts\third-party\jquery.scrollTo.js" />
+    <Compile Include="public\javascripts\third-party\jquery.tmpl.js" />
+    <Compile Include="public\javascripts\third-party\moment.js" />
+    <Compile Include="public\javascripts\third-party\socket.io.js" />
+    <Compile Include="public\javascripts\third-party\toastr.min.js" />
+    <Compile Include="public\javascripts\upload.js" />
+    <Compile Include="public\javascripts\views\audittrail.js" />
+    <Compile Include="public\javascripts\views\backup.js" />
+    <Compile Include="public\javascripts\views\contactsupport.js" />
+    <Compile Include="public\javascripts\views\healthcheck.js" />
+    <Compile Include="public\javascripts\views\home.js" />
+    <Compile Include="public\javascripts\views\https.js" />
+    <Compile Include="public\javascripts\views\ldapsettings.js" />
+    <Compile Include="public\javascripts\views\login.js" />
+    <Compile Include="public\javascripts\views\loginhistory.js" />
+    <Compile Include="public\javascripts\views\multiportals.js" />
+    <Compile Include="public\javascripts\views\rebranding.js" />
+    <Compile Include="public\javascripts\views\restore.js" />
+    <Compile Include="public\javascripts\views\ssosettings.js" />
+    <Compile Include="public\javascripts\views\update.js" />
+    <Compile Include="public\javascripts\views\gift.js" />
+    <Compile Include="public\javascripts\views\whitelabel.js" />
+    <Compile Include="server.js" />
+    <Content Include="app\controllers\privacyRoom.js" />
+    <Content Include="app\controllers\search.js" />
+    <Content Include="app\controllers\storage.js" />
+    <Content Include="app\controllers\activate.js" />
+    <Content Include="app\middleware\tenantExtra.js" />
+    <Content Include="app\middleware\fullAccess.js" />
+    <Content Include="config\config.json" />
+    <Content Include="config\production.json" />
+    <Content Include="executables\run-community-server.sh" />
+    <Content Include="executables\run-control-panel.sh" />
+    <Content Include="executables\run-document-server.sh" />
+    <Content Include="executables\run-mail-server.sh" />
+    <Content Include="executables\tools\apply-certificate.sh" />
+    <Content Include="executables\tools\check-bindings.sh" />
+    <Content Include="executables\tools\check-docker.sh" />
+    <Content Include="executables\tools\check-image.sh" />
+    <Content Include="executables\tools\check-vsyscall.sh" />
+    <Content Include="executables\tools\compare-certs.sh" />
+    <Content Include="executables\tools\createpfx.sh" />
+    <Content Include="executables\tools\get-machinekey.sh" />
+    <Content Include="executables\tools\get.sh" />
+    <Content Include="executables\tools\letsencrypt.sh" />
+    <Content Include="executables\tools\move.sh" />
+    <Content Include="executables\tools\openssl.sh" />
+    <Content Include="executables\tools\remove-certificate.sh" />
+    <Content Include="executables\tools\wait-for-it.sh" />
+    <Content Include="executables\tools\download-image.sh" />
+    <Content Include="executables\tools\get-available-version.sh" />
+    <Content Include="executables\tools\get-current-version.sh" />
+    <Content Include="executables\tools\remove-container.sh" />
+    <Content Include="package-lock.json" />
+    <Content Include="package.json" />
+    <Content Include="public\javascripts\third-party\jquery.cron.js" />
+    <Content Include="public\javascripts\views\privacyroom.js" />
+    <Content Include="public\javascripts\views\search.js" />
+    <Content Include="public\javascripts\views\storage.js" />
+    <Content Include="public\javascripts\views\activate.js" />
+    <Content Include="public\resources\ControlPanelResource.json" />
+    <Content Include="public\resources\CPContactSupportResource.json" />
+    <Content Include="public\resources\CPCountriesResource.json" />
+    <Content Include="public\resources\CPLdapResource.json" />
+    <Content Include="public\resources\CPMultiPortalsResource.json" />
+    <Content Include="public\resources\CPSsoResource.json" />
+    <Content Include="public\resources\CPWhiteLabelResource.json" />
+    <Content Include="public\stylesheets\action-menu.less" />
+    <Content Include="public\stylesheets\audittrail.less" />
+    <Content Include="public\stylesheets\backup.less" />
+    <Content Include="public\stylesheets\button.less" />
+    <Content Include="public\stylesheets\common.less" />
+    <Content Include="public\stylesheets\common_style.less" />
+    <Content Include="public\stylesheets\forms.less" />
+    <Content Include="public\stylesheets\header.less" />
+    <Content Include="public\stylesheets\images\audittrail.svg" />
+    <Content Include="public\stylesheets\images\audit_trail_empty_screen.jpg" />
+    <Content Include="public\stylesheets\images\backup.svg" />
+    <Content Include="public\stylesheets\images\banner-license.svg" />
+    <Content Include="public\stylesheets\images\banner-mobile.svg" />
+    <Content Include="public\stylesheets\images\banner-pro.svg" />
+    <Content Include="public\stylesheets\images\banner-scalability.svg" />
+    <Content Include="public\stylesheets\images\banner-security.svg" />
+    <Content Include="public\stylesheets\images\banner-support.svg" />
+    <Content Include="public\stylesheets\images\bnt-onoff.png" />
+    <Content Include="public\stylesheets\images\calendar.png" />
+    <Content Include="public\stylesheets\images\close.png" />
+    <Content Include="public\stylesheets\images\combo_gray.png" />
+    <Content Include="public\stylesheets\images\common.png" />
+    <Content Include="public\stylesheets\images\corner_top.gif" />
+    <Content Include="public\stylesheets\images\encryption.svg" />
+    <Content Include="public\stylesheets\images\exit-hover.svg" />
+    <Content Include="public\stylesheets\images\exit.svg" />
+    <Content Include="public\stylesheets\images\expl_16.png" />
+    <Content Include="public\stylesheets\images\favicon.ico" />
+    <Content Include="public\stylesheets\images\flags.gif" />
+    <Content Include="public\stylesheets\images\gift-white.svg" />
+    <Content Include="public\stylesheets\images\gift.svg" />
+    <Content Include="public\stylesheets\images\upgrade.svg" />
+    <Content Include="public\stylesheets\images\helper-corner-down.png" />
+    <Content Include="public\stylesheets\images\helper-corner.png" />
+    <Content Include="public\stylesheets\images\https.svg" />
+    <Content Include="public\stylesheets\images\icons_header.png" />
+    <Content Include="public\stylesheets\images\icon_payments.png" />
+    <Content Include="public\stylesheets\images\ldap.svg" />
+    <Content Include="public\stylesheets\images\loader.gif" />
+    <Content Include="public\stylesheets\images\loginhistory.svg" />
+    <Content Include="public\stylesheets\images\login_history_empty_screen.jpg" />
+    <Content Include="public\stylesheets\images\logo.svg" />
+    <Content Include="public\stylesheets\images\multiportals.svg" />
+    <Content Include="public\stylesheets\images\privacyroom.svg" />
+    <Content Include="public\stylesheets\images\question_small.png" />
+    <Content Include="public\stylesheets\images\rebranding.svg" />
+    <Content Include="public\stylesheets\images\rebranding_about.png" />
+    <Content Include="public\stylesheets\images\rebranding_navigation.png" />
+    <Content Include="public\stylesheets\images\rebranding_samples.png" />
+    <Content Include="public\stylesheets\images\remove_16.png" />
+    <Content Include="public\stylesheets\images\restore.svg" />
+    <Content Include="public\stylesheets\images\search.svg" />
+    <Content Include="public\stylesheets\images\slider_btn.png" />
+    <Content Include="public\stylesheets\images\social.png" />
+    <Content Include="public\stylesheets\images\socials_sprite.png" />
+    <Content Include="public\stylesheets\images\sprite_big.png" />
+    <Content Include="public\stylesheets\images\sso-sprite.png" />
+    <Content Include="public\stylesheets\images\sso.svg" />
+    <Content Include="public\stylesheets\images\storage.svg" />
+    <Content Include="public\stylesheets\images\tlcombobox-button.gif" />
+    <Content Include="public\stylesheets\images\toast_icon01.png" />
+    <Content Include="public\stylesheets\images\toast_icon02.png" />
+    <Content Include="public\stylesheets\images\toast_icon03.png" />
+    <Content Include="public\stylesheets\images\trash_16.png" />
+    <Content Include="public\stylesheets\images\ui-icons\animated-overlay.gif" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-bg_flat_0_aaaaaa_40x100.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-bg_flat_75_ffffff_40x100.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-bg_glass_55_fbf9ee_1x400.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-bg_glass_65_ffffff_1x400.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-bg_glass_75_dadada_1x400.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-bg_glass_75_e6e6e6_1x400.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-bg_glass_95_fef1ec_1x400.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-bg_highlight-soft_75_cccccc_1x100.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-icons_222222_256x240.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-icons_2e83ff_256x240.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-icons_454545_256x240.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-icons_888888_256x240.png" />
+    <Content Include="public\stylesheets\images\ui-icons\ui-icons_cd0a0a_256x240.png" />
+    <Content Include="public\stylesheets\images\update.svg" />
+    <Content Include="public\stylesheets\jqCron.less" />
+    <Content Include="public\stylesheets\jquery-ui-1.10.4.custom.css" />
+    <Content Include="public\stylesheets\layout.less" />
+    <Content Include="public\stylesheets\ldapsettings.less" />
+    <Content Include="public\stylesheets\link.less" />
+    <Content Include="public\stylesheets\login.less" />
+    <Content Include="public\stylesheets\loginhistory.less" />
+    <Content Include="public\stylesheets\multiportals.less" />
+    <Content Include="public\stylesheets\paragraph.less" />
+    <Content Include="public\stylesheets\phonecontroller.less" />
+    <Content Include="public\stylesheets\privacyroom.less" />
+    <Content Include="public\stylesheets\rebranding.less" />
+    <Content Include="public\stylesheets\restore.less" />
+    <Content Include="public\stylesheets\search.less" />
+    <Content Include="public\stylesheets\site.less" />
+    <Content Include="public\stylesheets\ssosettings.less" />
+    <Content Include="public\stylesheets\storage.less" />
+    <Content Include="public\stylesheets\tl-combobox.less" />
+    <Content Include="public\stylesheets\toastr.less" />
+    <Content Include="public\stylesheets\update.less" />
+    <Content Include="public\stylesheets\activate.less" />
+    <Content Include="public\stylesheets\gift.less" />
+    <Content Include="public\stylesheets\vars.less" />
+    <Content Include="public\stylesheets\whitelabel.less" />
+    <Content Include="README.md" />
+    <Content Include="typings.json" />
+    <Content Include="views\audittrail.pug" />
+    <Content Include="views\backup.pug" />
+    <Content Include="views\contactSupport.pug" />
+    <Content Include="views\dateTimeSelector.pug" />
+    <Content Include="views\https.pug" />
+    <Content Include="views\httpsInfo.pug" />
+    <Content Include="views\httpsWin.pug" />
+    <Content Include="views\index.pug" />
+    <Content Include="views\ldap.pug" />
+    <Content Include="views\loginHistory.pug" />
+    <Content Include="views\multiPortals.pug" />
+    <Content Include="views\privacyRoom.pug" />
+    <Content Include="views\rebranding.pug" />
+    <Content Include="views\rebrandingPartial.pug" />
+    <Content Include="views\restore.pug" />
+    <Content Include="views\search.pug" />
+    <Content Include="views\Shared\topButtons.pug" />
+    <Content Include="views\Shared\error.pug" />
+    <Content Include="views\Shared\footer.pug" />
+    <Content Include="views\Shared\homeLayout.pug" />
+    <Content Include="views\Shared\layout.pug" />
+    <Content Include="views\Shared\leftSide.pug" />
+    <Content Include="views\sso.pug" />
+    <Content Include="views\storage.pug" />
+    <Content Include="views\update.pug" />
+    <Content Include="views\activate.pug" />
+    <Content Include="views\gift.pug" />
+    <Content Include="views\whitelabel.pug" />
+    <Content Include="views\whitelabelPartial.pug" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="app\controllers\" />
+    <Folder Include="app\middleware\" />
+    <Folder Include="app\model\" />
+    <Folder Include="bin\" />
+    <Folder Include="app\" />
+    <Folder Include="config\" />
+    <Folder Include="executables\" />
+    <Folder Include="executables\tools\" />
+    <Folder Include="public\" />
+    <Folder Include="public\javascripts\" />
+    <Folder Include="public\javascripts\plugins\" />
+    <Folder Include="public\javascripts\third-party\" />
+    <Folder Include="public\javascripts\views\" />
+    <Folder Include="public\resources\" />
+    <Folder Include="public\stylesheets\" />
+    <Folder Include="public\stylesheets\images\" />
+    <Folder Include="public\stylesheets\images\ui-icons\" />
+    <Folder Include="typings\" />
+    <Folder Include="typings\globals\" />
+    <Folder Include="typings\globals\body-parser\" />
+    <Folder Include="typings\globals\connect-redis\" />
+    <Folder Include="typings\globals\cookie-parser\" />
+    <Folder Include="typings\globals\debug\" />
+    <Folder Include="typings\globals\express-serve-static-core\" />
+    <Folder Include="typings\globals\express-session\" />
+    <Folder Include="typings\globals\express\" />
+    <Folder Include="typings\globals\jade\" />
+    <Folder Include="typings\globals\less\" />
+    <Folder Include="typings\globals\mime\" />
+    <Folder Include="typings\globals\moment\" />
+    <Folder Include="typings\globals\morgan\" />
+    <Folder Include="typings\globals\node-forge\" />
+    <Folder Include="typings\globals\node\" />
+    <Folder Include="typings\globals\pug\" />
+    <Folder Include="typings\globals\semver\" />
+    <Folder Include="typings\globals\serve-favicon\" />
+    <Folder Include="typings\globals\serve-static\" />
+    <Folder Include="typings\globals\socket.io\" />
+    <Folder Include="typings\globals\stylus\" />
+    <Folder Include="typings\globals\uuid\" />
+    <Folder Include="views\" />
+    <Folder Include="views\Shared\" />
+  </ItemGroup>
+  <ItemGroup>
+    <TypeScriptCompile Include="typings\globals\body-parser\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\connect-redis\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\cookie-parser\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\debug\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\express-serve-static-core\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\express-session\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\express\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\jade\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\less\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\mime\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\moment\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\morgan\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\node-forge\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\node\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\pug\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\semver\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\serve-favicon\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\serve-static\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\socket.io\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\stylus\index.d.ts" />
+    <TypeScriptCompile Include="typings\globals\uuid\index.d.ts" />
+    <TypeScriptCompile Include="typings\index.d.ts" />
+  </ItemGroup>
+  <!-- Do not delete the following Import Project.  While this appears to do nothing it is a marker for setting TypeScript properties before our import that depends on them. -->
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\TypeScript\Microsoft.TypeScript.targets" Condition="False" />
+  <Import Project="$(VSToolsPath)\Node.js Tools\Microsoft.NodejsTools.targets" />
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>0</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:48022/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>True</UseCustomServer>
+          <CustomServerUrl>http://localhost:1337</CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}" User="">
+        <WebProjectProperties>
+          <StartPageUrl>
+          </StartPageUrl>
+          <StartAction>CurrentPage</StartAction>
+          <AspNetDebugging>True</AspNetDebugging>
+          <SilverlightDebugging>False</SilverlightDebugging>
+          <NativeDebugging>False</NativeDebugging>
+          <SQLDebugging>False</SQLDebugging>
+          <ExternalProgram>
+          </ExternalProgram>
+          <StartExternalURL>
+          </StartExternalURL>
+          <StartCmdLineArguments>
+          </StartCmdLineArguments>
+          <StartWorkingDirectory>
+          </StartWorkingDirectory>
+          <EnableENC>False</EnableENC>
+          <AlwaysStartWebServerOnDebug>False</AlwaysStartWebServerOnDebug>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

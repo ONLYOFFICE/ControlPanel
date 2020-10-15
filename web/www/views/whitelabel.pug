@@ -1,0 +1,16 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.whitelabel
+    = controlPanelResource.WhiteLabel
+
+  p= cpWhiteLabelResource.WhiteLabelWarningMessage
+
+  include whitelabelPartial
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.WhiteLabelManager.init("#{cpWhiteLabelResource.SuccessfullySaveWhiteLabelSettingsMessage}", false)
+     });

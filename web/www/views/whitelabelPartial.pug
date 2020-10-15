@@ -1,0 +1,90 @@
+﻿p= cpWhiteLabelResource.WhiteLabelDscr
+
+div#formContentWhitelabel.display-none
+  h2.attention-header
+    span.attention-icon
+    = cpWhiteLabelResource.PleaseNote + ":"
+  p.attention-text
+  != cpWhiteLabelResource.format("LogoUploadRecommendation", "<b>","</b>")
+
+  h2.blue-text.top-indent-big= cpWhiteLabelResource.WhiteLabelSettings
+  div#whiteLabelSettings.clear-fix
+    div.clear-fix.container-base.logo-text-block
+      div.clear-fix
+        div.table-header.whiteLabelLogoText= cpWhiteLabelResource.CompanyNameForCanvasLogo + ":"
+        div.inputWithBtn
+          input#whiteLabelLogoText.textEdit(type="text", maxlength="30", value="" data-value="" tabindex="4")
+          button#useAsLogoBtn.button.black(type="button" tabindex="5")= cpWhiteLabelResource.UseAsLogoButton
+
+    -if (quota.customization) {
+    div.clear-fix.container-base
+      div.table-header= cpWhiteLabelResource.LogoDocsEditor + " (" + config.logoDocsEditorSize.width + "x" + config.logoDocsEditorSize.height + "):"
+      div.container-with-border
+        table
+          tr
+            td.paddingBase
+              div.logo-img-container
+                img.borderBase.docs-style1-background.logo_4
+                img.borderBase.docs-style2-background.logo_4
+                img.borderBase.docs-style3-background.logo_4
+            
+                canvas#canvas_logo_4_1.borderBase(width="172" height="40" data-fontsize="22" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
+                canvas#canvas_logo_4_2.borderBase(width="172" height="40" data-fontsize="22" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
+                canvas#canvas_logo_4_3.borderBase(width="172" height="40" data-fontsize="22" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase
+              input#logoPath_4(type="hidden" value="")
+              div.logo-change-container
+                input#logoUploader_4(type="file" name="logoUploader_4")
+                a.button.black= cpWhiteLabelResource.ChangeLogoButton
+    -}
+
+    div.clear-fix.container-base
+      div.table-header= cpWhiteLabelResource.LogoLightSmall + " (" + config.logoLightSmallSize.width + "x" + config.logoLightSmallSize.height + "):"
+      div.container-with-border
+        table
+          tr
+            td.paddingBase
+              div.logo-img-container
+                img.borderBase.theme-background.logo_1
+                canvas#canvas_logo_1.theme-background.borderBase(width="284" height="46" data-fontsize="36" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase
+              input#logoPath_1(type="hidden" value="")
+              div.logo-change-container
+                input#logoUploader_1(type="file" name="logoUploader_1")
+                a.button.black= cpWhiteLabelResource.ChangeLogoButton
+
+    div.clear-fix.container-base
+      div.table-header= cpWhiteLabelResource.LogoDark + " (" + config.logoDarkSize.width + "x" + config.logoDarkSize.height + "):"
+      div.container-with-border
+        table
+          tr
+            td.paddingBase
+              div.logo-img-container
+                img.borderBase.logo_2
+                canvas#canvas_logo_2.borderBase(width="432" height="70" data-fontsize="54" data-fontcolor="#333")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase
+              input#logoPath_2(type="hidden" value="")
+              div.logo-change-container
+                input#logoUploader_2(type="file" name="logoUploader_2")
+                a.button.black= cpWhiteLabelResource.ChangeLogoButton
+
+    div.clear-fix.container-base
+      div.table-header= cpWhiteLabelResource.LogoFavicon + " (" + config.logoFaviconSize.width + "x" + config.logoFaviconSize.height + "):"
+      div.container-with-border
+        table
+          tr
+            td.paddingBase
+              div.logo-img-container
+                img.borderBase.logo_3
+                canvas#canvas_logo_3.borderBase(width="32" height="32" data-fontsize="28" data-fontcolor="#333")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase
+              input#logoPath_3(type="hidden" value="")
+              div.logo-change-container
+                input#logoUploader_3(type="file" name="logoUploader_3")
+                a.button.black= cpWhiteLabelResource.ChangeLogoButton
+
+
+    div.middle-button-container
+      button#saveWhiteLabelSettingsBtn.button.green(type="button")= cpWhiteLabelResource.SaveButton
+      span.splitter-buttons
+      button#restoreWhiteLabelSettingsBtn.button.black(type="button")= cpWhiteLabelResource.RestoreDefaultButton

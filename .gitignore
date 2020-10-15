@@ -1,0 +1,9 @@
+**/node_modules/
+**/obj/
+**/bin/
+**/logs/
+**/log/
+**/iisnode/
+**/.vscode/
+web/www/public/stylesheets/*.css
+web/www/public/stylesheets/combined.less

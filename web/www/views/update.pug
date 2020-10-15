@@ -1,0 +1,112 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.update
+    = controlPanelResource.Update
+
+  - var helpcenter = (config.get("helpcenter") || "")
+  - var link = (controlPanelResource.format(config.isMono ? "UpdateDscrAdditionalFaqLink" : "UpdateDscrAdditionalFaqLinkWin", helpcenter) )
+  - var help = (helpcenter ? "&nbsp;" + controlPanelResource.format("UpdateDscrAdditional", "<a class=\"link underline\" href=\"" + link + "\" target=\"_blank\">", "</a>") : "")
+
+  p!= controlPanelResource.UpdateDscr + help
+
+  -if (!quota.update) {
+  div#licenseFeatureError
+  -}
+
+  div#formContentUpdate.display-none
+    h2.attention-header
+      span.attention-icon
+      = controlPanelResource.NoteBeforeUpgradingHeader
+    p.attention-text= controlPanelResource.NoteBeforeUpgrading
+    div#updatesOrInstallationsList
+  -if (quota.update) {
+  div#domainNameDialog.popup
+    div.popup-caption
+      span.attention-icon
+      = controlPanelResource.EnterDomainNameDialogTitle
+      div.popup-close &times;
+    div.popup-body
+      div.popup-content
+        = controlPanelResource.EnterDomainNameDialogMessage
+        div.table-header= controlPanelResource.DomainNameLabel + ":"
+        div
+          input.domainname-input.textBox(type="text", maxlength="255" placeholder=controlPanelResource.DomainNamePlaceholder)
+
+        p= controlPanelResource.PortalRestartWhenInstallUpdateDscr
+        p= controlPanelResource.AreYouSureToContinue
+
+        div.big-button-container
+          button.button.green.domain-name-ok= controlPanelResource.Ok
+          span.splitter-buttons
+          button.button.black.cancelbtn= controlPanelResource.Cancel
+
+  div#confirmationInstallOrUpdateDialog.popup
+    div.popup-caption
+      span.attention-icon
+      = controlPanelResource.ConfirmationTitle
+      div.popup-close &times;
+    div.popup-body
+      div.popup-content
+        p= controlPanelResource.PortalRestartWhenInstallUpdateDscr
+        p= controlPanelResource.AreYouSureToContinue
+  
+        div.big-button-container
+          button.button.green.confirmation-ok= controlPanelResource.Ok
+          span.splitter-buttons
+          button.button.black.cancelbtn= controlPanelResource.Cancel
+  -}
+
+    script#updatesTmpl(type="text/x-jquery-tmpl")
+      |{{each(i, item) items}}{{tmpl(item) "#updateItemTmpl"}}{{/each}}
+
+    script#updateItemTmpl(type="text/x-jquery-tmpl")
+      |{{if true|| (currentVersion != null && currentVersion != "") || (newVersion != null && newVersion != "")}}
+      div.clear-fix.container-base
+        div.table-header ${name}
+          span.helpCenterSwitcher(onclick=" $(this).helper({ BlockHelperID: '${serverTypeAsString}Helper' }); ")
+          div.popup_helper(id="${serverTypeAsString}Helper")
+            p  ${helper}
+          |{{if currentVersion != null && currentVersion != ''}}
+          span.green-ticket= controlPanelResource.UpdateInstalled
+          |{{/if}}
+          |{{if changeLogUrl != null && changeLogUrl != ''}}
+          a(href="${changeLogUrl}" class="view-changes" target="_blank")= controlPanelResource.ViewChanges
+          |{{/if}}
+        div.container-with-border
+          table
+            colgroup
+              col(style="width: 33%;")
+              col(style="width: 33%;")
+              col
+            tbody
+              tr
+                td.currentVer
+                  div.header-base-small-light= controlPanelResource.UpdateCurrent
+                  div.middle-text ${currentInstalledVersionText}
+                td.availableVer
+                  div.header-base-small-light= controlPanelResource.UpdateAvailable
+                  div.middle-text ${availableVersionText}
+                -if (quota.update) {
+                  td.btnContainer
+                    div
+                      |{{if downloadUrl}}
+
+                      |{{if updateAction.type == 2}}
+                      a(tabindex="4" href="${downloadUrl}" class="button green" target="_blank") ${buttonText}
+                      |{{else updateAction.type == 0}}
+                      a(tabindex="4" class="button black disabled") ${buttonText}
+                      |{{/if}}
+
+                      |{{else}}
+                      button(type="button" tabindex="4" id="update${serverTypeAsString}" class!="button " + "{{if updateAction.type == 0 || (updateAction.type == 2 && newVersion == window.Resource.UnknownVersion)}}black disabled{{else}}green{{/if}}" data-update-action="${updateAction.type}" data-update-server="${serverType}") ${buttonText}
+                      |{{/if}}
+                -}
+      |{{/if}}
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.versionManager.init(#{config.regxMailDomain});
+    });

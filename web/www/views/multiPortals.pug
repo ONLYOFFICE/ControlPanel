@@ -1,0 +1,121 @@
+﻿extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.multiportals
+    = cpMultiPortalsResource.MultiPortals
+  p= cpMultiPortalsResource.MultiPortalstDscr
+
+  div#multiPortalsView.display-none
+    div.table-header.top-indent-big= cpMultiPortalsResource.CurrentPortal
+
+    div.container-with-border.paddingBase.text-center
+      div.header-base-small-light= cpMultiPortalsResource.PortalName
+      div#currentPortalName.middle-text= config.defaultPortalName
+
+
+    h2.blue-text.top-indent-big= cpMultiPortalsResource.ExistingPortals
+    table.quotaTable.container-base(cellpadding="0" cellspacing="0" a="1")
+      tr
+        td#portalCount.container-with-border.big-text(data-max=10000)
+        td
+          button#newPortalBtn.button.green(type="button")= cpMultiPortalsResource.NewPortalBtn
+
+    table#linkedPortalsList.table-list.height40
+      colgroup
+        col
+        col(style="width: 32px;")
+      tbody
+
+
+    div#newPortalPanel.popup
+      div.popup-caption
+        = cpMultiPortalsResource.NewPortalPanelTitle
+        div.popup-close &times;
+      div.popup-body
+        div.popup-content
+          div.describe-block= cpMultiPortalsResource.NewPortalPanelMessage
+          div.table-header= cpMultiPortalsResource.PortalNameLabel + ":"
+          div
+            table
+              tbody
+                tr
+                  td
+                    input.portalname-input.textBox(type="text" maxlength="100")
+                  td
+                    div.middle-text.gray-text.portaldomain-text
+          div#visitPoralCheckbox.custom-checkbox.checked
+            button.icon(type="button")
+            span= cpMultiPortalsResource.VisitPortalAfterCreation
+          div#limitedControlPanelCheckbox.custom-checkbox.checked
+            button.icon(type="button")
+            span= cpMultiPortalsResource.LimitedControlPanel
+          div.big-button-container
+            button.button.green.new-portal-ok= controlPanelResource.Ok
+            span.splitter-buttons
+            button.button.black.cancelbtn= controlPanelResource.Cancel
+
+    h2.blue-text.top-indent-big= cpMultiPortalsResource.DomainSettings
+    div.container-with-border.container-base
+      table
+        colgroup
+          col(style="width: 99%;")
+          col
+        tbody
+        tr
+          td.currentDomain
+            div.header-base-small-light= cpMultiPortalsResource.Domain
+            div#currentDomain.middle-text= config.defaultDomain
+          td.btnContainer
+            div
+              button#changeBaseDomainBtn.button.black(type="button" tabindex="5")= controlPanelResource.EditBtn
+
+    div#changeBaseDomainPanel.popup
+      div.popup-caption= cpMultiPortalsResource.DomainSettings
+        div.popup-close &times;
+      div.popup-body
+        div.popup-content
+          h2.attention-header
+            span.attention-icon
+            = controlPanelResource.Warning
+          p= cpMultiPortalsResource.ChangeBaseDomainWarningDscr
+
+          div.table-header= cpMultiPortalsResource.ChangeBaseDomainLabel
+          div
+            input.domainname-input.textBox(type="text" maxlength="255")
+          div.big-button-container
+            button.button.green.change-domain-ok= controlPanelResource.Ok
+            span.splitter-buttons
+            button.button.black.cancelbtn= controlPanelResource.Cancel
+
+  div#multiPortalsViewMainSettings.display-none
+    h2.attention-header
+      span.attention-icon
+      = cpMultiPortalsResource.ConfigureCurrentPortalTitle
+    p= cpMultiPortalsResource.ConfigureCurrentPortalMessage
+
+    div.table-header= cpMultiPortalsResource.EnterDomainNameLabel
+    div
+      input.domainname-input.textBox(type="text" maxlength="255")
+
+    div.table-header= cpMultiPortalsResource.EnterPortalNameLabel
+    div
+      input.portalname-input.textBox(type="text" maxlength="100")
+
+    div.big-button-container
+      button.button.green.connectbtn
+        = cpMultiPortalsResource.ConnectBtn
+
+  script#linkedPortalTmpl(type="text/x-jquery-tmpl")
+    tr(data-id="${tenantId}")
+      td
+        div
+          a(href="${href}" target="_blank") ${domainName}
+      td
+        div(class!="status " + "{{if typeof(isCurrent) != 'undefined' && isCurrent == true}}green{{/if}}")
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.MultiPortalsManager.init(#{config.regxMailDomain});
+    });
