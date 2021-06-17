@@ -1,12 +1,11 @@
 ﻿{
   "version": {
-    "current": "2.9.0",
+    "current": "2.9.2",
     "available-url": "http://download.onlyoffice.com/install/windows/updates.txt"
   },
   "core.machinekey": "1123askdasjklasbnd",
   "maxFileSize": 5242880,
-  "useDataStorage": true,
-  "googleAnalyticsEnable": false,
+  "ami": false,
   "check.dns": true,
   "check.vsyscall": true,
   "port": 3000,
@@ -28,23 +27,28 @@
     "CommunityServer": {
       "script": "run-community-server.sh",
       "container": "onlyoffice-community-server",
-      "image": "onlyoffice/communityserver"
+      "image": "onlyoffice/communityserver",
+      "licenseAgreementsUrl": "http://www.apache.org/licenses/LICENSE-2.0"
     },
     "DocumentServer": {
       "script": "run-document-server.sh",
       "container": "onlyoffice-document-server",
       "image": "onlyoffice/documentserver",
-      "enterpriseImage": "onlyoffice/documentserver-ee"
+      "enterpriseImage": "onlyoffice/documentserver-ee",
+      "licenseAgreementsUrl": "https://help.onlyoffice.com/Products/Files/doceditor.aspx?fileid=4373122&doc=cVFJN0ZlaHowSTg0aWQ5YWNwWHQyamRrbFY2M0tNOXRkSkhUVVJWeTlhZz0_IjQzNzMxMjIi0",
+      "enterpriseLicenseAgreementsUrl": "https://help.onlyoffice.com/Products/Files/doceditor.aspx?fileid=6795868&doc=RG5GaVN6azdUQW5kLzZQNzBXbHZ4Rm9QWVZuNjZKUmgya0prWnpCd2dGcz0_IjY3OTU4Njgi0"
     },
     "MailServer": {
       "script": "run-mail-server.sh",
       "container": "onlyoffice-mail-server",
-      "image": "onlyoffice/mailserver"
+      "image": "onlyoffice/mailserver",
+      "licenseAgreementsUrl": "https://github.com/ONLYOFFICE/Docker-MailServer/blob/master/LICENSE.txt"
     },
     "ControlPanel": {
       "script": "run-control-panel.sh",
       "container": "onlyoffice-control-panel",
-      "image": "onlyoffice/controlpanel"
+      "image": "onlyoffice/controlpanel",
+      "licenseAgreementsUrl": "http://www.apache.org/licenses/LICENSE-2.0"
     },
     "MysqlServer": {
       "container": "onlyoffice-mysql-server",

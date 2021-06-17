@@ -48,7 +48,16 @@ append bodyscripts
       td.storeSize
         span ${storeSize}
       td.reindex
+        |{{if $data.count!=undefined && docsCount<count}}
+        |{{if parseInt(docsCount*100/count)<50}}
+        button.button.black.middle(style="width:100%;background:linear-gradient(270deg, #bcbcbc ${parseInt(100-parseInt(docsCount*100/count))}%, #4c4c4c ${parseInt(docsCount*100/count)}%)") ${parseInt(docsCount*100/count)}%
+        |{{else}}
+        button.button.black.middle(style="width:100%;background:linear-gradient(90deg,  #4c4c4c ${parseInt(docsCount*100/count)}%, #bcbcbc ${parseInt(100-parseInt(docsCount*100/count))}%)") ${parseInt(docsCount*100/count)}%
+        |{{/if}}
+        |{{else}}
         button.button.black.middle ${Resource.Reindex}
+        |{{/if}}
+
   script(type="text/javascript").
     $(function() {
       window.SearchView.init();

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# (c) Copyright Ascensio System Limited 2010-2020
+# (c) Copyright Ascensio System Limited 2010-2021
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -54,7 +54,7 @@ get_container_env_parameter () {
 		CONTAINER_EXIST=$(sudo docker ps -aqf "name=$CONTAINER_NAME");
 
 		if [[ -n ${CONTAINER_EXIST} ]]; then
-			VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${CONTAINER_NAME} | grep ${PARAMETER_NAME} | sed 's/^.*=//');
+			VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${CONTAINER_NAME} | grep "${PARAMETER_NAME}=" | sed 's/^.*=//');
 		fi
 	fi
 

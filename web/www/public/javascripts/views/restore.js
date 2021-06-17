@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -618,11 +618,15 @@ window.RestoreView = function($, apiService, loaderService) {
             case '5':
                 if (checkedThirdParty && checkedThirdParty.isThirdPartyDocs) {
                     storage.params.push({ key: "filePath", value: $sourceFileSelector.attr('data-backupid') });
-                    storage.value = 1;
+                    storage.value = '1';
                 }
                 else {
                 var isError;
                 var selectedConsumer = $consumerStorageSettingsBox.find('.radioBox.checked').attr("data-value");
+                if (!selectedConsumer) {
+                    toastr.error(window.Resource.ErrorStorageIsNull);
+                    return false;
+                }
                 var $settings = $consumerStorageSettingsBox.find('div[data-id="' + selectedConsumer + '"] .textBox');
                 storage.params.push({ key: "module", value: selectedConsumer });
                 var settingsLength = $settings.length;
@@ -636,7 +640,6 @@ window.RestoreView = function($, apiService, loaderService) {
                         storage.params.push({ key: $item.parent().attr("data-id"), value: $item.val() });
                     }
                 }
-                
                 if (isError) {
                     return false;
                 }
@@ -654,12 +657,19 @@ window.RestoreView = function($, apiService, loaderService) {
 
         switch (source.value) {
             case '0':
+            case '1':
             case '5':
                 if (checkedThirdParty && checkedThirdParty.isThirdPartyDocs && $consumerSource.is('.checked')) {
-                    source.value = 1;
+                    source.value = '1';
                 }
                 if (source.params.findIndex(function(item){return item.key === "filePath" && item.value}) === -1) {
-                    $sourceFileSelector.find('.textBox').addClass('withError');
+                    $sourceFileSelector.find('.textBox').addClass(withErrorClass);
+                    valid = false;
+                }
+                break;
+            case '3':
+                if (source.params.findIndex(function(item){return item.key === "filePath" && item.value}) === -1) {
+                    $localFileSelector.find('.textBox').addClass(withErrorClass);
                     valid = false;
                 }
                 break;
@@ -669,7 +679,8 @@ window.RestoreView = function($, apiService, loaderService) {
     }
 
     function clearSourceErrors() {
-        $sourceFileSelector.find('.textBox').removeClass('withError');
+        $sourceFileSelector.find('.textBox').removeClass(withErrorClass);
+        $localFileSelector.find('.textBox').removeClass(withErrorClass);
     }
 
     function getFileSelectorIframeUrl() {

@@ -113,6 +113,8 @@
     <Content Include="app\controllers\activate.js" />
     <Content Include="app\middleware\tenantExtra.js" />
     <Content Include="app\middleware\fullAccess.js" />
+    <Content Include="app\middleware\enableTariffPage.js" />
+    <Content Include="app\middleware\notCustomMode.js" />
     <Content Include="config\config.json" />
     <Content Include="config\production.json" />
     <Content Include="executables\run-community-server.sh" />

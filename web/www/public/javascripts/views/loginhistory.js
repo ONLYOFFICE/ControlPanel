@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,12 +34,13 @@ window.LoginHistoryView = function($, apiService, loaderService) {
     var $onlineUserTmpl = $('#online-user-tmpl');
     var $onlineUsersList = $('#online-users-list');
     var $onlineUsersBox = $('#online-users-box');
+    var renderOnlineUsersBlock = true;
     var renderUserTimeout = 5000;
 
     var settings = null;
     var url = null;
     var socketIO = null;
-    
+
     var users;
 
     function init() {
@@ -99,18 +100,18 @@ window.LoginHistoryView = function($, apiService, loaderService) {
     function saveLoginHistorySettings() {
         if($(this).hasClass("disabled"))
             return;
-        
+
         var val = parseInt($lifetimeInput.val());
 
         if (isNaN(val) || val <= 0 || val > settings.maxLifeTime) {
             $lifetimeInput.addClass("error");
             return;
         }
-        
+
         $lifetimeInput.removeClass("error");
 
         settings.loginHistoryLifeTime = val;
-        
+
         apiService.post('loginHistory/saveSettings', { settings: settings })
             .done(function (result) {
                 if (!result) {
@@ -150,6 +151,9 @@ window.LoginHistoryView = function($, apiService, loaderService) {
             $downloadReportBtn.css('display', 'inline-block').click(createLoginHistoryReport);
         } else {
             $emptyScreen.show();
+
+            renderOnlineUsersBlock = false;
+            $onlineUsersBox.hide();
         }
 
         settings = stngs;
@@ -208,11 +212,11 @@ window.LoginHistoryView = function($, apiService, loaderService) {
             onlineUsers = getUsers(users, usersDictionary);
         }
         else if (typeof users === "string")
-            {
-                return showErrorMessage(users);
-            }
+        {
+            return showErrorMessage(users);
+        }
 
-        if (onlineUsers.length) {
+        if (renderOnlineUsersBlock && onlineUsers.length) {
             var $onlineUsers = $onlineUserTmpl.tmpl(onlineUsers);
             $onlineUsersList.html($onlineUsers);
 

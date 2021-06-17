@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ window.SearchView = function($, apiService, loaderService) {
         $searchTableView = $('#searchTableView'),
         $searchTable = $('#searchTable'),
         data = [],
-        clickEv = "click";
+        clickEv = "click"
+        timeoutID = null;
 
     function makeRequest(path){
         return function(cb) {
@@ -114,9 +115,22 @@ window.SearchView = function($, apiService, loaderService) {
             var id = $($self.parents("tr")[0]).attr("data-id");
             reindex(id);
         });
+
+        timeoutID = setTimeout(checkState, 5000);
+    }
+
+    function checkState() {
+        apiService.get('search/state', false)
+            .done(function(res) {
+                if (res && res.indices && res.indices.length) {
+                    $searchTable.find("tbody").html($("#searchDataTmpl").tmpl(res.indices));
+                    timeoutID = setTimeout(checkState, 5000);
+                }
+            });
     }
 
     function reindex(name) {
+        clearTimeout(timeoutID);
         loaderService.showFormBlockLoader($searchTableView);
         apiService.post('search/reindex', { name: name },false).done(onReindex);
     }
@@ -126,12 +140,12 @@ window.SearchView = function($, apiService, loaderService) {
         toastr.success(window.Resource.ReindexSuccessMsg || window.Resource.OperationSucceededMsg);
     }
 
-    
     function onReindex(res) {
         $searchTable.find("tbody").html($("#searchDataTmpl").tmpl(res.indices));
         $searchTable.toggleClass("display-none", !res.indices.length);
         loaderService.hideFormBlockLoader($searchTableView);
         toastr.success(window.Resource.ReindexSuccessMsg || window.Resource.OperationSucceededMsg);
+        timeoutID = setTimeout(checkState, 5000);
     }
 
     return {

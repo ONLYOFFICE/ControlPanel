@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -141,6 +141,7 @@ window.SsoSettings = (function() {
             },
             spCertificates: tmpSPCertificates,
             spCertificateAdvanced: {
+                decryptAlgorithm: null,
                 signingAlgorithm: window.Common.selectorListener.get($ssoSigningAlgorithm),
                 signAuthRequests: $ssoSignAuthRequestsCbx.hasClass("checked"),
                 signLogoutRequests: $ssoSignLogoutRequestsCbx.hasClass("checked"),
@@ -505,6 +506,12 @@ window.SsoSettings = (function() {
         return posExt >= 0 ? fileName.substring(posExt).trim().toLowerCase() : "";
     }
 
+    function getUniqueItems(array) {
+        return array.filter(function (item, index, array) { 
+            return array.indexOf(item) == index
+        });
+    }
+
     function loadMetadata() {
         if ($(this).hasClass("disabled"))
             return;
@@ -587,7 +594,7 @@ window.SsoSettings = (function() {
 
             if (metadata.certificate.signing) {
                 if (Array.isArray(metadata.certificate.signing)) {
-                    metadata.certificate.signing = jQuery.unique(metadata.certificate.signing).reverse();
+                    metadata.certificate.signing = getUniqueItems(metadata.certificate.signing).reverse();
                     metadata.certificate.signing.forEach(function(signingCrt) {
                         data.push({
                             crt: signingCrt.trim(),
@@ -610,7 +617,7 @@ window.SsoSettings = (function() {
 
             /*if (metadata.certificate.encryption) {
                 if (Array.isArray(metadata.certificate.encryption)) {
-                    metadata.certificate.encryption = jQuery.unique(metadata.certificate.encryption).reverse();
+                    metadata.certificate.encryption = getUniqueItems(metadata.certificate.encryption).reverse();
                     metadata.certificate.encryption.forEach(function(encryptionCrt) {
                         data.push({
                             crt: encryptionCrt.trim(),
