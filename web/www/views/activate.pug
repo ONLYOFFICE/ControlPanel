@@ -65,6 +65,7 @@ block rightSide
       div=controlPanelResource.UpgradeToProBannerItemSupportDescr
   -}
 
+  -if(additionalSettings.buyUrl){
   div.purchase
     -if(tenantExtra.opensource || (tenantExtra.enterprise && (tenantExtra.trial || tenantExtra.defaultTariff))){
     div=controlPanelResource.ActivatePurchaseBuyLicense
@@ -74,6 +75,7 @@ block rightSide
     -}
     div.small-button-container
       a.button.green(href=additionalSettings.buyUrl, target="_blank")=controlPanelResource.ActivatePurchaseBuyNow
+  -}
 
   -if(tenantExtra.opensource){
   div.instruction
@@ -96,8 +98,8 @@ block rightSide
 
   -if(tenantExtra.enterprise){
   div.activation
-    -if(!(tenantExtra.trial || tenantExtra.defaultTariff)){
-    div.renewal-terms!=controlPanelResource.format("ActivateRenewDescr", "<a class='link underline' href='mailto:" + mailSettings.salesEmail + "'>", "</a>", additionalSettings.salesEmail)
+    -if(!(tenantExtra.trial || tenantExtra.defaultTariff) && mailSettings.salesEmail){
+    div.renewal-terms!=controlPanelResource.format("ActivateRenewDescr", "<a class='link underline' href='mailto:" + mailSettings.salesEmail + "'>", "</a>", mailSettings.salesEmail)
     -}
     div.upload-descr=(tenantExtra.trial || tenantExtra.defaultTariff) ? controlPanelResource.ActivateUploadDescr : controlPanelResource.ActivateUploadRenewalDescr
     -if(!tenantExtra.licenseAccept && additionalSettings.licenseAgreementsEnabled){
@@ -114,14 +116,24 @@ block rightSide
   -}
 
   div.information.gray-text
-    -if(tenantExtra.opensource){
+    -if(tenantExtra.opensource && (mailSettings.siteUrl || mailSettings.demoUrl)){
     div.information-item
+      -if(mailSettings.siteUrl){
       div!=controlPanelResource.format("UpgradeToProBannerInformationAboutShort", "<a class='link underline' target='_blank' href='" + mailSettings.siteUrl + "/for-enterprises.aspx'>", "</a>")
+      -}
+      -if(mailSettings.demoUrl){
       div!=controlPanelResource.format("UpgradeToProBannerInformationDemo", "<a class='link underline' target='_blank' href='" + mailSettings.demoUrl + "'>", "</a>")
+      -}
     -}
+    -if(mailSettings.salesEmail || mailSettings.supportUrl){
     div.information-item
-      div!=controlPanelResource.format("UpgradeToProBannerInformationPurchase", "<a class='link underline' href='mailto:" + mailSettings.salesEmail + "'>", "</a>", additionalSettings.salesEmail)
-      div!=controlPanelResource.format("UpgradeToProBannerInformationSupport", "<a class='link underline' target='_blank' href='" + mailSettings.supportUrl + "'>", "</a>", additionalSettings.feedbackAndSupportUrl)
+      -if(mailSettings.salesEmail){
+      div!=controlPanelResource.format("UpgradeToProBannerInformationPurchase", "<a class='link underline' href='mailto:" + mailSettings.salesEmail + "'>", "</a>", mailSettings.salesEmail)
+      -}
+      -if(mailSettings.supportUrl){
+      div!=controlPanelResource.format("UpgradeToProBannerInformationSupport", "<a class='link underline' target='_blank' href='" + mailSettings.supportUrl + "'>", "</a>", mailSettings.supportUrl)
+      -}
+    -}
 
 
 append bodyscripts

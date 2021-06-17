@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,11 +25,15 @@ const baseController = require('./base.js'),
     companySettingsApiUrl = "settings/rebranding/company.json",
     additionalSettingsApiUrl = "settings/rebranding/additional.json",
     mailSettingsApiUrl = "settings/rebranding/mail.json",
-    fullAccess = require('../middleware/fullAccess.js');
+    fullAccess = require('../middleware/fullAccess.js'),
+    tenantExtra = require('../middleware/tenantExtra.js'),
+    notCustomMode = require('../middleware/notCustomMode.js');
 
 router
     .use(require('../middleware/quota.js')("ssbranding"))
     .use(fullAccess())
+    .use(tenantExtra())
+    .use(notCustomMode())
     .get("/", (req, res) => {
         res.setHeader('content-type', 'text/html');
 

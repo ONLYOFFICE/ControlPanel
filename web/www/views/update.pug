@@ -5,13 +5,14 @@ block rightSide
     span.header-icon.update
     = controlPanelResource.Update
 
+  - var ami = config.get("ami")
   - var helpcenter = (config.get("helpcenter") || "")
   - var link = (controlPanelResource.format(config.isMono ? "UpdateDscrAdditionalFaqLink" : "UpdateDscrAdditionalFaqLinkWin", helpcenter) )
   - var help = (helpcenter ? "&nbsp;" + controlPanelResource.format("UpdateDscrAdditional", "<a class=\"link underline\" href=\"" + link + "\" target=\"_blank\">", "</a>") : "")
 
   p!= controlPanelResource.UpdateDscr + help
 
-  -if (!quota.update) {
+  -if (!ami && !quota.update) {
   div#licenseFeatureError
   -}
 
@@ -21,7 +22,7 @@ block rightSide
       = controlPanelResource.NoteBeforeUpgradingHeader
     p.attention-text= controlPanelResource.NoteBeforeUpgrading
     div#updatesOrInstallationsList
-  -if (quota.update) {
+  -if (ami || quota.update) {
   div#domainNameDialog.popup
     div.popup-caption
       span.attention-icon
@@ -56,13 +57,26 @@ block rightSide
           button.button.green.confirmation-ok= controlPanelResource.Ok
           span.splitter-buttons
           button.button.black.cancelbtn= controlPanelResource.Cancel
+
+  div#licenseAgreementsDialog.popup
+    div.popup-caption
+      span.attention-icon
+      = controlPanelResource.LicenseAgreementsDialogHeader
+      div.popup-close &times;
+    div.popup-body
+      div.popup-content
+        p!= controlPanelResource.format("LicenseAgreementsDialogBody", "<a href='' target='_blank' class='link underline'>", "</a>")
+
+        div.big-button-container
+          button.button.green.license-agreements-ok= controlPanelResource.Continue
+          span.splitter-buttons
+          button.button.black.cancelbtn= controlPanelResource.Cancel
   -}
 
     script#updatesTmpl(type="text/x-jquery-tmpl")
       |{{each(i, item) items}}{{tmpl(item) "#updateItemTmpl"}}{{/each}}
 
     script#updateItemTmpl(type="text/x-jquery-tmpl")
-      |{{if true|| (currentVersion != null && currentVersion != "") || (newVersion != null && newVersion != "")}}
       div.clear-fix.container-base
         div.table-header ${name}
           span.helpCenterSwitcher(onclick=" $(this).helper({ BlockHelperID: '${serverTypeAsString}Helper' }); ")
@@ -88,7 +102,7 @@ block rightSide
                 td.availableVer
                   div.header-base-small-light= controlPanelResource.UpdateAvailable
                   div.middle-text ${availableVersionText}
-                -if (quota.update) {
+                -if (ami || quota.update) {
                   td.btnContainer
                     div
                       |{{if downloadUrl}}
@@ -100,10 +114,9 @@ block rightSide
                       |{{/if}}
 
                       |{{else}}
-                      button(type="button" tabindex="4" id="update${serverTypeAsString}" class!="button " + "{{if updateAction.type == 0 || (updateAction.type == 2 && newVersion == window.Resource.UnknownVersion)}}black disabled{{else}}green{{/if}}" data-update-action="${updateAction.type}" data-update-server="${serverType}") ${buttonText}
+                      button(type="button" tabindex="4" id="update${serverTypeAsString}" class!="button " + "{{if updateAction.type == 0 || (updateAction.type == 2 && newVersion == window.Resource.UnknownVersion)}}black disabled{{else}}green{{/if}}" data-update-action="${updateAction.type}" data-update-server="${serverType}" data-license-agreements="${licenseAgreementsUrl}") ${buttonText}
                       |{{/if}}
                 -}
-      |{{/if}}
 
 append bodyscripts
   script(type="text/javascript").

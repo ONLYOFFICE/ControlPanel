@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,10 +20,14 @@ const baseController = require('./base.js'),
     Model = require('../model/base.js'),
     pug = require('pug'),
     path = require('path'),
-    privacyRoomCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'privacyRoom.pug'));
+    privacyRoomCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'privacyRoom.pug')),
+    tenantExtra = require('../middleware/tenantExtra.js'),
+    notCustomMode = require('../middleware/notCustomMode.js');
 
 router
     .use(require('../middleware/quota.js')("privacyroom"))
+    .use(tenantExtra())
+    .use(notCustomMode())
     .get("/", (req, res) => {
         res.setHeader('content-type', 'text/html');
         res.end(privacyRoomCompiled(new Model(req, req.resources.controlPanelResource.PrivacyRoom)));

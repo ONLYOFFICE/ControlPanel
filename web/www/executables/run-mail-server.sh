@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# (c) Copyright Ascensio System Limited 2010-2020
+# (c) Copyright Ascensio System Limited 2010-2021
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -141,7 +141,7 @@ COMMUNITY_SERVER_ID=$(sudo docker ps -aqf "name=$COMMUNITY_CONTAINER_NAME");
 PARAMETER_VALUE="";
 
 if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
-	PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "MYSQL_SERVER_ROOT_PASSWORD" | sed 's/^.*=//');
+	PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "MYSQL_SERVER_ROOT_PASSWORD=" | sed 's/^.*=//');
 	if [[ -n ${PARAMETER_VALUE} ]]; then
 		MYSQL_ROOT_PASSWORD="$PARAMETER_VALUE";
 	fi
@@ -151,27 +151,27 @@ if [ "$UPDATE" == "1" ]; then
 	MAIL_SERVER_ID=$(sudo docker ps -aqf "name=$MAIL_CONTAINER_NAME");
 
 	if [[ -n ${MAIL_SERVER_ID} ]]; then
-		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_SERVER" | sed 's/^.*=//');
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_SERVER=" | sed 's/^.*=//');
 		if [[ -n ${PARAMETER_VALUE} ]]; then
 			MYSQL_HOST="$PARAMETER_VALUE";
 		fi
 
-		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_SERVER_PORT" | sed 's/^.*=//');
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_SERVER_PORT=" | sed 's/^.*=//');
 		if [[ -n ${PARAMETER_VALUE} ]]; then
 			MYSQL_PORT="$PARAMETER_VALUE";
 		fi
 
-		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_ROOT_USER" | sed 's/^.*=//');
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_ROOT_USER=" | sed 's/^.*=//');
 		if [[ -n ${PARAMETER_VALUE} ]]; then
 			MYSQL_ROOT_USER="$PARAMETER_VALUE";
 		fi
 
-		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_ROOT_PASSWD" | sed 's/^.*=//');
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_ROOT_PASSWD=" | sed 's/^.*=//');
 		if [[ -n ${PARAMETER_VALUE} ]]; then
 			MYSQL_ROOT_PASSWORD="$PARAMETER_VALUE";
 		fi
 
-		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_SERVER_DB_NAME" | sed 's/^.*=//');
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_SERVER_DB_NAME=" | sed 's/^.*=//');
 		if [[ -n ${PARAMETER_VALUE} ]]; then
 			MYSQL_MAIL_DATABASE="$PARAMETER_VALUE";
 		fi

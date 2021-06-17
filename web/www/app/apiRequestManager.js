@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,11 @@ class RequestManager {
     }
     makeRequest(apiMethod, req, options) {
         return new Promise((resolve, reject) => {
-            options.uri = this.getBasePath() + apiMethod;
+
+            var absolutePathRegex = /^https?:\/\//i;
+            var basePath = absolutePathRegex.test(apiMethod) ? "" : this.getBasePath();
+            options.uri = basePath + apiMethod;
+
             request(options, (error, response, body) => {
                 if (!error) {
                     if (body === "Unauthorized") {
@@ -93,7 +97,7 @@ class RequestManager {
 class ApiRequestManager extends RequestManager {
     constructor() { super(); }
     getBasePath() {
-        return portalManager.getInternalPortalUrl().replace(/\/$/g, '') + apiBasePath;
+        return portalManager.getAbsolutePortalUrl(apiBasePath);
     }
     makeRequest(apiMethod, req, options) {
         options.headers = {};
@@ -123,7 +127,7 @@ class ApiSystemRequestManager extends RequestManager {
         const apiSystemAbsolute = config.get("web:apiSystem").replace(/\/$/g, '') + "/";
         return apiSystemAbsolute.startsWith("http")
             ? apiSystemAbsolute
-            : portalManager.getInternalPortalUrl().replace(/\/$/g, '') + apiSystemAbsolute;
+            : portalManager.getAbsolutePortalUrl(apiSystemAbsolute);
     }
 
     makeRequest(apiMethod, req, options) {

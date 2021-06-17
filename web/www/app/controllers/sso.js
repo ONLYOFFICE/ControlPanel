@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,18 +24,12 @@
         apiRequestManager = require('../apiRequestManager.js').apiManager,
         pug = require('pug'),
         path = require('path'),
-        ssoCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'sso.pug')),
-        samlify = require("samlify"),
+        fs = require('fs'),
         formidable = require('formidable'),
+        ssoCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'sso.pug')),
+        portalManager = require('../portalManager.js'),
         fileManager = require('../fileManager.js'),
-        forge = require('node-forge'),
-        config = require('../../config'),
-        uuid = require('uuid'),
-        fs = require('fs');
-
-    let uploadDir = "";
-
-    const selfSignedDomain = "myselfsigned.crt";
+        config = require('../../config');
 
     function uploadMetadata(req, res) {
         function formParse(err, fields, files) {
@@ -56,22 +50,22 @@
                 return;
             }
 
-            const idp = samlify.IdentityProvider({
-                metadata: fs.readFileSync(files.metadata.path)
-            });
-            const idpMetadata = idp.entityMeta;
+            var params = {
+                method: "POST",
+                formData: { 
+                    metadata: null
+                },
+                json: true
+            };
 
-            if (!idpMetadata ||
-                !idpMetadata.meta ||
-                !idpMetadata.meta.entityDescriptor ||
-                !idpMetadata.meta.singleSignOnService) {
-                fileManager.deleteFile(files.metadata.path);
-                res.status(500).send(req.resources.cpSsoResource.SsoInvalidMetadataFile).end();
-                return;
-            }
+            params.formData.metadata = fs.createReadStream(files.metadata.path);
+            params.formData.metadata.name = files.metadata.name;
 
             fileManager.deleteFile(files.metadata.path);
-            res.status(200).send(idpMetadata).end();
+
+            apiRequestManager.makeRequest(portalManager.getAbsolutePortalUrl('sso/uploadmetadata'), req, params)
+                .then(onSuccess.bind(null, res))
+                .catch(onError.bind(null, res));
         }
 
         const form = new formidable.IncomingForm();
@@ -79,88 +73,23 @@
         form.parse(req, formParse);
     }
 
-    function generateCertificate() {
-        const pki = forge.pki;
+    function onSuccess(response, result) {
+        response.status(200);
 
-        let keys = pki.rsa.generateKeyPair(2048);
-        let cert = pki.createCertificate();
+        if (typeof result === "string") {
+            response.send({ "data": result });
+            return;
+        }
 
-        cert.publicKey = keys.publicKey;
-        cert.serialNumber = "01";
-        cert.validity.notBefore = new Date();
-        cert.validity.notAfter = new Date();
-        cert.validity.notAfter.setFullYear(cert.validity.notBefore.getFullYear() + 1);
-
-        let attr = [{
-            name: "commonName",
-            value: selfSignedDomain
-        }];
-
-        cert.setSubject(attr);
-        cert.setIssuer(attr);
-
-        cert.sign(keys.privateKey);
-
-        let crt = pki.certificateToPem(cert);
-        let key = pki.privateKeyToPem(keys.privateKey);
-
-        return {
-            crt: crt,
-            key: key
-        };
+        response.send(result);
     }
 
-    function validateCertificate(certs) {
-        const result = [];
-        const pki = forge.pki;
-
-        certs.forEach(function (data) {
-            if (!data.crt)
-                throw "Empty public certificate";
-
-            if (data.crt[0] !== "-")
-                data.crt = "-----BEGIN CERTIFICATE-----\n" + data.crt + "\n-----END CERTIFICATE-----";
-
-            const cert = pki.certificateFromPem(data.crt);
-
-            const publicKey = cert.publicKey;
-            if (!publicKey)
-                throw "Invalid public cert";
-
-            if (data.key) {
-                const privateKey = pki.privateKeyFromPem(data.key);
-                if (!privateKey)
-                    throw "Invalid private key";
-
-                const md = forge.md.sha1.create();
-                md.update('sign this', 'utf8');
-                const signature = privateKey.sign(md);
-
-                // verify data with a public key
-                // (defaults to RSASSA PKCS#1 v1.5)
-                const verified = publicKey.verify(md.digest().bytes(), signature);
-
-                if (!verified)
-                    throw "Invalid key-pair (unverified signed data test)";
-            }
-
-            const domainName = cert.subject.getField("CN").value || cert.issuer.getField("CN").value;
-            const startDate = cert.validity.notBefore.toISOString().split(".")[0] + "Z";
-            const expiredDate = cert.validity.notAfter.toISOString().split(".")[0] + "Z";
-
-            result.push({
-                selfSigned: domainName === selfSignedDomain,
-                crt: data.crt,
-                key: data.key,
-                action: data.action,
-                domainName: domainName,
-                startDate: startDate,
-                expiredDate: expiredDate
-            });
-        });
-
-        return result;
+    function onError(response, error) {
+        response.status(500);
+        response.send(error);
     }
+
+    let uploadDir = "";
 
     router
         .use(require('../middleware/quota.js')("sso"))
@@ -191,55 +120,12 @@
         .get("/settings", baseController.get.bind(baseController, 'settings/ssov2.json'))
         .post("/settings", baseController.post.bind(baseController, 'settings/ssov2.json'))
         .delete("/settings", baseController.dlt.bind(baseController, 'settings/ssov2.json'))
+
         .post("/uploadmetadata", uploadMetadata)
-        .post("/loadmetadata", (req, res) => {
-            try {
-                const filePath = path.join(uploadDir, uuid.v1() + ".xml");
+        .post("/loadmetadata", baseController.post.bind(baseController, portalManager.getAbsolutePortalUrl('sso/loadmetadata')))
+        .post("/validatecerts", baseController.post.bind(baseController, portalManager.getAbsolutePortalUrl('sso/validatecerts')))
+        .get("/generatecert", baseController.get.bind(baseController, portalManager.getAbsolutePortalUrl('sso/generatecert')));
 
-                fileManager.downloadFile(req.body.url, filePath)
-                    .then((result) => {
-                        const idp = samlify.IdentityProvider({
-                            metadata: fs.readFileSync(result)
-                        });
-                        const idpMetadata = idp.entityMeta;
-
-                        if (!idpMetadata ||
-                            !idpMetadata.meta ||
-                            !idpMetadata.meta.entityDescriptor ||
-                            !idpMetadata.meta.singleSignOnService) {
-                            fileManager.deleteFile(result);
-                            res.status(500).send(req.resources.cpSsoResource.SsoInvalidMetadataFile).end();
-                            return;
-                        }
-
-                        fileManager.deleteFile(result);
-                        res.status(200).send(idpMetadata).end();
-                    })
-                    .catch((error) => {
-                        fileManager.deleteFile(filePath);
-                        res.status(500).send(req.resources.cpSsoResource.SsoMetadataFileNotTransfered);
-                    });
-            }
-            catch (error) {
-                res.status(500).send(error);
-            }
-        })
-        .post("/validatecerts", (req, res) => {
-            try {
-                res.status(200).send(validateCertificate(req.body.certs));
-            }
-            catch (error) {
-                res.status(500).send(req.resources.cpSsoResource.SsoInvalidCertificate);
-            }
-        })
-        .get("/generatecert", (req, res) => {
-            try {
-                res.status(200).send(generateCertificate());
-            }
-            catch (error) {
-                res.status(500).send(req.resources.cpSsoResource.SsoCannotGenerateCertificate);
-            }
-        });
 
     module.exports = router;
 })();

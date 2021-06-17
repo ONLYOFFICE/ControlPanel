@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# (c) Copyright Ascensio System Limited 2010-2020
+# (c) Copyright Ascensio System Limited 2010-2021
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -125,11 +125,11 @@ while [ "$1" != "" ]; do
 done
 
 DIR=$(dirname $(readlink -f $0));
-JWT_SECRET=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_SECRET" | sed 's/^.*=//');
+JWT_SECRET=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_SECRET=" | sed 's/^.*=//');
 
 if [ "$UPDATE" == "1" ]; then
 	DOCUMENT_SERVER_ID=$(sudo docker ps -aqf "name=$DOCUMENT_CONTAINER_NAME");
-	JWT_SECRET=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_SECRET" | sed 's/^.*=//');
+	JWT_SECRET=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_SECRET=" | sed 's/^.*=//');
 	sudo bash ${DIR}/tools/check-bindings.sh ${DOCUMENT_SERVER_ID} "/etc/$PRODUCT,/var/lib/$PRODUCT,/var/lib/postgresql,/usr/share/fonts/truetype/custom,/var/lib/rabbitmq,/var/lib/redis";
 	sudo docker exec ${DOCUMENT_CONTAINER_NAME} bash /usr/bin/documentserver-prepare4shutdown.sh
 	sudo bash ${DIR}/tools/remove-container.sh ${DOCUMENT_CONTAINER_NAME}

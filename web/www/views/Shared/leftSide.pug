@@ -2,6 +2,8 @@
   ul.side-nav
 
     - var fullAccess = (!controlPanelSettings.limitedAccess)
+    - var tenantExtraExist = (typeof tenantExtra == "object")
+    - var customMode = (tenantExtraExist && tenantExtra.customMode)
 
     -if(fullAccess){
 
@@ -33,7 +35,7 @@
     li.with-icon.search
       a.nav-link.nav-search(href=config.makePath("search"), tab-index="-1")
         =controlPanelResource.Search
-    -if(quota.ssbranding){
+    -if(quota.ssbranding && !customMode){
     li.with-icon.rebranding
       a.nav-link.nav-rebranding(href=config.makePath("rebranding"), tab-index="-1")
         =controlPanelResource.WhiteLabel
@@ -52,7 +54,7 @@
       div#portalSettingsHelper.popup_helper
         p= controlPanelResource.PortalSettingsHelper
 
-    -if(quota.privacyroom){
+    -if(quota.privacyroom && !customMode){
     li.with-icon.privacyroom
       a.nav-link.nav-privacyroom(href=config.makePath("privacyRoom"), tab-index="-1")
         =controlPanelResource.PrivacyRoom

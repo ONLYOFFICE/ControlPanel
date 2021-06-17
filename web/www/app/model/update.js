@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,9 @@ fileManager.getDataDirPath(config.get("web:image-path"))
         imagePath = result;
     });
 
-const serverType = {
+const ami = config.get("ami");
+
+const serverType = ami ? { MailServer: 2 } : {
     ControlPanel: 3,
     CommunityServer: 0,
     DocumentServer: 1,
@@ -107,6 +109,7 @@ class UpdateItem extends UpdateItemBase {
             this.installScript = docker.script;
             this.image = (enterprise ? docker.enterpriseImage : "") || docker.image;
             this.container = docker.container;
+            this.licenseAgreementsUrl = (enterprise ? docker.enterpriseLicenseAgreementsUrl : "") || docker.licenseAgreementsUrl;
         }
     }
 
@@ -143,7 +146,7 @@ class UpdateItem extends UpdateItemBase {
             let currentVersion = this.getValidVersion(this.currentVersion);
             let newVersion = this.getValidVersion(this.newVersion);
 
-            if (!currentVersion || !newVersion) {
+            if (ami || !currentVersion || !newVersion) {
                 resolve(updateActionType.None);
                 return;
             }
@@ -351,12 +354,12 @@ class UpdateItemWin extends UpdateItemBase {
             const currentVersion = this.getValidVersion(this.currentVersion);
             const newVersion = this.getValidVersion(this.newVersion);
 
-            if (!currentVersion || !newVersion) {
+            if (!newVersion) {
                 resolve(updateActionType.None);
                 return;
             }
 
-            if (semver.gt(newVersion, currentVersion)) {
+            if (!currentVersion || semver.gt(newVersion, currentVersion)) {
                 resolve(updateActionType.Download);
                 return;
             }

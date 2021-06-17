@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,11 +75,13 @@ module.exports = function (req, res, next) {
             req.session.tariff = result.tariff;
 
             req.session.tenantExtra = {
+                customMode: result.customMode,
                 opensource: result.opensource,
                 enterprise: result.enterprise,
                 licenseAccept: result.licenseAccept,
                 trial: result.tariff.state == 0,
-                defaultTariff: result.quota.id == -1
+                defaultTariff: result.quota.id == -1,
+                enableTariffPage: result.enableTariffPage
             };
 
             paymentCheck(req, res, next, result.quota, result.tariff);

@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,7 +90,7 @@ function validatePortalName(req) {
 function onError(res, error) {
     res.send({
         success: false,
-        message: error
+        message: typeof error === 'string' ? error : error.message
     });
     res.end();
 }
@@ -277,7 +277,7 @@ router
             res.end();
         })
         .catch((err) => {
-            onError(err);
+            onError(res, err);
         });
     })
     .post("/checkDomainName", (req, res) => {

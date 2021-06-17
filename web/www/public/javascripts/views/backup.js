@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -245,6 +245,10 @@ window.BackupView = function ($, apiService, loaderService) {
                     $view.find("#backupConsumerStorageScheduleSettingsBox").removeClass(displayNoneClass);
                     $scheduleSettingsBox.find(".radioBox[data-value='" + storage.params.title + "']").click();
                     if (storage.isThirdPartyDocs) {
+                        if (!checkedThirdParty) {
+                            toastr.error(window.Resource.AutomaticDataBackup + ": " + window.Resource.ErrorStorageIsNull);
+                            break;
+                        }
                         fillSelectedStorages(selectorId, storageId, checkedThirdParty.dataFolderId, storage.params.filePath);
                         var teamlabStorageFolderSelectorTitle = storage.params.filePath;
                         $teamlabStorageFolderSelector = $scheduleSettingsBox.find('.teamlabStorageFolderSelector');
@@ -694,6 +698,14 @@ window.BackupView = function ($, apiService, loaderService) {
         }
     }
 
+    function checkValid(consumer, key, value) {
+        var needCheck = true;
+        if  (consumer == "S3")  {
+            needCheck = key == "bucket" || key == "region";
+        }
+        return needCheck ? !!value : true;
+    }
+
     function getStorage($box) {
         var $storage = $box.find('.buttonGroup .checked');
         selectorId = $storage.attr('id');
@@ -705,6 +717,11 @@ window.BackupView = function ($, apiService, loaderService) {
         switch (storage.id) {
             case storageTypes.Consumers:
             case storageTypes.Docs:
+                if (storage.id != storageTypes.Docs && !checkedThirdParty) {
+                    toastr.error(window.Resource.ErrorStorageIsNull);
+                    return false;
+                }
+
                 if (storage.id != storageTypes.Docs && !checkedThirdParty.isThirdPartyDocs) {
                     var isError;
                     var $selectedConsumer = $box.find('.consumerStorageSettingsBox');
@@ -714,12 +731,14 @@ window.BackupView = function ($, apiService, loaderService) {
                     var settingsLength = $settings.length;
                     for (var i = 0; i < settingsLength; i++) {
                         var $item = $($settings[i]);
-                        if (false) { //!$item.val() temp fix
+                        var itemKey = $item.parent().attr("data-id");
+                        var itemValue = $item.val();
+                        if (!checkValid(selectedConsumer, itemKey, itemValue)) {
                             $item.addClass(withErrorClass);
                             isError = true;
-                        }
-                        else {
-                            storage.params.push({ key: $item.parent().attr("data-id"), value: $item.val() });
+                        } else {
+                            $item.removeClass(withErrorClass);
+                            storage.params.push({ key: itemKey, value: itemValue });
                         }
                     }
 

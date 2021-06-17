@@ -5,5 +5,9 @@
 **/log/
 **/iisnode/
 **/.vscode/
+**/.vs/
+*.sln
+*.suo
+*.user
 web/www/public/stylesheets/*.css
 web/www/public/stylesheets/combined.less

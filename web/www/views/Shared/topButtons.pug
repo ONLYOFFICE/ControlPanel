@@ -66,8 +66,10 @@ div.top-panel-btns-container
 
   -}
 
+  -if(tenantExtra.enableTariffPage){
   - var linkText = ((tenantExtra.enterprise && !(tenantExtra.trial || tenantExtra.defaultTariff)) ? controlPanelResource.ActivateRenewSubscription : controlPanelResource.ActivateUpgradeToEnterprise)
   a.top-link.nav-activate.top-btn(href=config.makePath("activate"), tabindex="1", title=linkText)= linkText
+  -}
 
   -if(tenantExtra.opensource){
   a.button.green.gift-btn.top-btn(href=config.makePath("gift"), tabindex="1", title=controlPanelResource.UpgradeToProHeader)= controlPanelResource.UpgradeToProHeader

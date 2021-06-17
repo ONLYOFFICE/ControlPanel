@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -295,6 +295,14 @@ window.StorageView = function ($, apiService, loaderService) {
 
     }
 
+    function checkValid(consumer, key, value) {
+        var needCheck = true;
+        if  (consumer == "S3")  {
+            needCheck = key == "bucket" || key == "region";
+        }
+        return needCheck ? !!value : true;
+    }
+
     function getStorage($box) {
         var $storage = $box.find('.radioBox.checked');
         var storage = {
@@ -312,12 +320,14 @@ window.StorageView = function ($, apiService, loaderService) {
             var isError;
             for (var i = 0; i < countTextBoxes; i++) {
                 var $item = $(flexContainer[i]).find('.textBox');
-                if (!$item.val()) {
+                var itemKey = $item.parent().attr("data-id");
+                var itemValue = $item.val();
+                if (!checkValid(storage.id, itemKey, itemValue)) {
                     $item.addClass(withErrorClass);
                     isError = true;
-                }
-                else {
-                    storage.params.push({ key: $item.parent().attr("data-id"), value: $item.val() })
+                } else {
+                    $item.removeClass(withErrorClass);
+                    storage.params.push({ key: itemKey, value: itemValue })
                 }
             }
 

@@ -1,4 +1,5 @@
 ﻿div.layoutContent
+  - var tenantExtraExist = (typeof tenantExtra == "object")
   - var settings = (whiteLabelSettings ? whiteLabelSettings : [])
   - var licensor = (settings.find(function(item){return item.isLicensor}))
   - var companyName = (licensor ? licensor.companyName : "")
@@ -56,6 +57,8 @@
 
         -}
 
+      -if (tenantExtraExist && tenantExtra.opensource && !tenantExtra.customMode) {
       br
       div!= controlPanelResource.format("AboutLicensedUnderApache", "<a href='" + controlPanelResource.AboutLicensedUnderApacheUrl  + "' target='_blank' class='link underline'>", "</a>")
       div!= controlPanelResource.format("AboutSourceCode", "<a href='" + controlPanelResource.AboutSourceCodeUrl  + "' target='_blank' class='link underline'>", "</a>")
+      -}

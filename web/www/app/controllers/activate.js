@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ const router = require('express').Router(),
     activateCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'activate.pug')),
     fullAccess = require('../middleware/fullAccess.js'),
     tenantExtra = require('../middleware/tenantExtra.js'),
+    enableTariffPage = require('../middleware/enableTariffPage.js'),
     apiManager = require('../apiRequestManager.js').apiManager,
     formidable = require('formidable'),
     fs = require('fs');
@@ -77,6 +78,7 @@ function activateLicense(req, res) {
 router
     .use(fullAccess())
     .use(tenantExtra())
+    .use(enableTariffPage())
     .get("/", (req, res) => {
         res.setHeader('content-type', 'text/html');
 

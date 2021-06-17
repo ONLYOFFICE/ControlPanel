@@ -1,6 +1,6 @@
 /*
  *
- * (c) Copyright Ascensio System Limited 2010-2020
+ * (c) Copyright Ascensio System Limited 2010-2021
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -171,14 +171,15 @@ window.versionManager = (function () {
         var self = $(btn),
 
             request = {
-                serverType : self.attr("data-update-server"),
-                action     : self.attr("data-update-action")
+                serverType: self.attr("data-update-server"),
+                action: self.attr("data-update-action"),
+                licenseAgreementsUrl: self.attr("data-license-agreements")
             };
 
         if (self.hasClass("disabled")) return;
 
-        if (isReqForInstallOrUpdate(request)) { //Confirmation popup should be shown
-            installMailServer(request, btn);
+        if (isReqForInstallOrUpdate(request)) {
+            showDialog(request, btn);
         } else {
             updateComplete(request, btn);
         }
@@ -225,26 +226,49 @@ window.versionManager = (function () {
             });
     }
 
-    function installMailServer(request, btn) {
-        if (isReqMailServer(request) && isReqForInstall(request)) { // Install mail server
-            $("#domainNameDialog .domain-name-ok")
+    function showDialog(request, btn) {
+        if ((isReqMailServer(request) || isReqDocumentServer(request)) && isReqForInstall(request)) {
+            showLicenseDialog(request, btn);
+        } else {
+            showConfirmationDialog(request, btn);
+        }
+    }
+
+    function showLicenseDialog(request, btn) {
+        $("#licenseAgreementsDialog .link").attr("href", request.licenseAgreementsUrl)
+
+        $("#licenseAgreementsDialog .license-agreements-ok")
+            .off(clickEventName)
+            .on(clickEventName, function () {
+                if (isReqMailServer(request)) {
+                    showDomainDialog(request, btn);
+                } else {
+                    showConfirmationDialog(request, btn);
+                }
+            });
+
+        blockUI.show("licenseAgreementsDialog", 500, 500, 0, 0, 1000);
+    }
+
+    function showDomainDialog(request, btn) {
+        $("#domainNameDialog .domain-name-ok")
                 .off(clickEventName)
                 .on(clickEventName, function () {
                     checkDomainName(request, btn);
                 });
 
-            blockUI.show("domainNameDialog", 500, 500, 0, 0, 1000);
+        blockUI.show("domainNameDialog", 500, 500, 0, 0, 1000);
+    }
 
-        } else {
-            $("#confirmationInstallOrUpdateDialog .confirmation-ok")
-                .off(clickEventName)
-                .on(clickEventName, function () {
-                    blockUI.hide();
-                    updateComplete(request, btn);
-                });
+    function showConfirmationDialog(request, btn) {
+        $("#confirmationInstallOrUpdateDialog .confirmation-ok")
+            .off(clickEventName)
+            .on(clickEventName, function () {
+                blockUI.hide();
+                updateComplete(request, btn);
+            });
 
-            blockUI.show("confirmationInstallOrUpdateDialog", 500, 350, 0, 0, 1000);
-        }
+        blockUI.show("confirmationInstallOrUpdateDialog", 500, 500, 0, 0, 1000);
     }
 
     function isReqForInstall(request) {
@@ -261,6 +285,10 @@ window.versionManager = (function () {
 
     function isReqMailServer(request) {
         return request.serverType == "2";
+    }
+
+    function isReqDocumentServer(request) {
+        return request.serverType == "1";
     }
 
     function updateComplete(request, btn) {
