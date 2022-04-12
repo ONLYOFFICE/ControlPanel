@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * (c) Copyright Ascensio System Limited 2010-2021
  * 
@@ -79,6 +79,12 @@ class UpdateItemBase {
     }
 
     setChangeLogUrl() {
+        const customChangeLogUrl = config.get("customMode:" + this.serverTypeAsString +  "ChangeLogUrl");
+        if (typeof customChangeLogUrl !== "undefined") {
+            this.changeLogUrl = customChangeLogUrl || "";
+            return;
+        }
+
         const helpcenter = config.get("helpcenter");
         const type = this.serverTypeAsString.toLowerCase().replace("server","");
         this.changeLogUrl = helpcenter ? this.cpResource.ChangeLogLink.replace("{0}", helpcenter).replace("{1}", type) : null;

@@ -23,13 +23,17 @@ const router = require('express').Router(),
     fullAccess = require('../middleware/fullAccess.js'),
     tenantExtra = require('../middleware/tenantExtra.js'),
     enableTariffPage = require('../middleware/enableTariffPage.js'),
-    apiManager = require('../apiRequestManager.js').apiManager,
+    arm = require('../apiRequestManager.js'),
+    apiSystemManager = arm.apiSystemManager,
+    apiManager = arm.apiManager,
     formidable = require('formidable'),
-    fs = require('fs');
+    fs = require('fs'),
+    moment = require('moment');
 
 const cacheMinutes = 15;
 let onGetComponentsDate = new Date();
 let components = null;
+let quotaUsers = null;
 
 function uploadLicense(req, res) {
     const form = new formidable.IncomingForm();
@@ -75,6 +79,37 @@ function activateLicense(req, res) {
         });
 }
 
+function getReport(req, res) {
+    const filename = req.resources.controlPanelResource.format("ActivateReportFileName", moment().format("L LTS"));
+
+    let content = req.resources.controlPanelResource.ActivateReportFileHeader + "\n";
+
+    for (let prop in req.session.tenantExtra.docServerUserQuota) {
+        let date = moment.utc(req.session.tenantExtra.docServerUserQuota[prop]).format('L LTS');
+        let user = quotaUsers.find(item => item.id === prop);
+        if (user) {
+            content += user.id + "," + user.name + "," + user.email + "," + user.link + "," + date + "\n";
+        } else {
+            content += prop + ",,,," + date + "\n";
+        }
+    }
+
+    const params = {
+        method: "POST",
+        body: Buffer.from(content, "utf8")
+    };
+
+    apiManager.makeRequest("files/@my/insert?createNewIfExist=true&title=" + encodeURIComponent(filename), req, params)
+        .then((result) => {
+            res.send({ success: true, url: result.webUrl });
+            res.end();
+        })
+        .catch((error) => {
+            res.send({ success: false, message: error });
+            res.end();
+        });
+}
+
 router
     .use(fullAccess())
     .use(tenantExtra())
@@ -89,11 +124,24 @@ router
         const additionalSettingsPromise = apiManager.get("settings/rebranding/additional.json", req);
         const mailSettingsPromise = apiManager.get("settings/rebranding/mail.json", req);
 
-        Promise.all([additionalSettingsPromise, mailSettingsPromise])
+        const userIds = req.session.tenantExtra.docServerUserQuota ? Object.keys(req.session.tenantExtra.docServerUserQuota) : [];
+
+        const findPeoplePromise = apiSystemManager.makeRequest("people/find", req,
+        {
+            method: "POST",
+            body: userIds,
+            json: true
+        });
+
+        Promise.all([additionalSettingsPromise, mailSettingsPromise, findPeoplePromise])
             .then((result) => {
+                quotaUsers = result[2];
+
                 Object.assign(data, {
                     additionalSettings: result[0],
-                    mailSettings: result[1]
+                    mailSettings: result[1],
+                    docServerUserQuotaLength: userIds.length,
+                    docServerUsersCount: quotaUsers.length
                 });
 
                 if (req.session.tenantExtra.enterprise) {
@@ -130,6 +178,7 @@ router
             });
     })
     .post("/uploadlicense", uploadLicense)
-    .post("/activatelicense", activateLicense);
+    .post("/activatelicense", activateLicense)
+    .get("/report", getReport);
 
 module.exports = router;

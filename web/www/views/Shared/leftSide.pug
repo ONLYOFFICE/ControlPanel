@@ -24,9 +24,11 @@
     li.with-icon.restore
       a.nav-link.nav-restore(href=config.makePath("restore"), tab-index="-1")
         =controlPanelResource.Restore
+    -if(!customMode){
     li.with-icon.storage
       a.nav-link.nav-storage(href=config.makePath("storage"), tab-index="-1")
         =controlPanelResource.Storage
+    -}
     -if(config.controllers.includes("update.js")){
     li.with-icon.update
       a.nav-link.nav-update(href=config.makePath("update"), tab-index="-1")

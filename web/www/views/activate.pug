@@ -1,6 +1,9 @@
 ﻿extends Shared/homeLayout
 
 block rightSide
+  - var helpcenter = (config.get("helpcenter") || "")
+  - var licenseByUser = (tenantExtra.docServerUserQuota && tenantExtra.docServerLicense && tenantExtra.docServerLicense.users_count > 0)
+  - var userQuotaPercent = (licenseByUser ? parseInt(docServerUserQuotaLength*100/tenantExtra.docServerLicense.users_count) : 0)
   -if(tenantExtra.enterprise && (tenantExtra.trial || tenantExtra.defaultTariff)){
   h1.blue-text
     span.header-icon.upgrade
@@ -30,7 +33,12 @@ block rightSide
   -}
   -if(tenantExtra.enterprise && !tenantExtra.defaultTariff && !tenantExtra.trial){
   div.tariff
+    -if(!licenseByUser){
     h3!=controlPanelResource.ActivateTariffEnterpriseDescr
+    -}
+    -if(licenseByUser){
+    h3!=controlPanelResource.format("ActivateTariffEnterpriseDescrByUsers", "<a id='userQuotaDescrLink' class='link underline'>" + docServerUserQuotaLength + "/" + tenantExtra.docServerLicense.users_count + "</a>")
+    -}
     -if(!tariff.dueDateIsMax || !tariff.licenseDateIsMax){
     div!=controlPanelResource.format("ActivateTariffEnterpriseExpiration", tariff.dueDateIsMax ? tariff.licenseDateStr : tariff.dueDateStr)
     -}
@@ -48,9 +56,9 @@ block rightSide
     -if(tenantExtra.enterprise){
     h2.blue-text=controlPanelResource.ActivateToProBannerHeaderTrial
     -}
-    div.banner-item.pro
-      h3=controlPanelResource.UpgradeToProBannerItemProFunctionalityHeader
-      div=controlPanelResource.UpgradeToProBannerItemProDescr
+    //-div.banner-item.pro
+    //-  h3=controlPanelResource.UpgradeToProBannerItemProFunctionalityHeader
+    //-  div=controlPanelResource.UpgradeToProBannerItemProDescr
     div.banner-item.scalability
       h3=controlPanelResource.UpgradeToProBannerItemScalabilityHeader
       div=controlPanelResource.UpgradeToProBannerItemScalabilityDescr
@@ -80,7 +88,6 @@ block rightSide
   -if(tenantExtra.opensource){
   div.instruction
     h3=controlPanelResource.ActivateToProBannerInstructionHeader
-    - var helpcenter = (config.get("helpcenter") || "")
     -if (helpcenter) {
     ul
       li
@@ -135,6 +142,33 @@ block rightSide
       -}
     -}
 
+  -if(licenseByUser){
+
+  div#userQuotaDescrDialog.popup
+    div.popup-caption
+      = controlPanelResource.ActivateUserQuotaDialogHdr
+      div.popup-close &times;
+    div.popup-body
+      div.popup-content
+        div.data-descr
+          div
+            div= controlPanelResource.ActivateUserQuotaDialogContentText1
+            b= controlPanelResource.ActivateUserQuotaDialogContentText2
+          div.block
+            div!= controlPanelResource.format("ActivateUserQuotaDialogContentText3", "<b>", "</b>", tenantExtra.docServerLicense.users_count)
+            div!= controlPanelResource.format("ActivateUserQuotaDialogContentText4", "<b>", "</b>", docServerUserQuotaLength, docServerUsersCount, (docServerUserQuotaLength - docServerUsersCount))
+            div.progress-wrapper
+              div.progress-value(style=("width: " + userQuotaPercent + "%;"), class=((userQuotaPercent < 50) ? "" : (userQuotaPercent < 95) ? "info-value" : "warn-value"))
+          div= controlPanelResource.ActivateUserQuotaDialogContentText5
+
+        div.small-button-container
+          a#reportBtn.button.green= controlPanelResource.ActivateUserQuotaDialogBtn
+          -if (helpcenter) {
+          span.splitter-buttons
+          span.splitter-buttons
+          a.link.underline(href=controlPanelResource.format("ActivateUserQuotaDialogHelpCenterUrl", helpcenter), target="_blank")=controlPanelResource.ActivateUserQuotaDialogContentText6
+          -}
+  -}
 
 append bodyscripts
   script(type="text/javascript").

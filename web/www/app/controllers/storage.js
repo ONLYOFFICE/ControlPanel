@@ -21,10 +21,12 @@ const baseController = require('./base.js'),
     pug = require('pug'),
     path = require('path'),
     storageCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'storage.pug')),
-    fullAccess = require('../middleware/fullAccess.js');
+    fullAccess = require('../middleware/fullAccess.js'),
+    notCustomMode = require('../middleware/notCustomMode.js');
 
 router
     .use(fullAccess())
+    .use(notCustomMode())
     .get("/", (req, res) => {
         res.setHeader('content-type', 'text/html');
         res.end(storageCompiled(new Model(req, req.resources.controlPanelResource.Storage)));

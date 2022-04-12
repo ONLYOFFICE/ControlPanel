@@ -1,0 +1,5 @@
+FROM onlyoffice/controlpanel:latest
+
+RUN cd /var/www/onlyoffice/controlpanel/www/config/ && \
+    sed -i 's/\("ami":\).*/\1 true,/' config.json && \
+    sed -i 's/\("ami":\).*/\1 true,/' production.json

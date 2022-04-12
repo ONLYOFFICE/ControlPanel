@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * (c) Copyright Ascensio System Limited 2010-2021
  * 
@@ -81,7 +81,9 @@ module.exports = function (req, res, next) {
                 licenseAccept: result.licenseAccept,
                 trial: result.tariff.state == 0,
                 defaultTariff: result.quota.id == -1,
-                enableTariffPage: result.enableTariffPage
+                enableTariffPage: result.enableTariffPage,
+                docServerUserQuota: result.docServerUserQuota,
+                docServerLicense: result.docServerLicense
             };
 
             paymentCheck(req, res, next, result.quota, result.tariff);

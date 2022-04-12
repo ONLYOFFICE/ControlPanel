@@ -9,7 +9,6 @@ Control Panel is distributed as a part of [ONLYOFFICE Groups (Community Server)]
 * automate backups and update process, 
 * easily update ONLYOFFICE, 
 * centralize access with SSO and LDAP,
-* enable full-text search in document and mail content with Elasticsearch, 
 * track user actions, 
 * add your logo, company info, etc to use ONLYOFFICE platform under your own brand, 
 * create separate web-offices for different company branches with multitenancy. 
@@ -28,7 +27,7 @@ License: [Apache](https://www.apache.org/licenses/LICENSE-2.0)
 
 SaaS version: [https://www.onlyoffice.com/cloud-office.aspx](https://www.onlyoffice.com/cloud-office.aspx?utm_source=github&utm_medium=cpc&utm_campaign=GitHubCP "https://www.onlyoffice.com/cloud-office.aspx?utm_source=github&utm_medium=cpc&utm_campaign=GitHubCP")
 
-ONLYOFFICE Workspace (on-premise installation): [https://www.onlyoffice.com/workspace.aspx](https://www.onlyoffice.com/workspace.aspx/?utm_source=github&utm_medium=cpc&utm_campaign=GitHubCP)
+ONLYOFFICE Workspace (on-premise installation): [link]
 
 ## User Feedback and Support
 

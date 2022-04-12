@@ -328,6 +328,11 @@ window.BackupView = function ($, apiService, loaderService) {
     }
 
     function initConsumerStorages(storages) {
+        if (storages.length === 0) {
+            $view.find("#backupConsumerStorage, #scheduleConsumerStorage").hide();
+            return;
+        }
+
         $backupConsumerStorageSettingsBox = $view.find("#backupConsumerStorageSettingsBox");
         var selectedConsumer = storages.find(function (item) { return item.isSet }) || storages[0];
         initConsumerStorage($backupConsumerStorageSettingsBox, selectedConsumer, storages);

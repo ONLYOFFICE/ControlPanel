@@ -56,6 +56,10 @@ window.ActivateView = function ($, apiService, loaderService) {
                 }
             });
 
+        $("#userQuotaDescrLink").on("click", function () {
+            Common.blockUI.show("userQuotaDescrDialog", 600, 660, 0, 0, 1000);
+        });
+
         $("#agreementsCbx").on("click", function () {
             agree = $(this).hasClass("checked");
             unlockButton();
@@ -77,6 +81,24 @@ window.ActivateView = function ($, apiService, loaderService) {
                     toastr.error(window.Resource.OperationFailedError);
                 });
         });
+
+        $("#reportBtn").on("click", function () {
+            var newWindow = window.open("about:blank", "_blank");
+            apiService.get("activate/report")
+                .done(function (res) {
+                    if (res.success) {
+                        newWindow.location.href = res.url;
+                        newWindow.focus();
+                    } else {
+                        newWindow.close();
+                        toastr.error(res.message);
+                    }
+                })
+                .fail(function () {
+                    toastr.error(window.Resource.OperationFailedError);
+                });
+        });
+
     }
 
     return {

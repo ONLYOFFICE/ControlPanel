@@ -50,3 +50,39 @@
         }
     }
 }
+#userQuotaDescrDialog {
+    .data-descr {
+        line-height: 18px;
+    }
+    .block {
+        margin: 16px 0;
+    }
+    .progress-wrapper {
+        height: 8px;
+        margin-top: 8px;
+        border-radius: 4px;
+        position: relative;
+        background: linear-gradient(256deg, #F7F7F7 0%, #F4F4F4 100%);
+        overflow: hidden;
+
+        .progress-value {
+            position: absolute;
+            background: #66BB6A;
+            height: 8px;
+            border-radius: 4px;
+            left: 0;
+            top: 0;
+
+            &.info-value {
+                background: #FFD482;
+            }
+
+            &.warn-value {
+                background: #FCA689;
+            }
+        }
+    }
+    b {
+        font-weight: 600;
+    }
+}

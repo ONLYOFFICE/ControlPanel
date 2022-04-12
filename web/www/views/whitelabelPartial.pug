@@ -36,6 +36,21 @@ div#formContentWhitelabel.display-none
               div.logo-change-container
                 input#logoUploader_4(type="file" name="logoUploader_4")
                 a.button.black= cpWhiteLabelResource.ChangeLogoButton
+
+    div.clear-fix.container-base
+      div.table-header= cpWhiteLabelResource.LogoDocsEditorEmbed + " (" + config.logoDocsEditorEmbedSize.width + "x" + config.logoDocsEditorEmbedSize.height + "):"
+      div.container-with-border
+        table
+          tr
+            td.paddingBase
+              div.logo-img-container
+                img.borderBase.logo_5
+                canvas#canvas_logo_5.borderBase(width="172" height="40" data-fontsize="22" data-fontcolor="#333")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase
+              input#logoPath_5(type="hidden" value="")
+              div.logo-change-container
+                input#logoUploader_5(type="file" name="logoUploader_5")
+                a.button.black= cpWhiteLabelResource.ChangeLogoButton
     -}
 
     div.clear-fix.container-base
@@ -54,7 +69,7 @@ div#formContentWhitelabel.display-none
                 a.button.black= cpWhiteLabelResource.ChangeLogoButton
 
     div.clear-fix.container-base
-      div.table-header= cpWhiteLabelResource.LogoDark + " (" + config.logoDarkSize.width + "x" + config.logoDarkSize.height + "):"
+      div.table-header= cpWhiteLabelResource.LogoDarkHdr + " (" + config.logoDarkSize.width + "x" + config.logoDarkSize.height + "):"
       div.container-with-border
         table
           tr

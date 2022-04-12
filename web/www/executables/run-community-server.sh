@@ -225,7 +225,7 @@ if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
 	elif [ "$UPDATE" == "1" ]; then
 		sudo bash ${DIR}/tools/check-bindings.sh ${COMMUNITY_SERVER_ID} "/var/lib/mysql";
 
-		COMMUNITY_PORT=$(sudo docker port $COMMUNITY_SERVER_ID 80 | sed 's/.*://')
+		COMMUNITY_PORT=$(sudo docker port $COMMUNITY_SERVER_ID 80 | sed 's/.*://' | head -n1)
 
 		if [[ -z ${COMMUNITY_PORT} ]]; then
 			COMMUNITY_PORT=80
