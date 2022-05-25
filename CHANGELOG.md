@@ -1,5 +1,11 @@
 # Change log
 
+## 3.1.0
+
+* Added the Data Import page that allows to import data from Nextcloud, ownCloud and GoogleWorkspace to ONLYOFFICE Workspace.
+* Moved Elasticsearch to a separate container.
+* Fixed bugs.
+
 ## 3.0.0
 
 ### Update
