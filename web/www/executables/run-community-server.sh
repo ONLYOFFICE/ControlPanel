@@ -100,6 +100,16 @@ while [ "$1" != "" ]; do
 			shift
 		;;
 
+		-ec | --elasticsearch )
+			ELASTICSEARCH_CONTAINER_NAME=$2
+			shift
+		;;
+
+		-ei | --elasticimage )
+			ELASTICSEARCH_IMAGE_NAME=$2
+			shift
+		;;
+
 		-product | --product )
 			PRODUCT=$2
 			shift
@@ -126,6 +136,8 @@ while [ "$1" != "" ]; do
 			echo "      -p, --password                 dockerhub password"
 			echo "      -path, --imagepath             image path"
 			echo "      -mysql, --mysql                mysql container name"
+			echo "      -ec, --elasticsearch           elasticsearch container name"
+			echo "      -ei, --elasticimage            elasticsearch image name"
 			echo "      -product, --product            product"
 			echo "      -hostdir, --hostdir            host dir"
 			echo "      -?, -h, --help                 this help"
@@ -156,6 +168,7 @@ DOCUMENT_SERVER_ID=$(sudo docker ps -aqf "name=$DOCUMENT_CONTAINER_NAME");
 MAIL_SERVER_ID=$(sudo docker ps -aqf "name=$MAIL_CONTAINER_NAME");
 CONTROL_PANEL_ID=$(sudo docker ps -aqf "name=$CONTROLPANEL_CONTAINER_NAME");
 MYSQL_SERVER_ID=$(sudo docker ps -aqf "name=$MYSQL_CONTAINER_NAME");
+ELASTICSEARCH_SERVER_ID=$(sudo docker ps -aqf "name=$ELASTICSEARCH_CONTAINER_NAME");
 JWT_SECRET="";
 CORE_MACHINEKEY=$(sudo bash ${DIR}/tools/get-machinekey.sh $CONTROLPANEL_CONTAINER_NAME $COMMUNITY_CONTAINER_NAME $PRODUCT);
 MACHINEKEY_PARAM=$(echo "${PRODUCT}_CORE_MACHINEKEY" | awk '{print toupper($0)}');
@@ -187,6 +200,23 @@ if [ "$UPDATE" == "1" ]; then
 		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "MYSQL_SERVER_PASS=" | sed 's/^.*=//');
 		if [[ -n ${PARAMETER_VALUE} ]]; then
 			MYSQL_PASSWORD="$PARAMETER_VALUE";
+		fi
+
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "ELASTICSEARCH_SERVER_HOST=" | sed 's/^.*=//');
+		if [[ -n ${PARAMETER_VALUE} ]]; then
+			ELASTICSEARCH_SERVER_HOST="$PARAMETER_VALUE";
+		fi
+
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "ELASTICSEARCH_SERVER_HTTPPORT=" | sed 's/^.*=//');
+		if [[ -n ${PARAMETER_VALUE} ]]; then
+			ELASTICSEARCH_SERVER_HTTPPORT="$PARAMETER_VALUE";
+		fi
+
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "MAIL_IMAPSYNC_START_DATE=" | sed 's/^.*=//');
+		if [[ -n ${PARAMETER_VALUE} ]]; then
+			MAIL_IMAPSYNC_START_DATE="$PARAMETER_VALUE";
+		else
+			MAIL_IMAPSYNC_START_DATE=$(date +"%Y-%m-%dT%H:%M:%S");
 		fi
 	fi
 
@@ -265,6 +295,30 @@ if [[ -z ${VERSION} ]]; then
 	VERSION=$(${GET_VERSION_COMMAND});
 fi
 
+ELASTICSEARCH_CURRENT_VERSION=$(sudo bash ${DIR}/tools/get-current-version.sh $ELASTICSEARCH_CONTAINER_NAME);
+ELASTICSEARCH_AVAILABLE_VERSION=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' $COMMUNITY_IMAGE_NAME:$VERSION | grep "ELASTICSEARCH_VERSION=" | sed 's/^.*=//');
+
+if [[ ${ELASTICSEARCH_CURRENT_VERSION} != ${ELASTICSEARCH_AVAILABLE_VERSION} \
+   && ${ELASTICSEARCH_SERVER_HOST} = ${ELASTICSEARCH_CONTAINER_NAME} || -z ${ELASTICSEARCH_SERVER_HOST} ]]; then
+	if [[ -n ${ELASTICSEARCH_SERVER_ID} ]]; then
+		sudo bash ${DIR}/tools/remove-container.sh $ELASTICSEARCH_CONTAINER_NAME
+	fi
+	args=();
+	args+=(--name "$ELASTICSEARCH_CONTAINER_NAME");
+
+	args+=(-e "discovery.type=single-node");
+	args+=(-e "bootstrap.memory_lock=true");
+	args+=(-e "ES_JAVA_OPTS=-Xms512m -Xmx512m -Dlog4j2.formatMsgNoLookups=true");
+	args+=(-e "indices.fielddata.cache.size=30%");
+	args+=(-e "indices.memory.index_buffer_size=30%");
+	args+=(--ulimit "nofile=65535:65535");
+	args+=(--ulimit "memlock=-1:-1");
+	args+=(-v "es_data:/usr/share/elasticsearch/data");
+	args+=("$ELASTICSEARCH_IMAGE_NAME:$ELASTICSEARCH_AVAILABLE_VERSION");
+
+	sudo docker run --net ${PRODUCT} -itd --restart=always "${args[@]}";
+fi
+
 args=();
 args+=(--name "$COMMUNITY_CONTAINER_NAME")
 args+=(-p "$COMMUNITY_PORT:80")
@@ -299,6 +353,10 @@ if [[ -n ${MAIL_SERVER_ID} ]]; then
 	fi
 fi
 
+if [[ -n ${MAIL_IMAPSYNC_START_DATE} ]]; then
+	args+=(-e "MAIL_IMAPSYNC_START_DATE=$MAIL_IMAPSYNC_START_DATE");
+fi
+
 if [[ -n ${CONTROL_PANEL_ID} ]]; then
 	args+=(-e "CONTROL_PANEL_PORT_80_TCP=80");
 	args+=(-e "CONTROL_PANEL_PORT_80_TCP_ADDR=$CONTROLPANEL_CONTAINER_NAME");
@@ -313,6 +371,9 @@ fi
 if [[ -n ${CORE_MACHINEKEY} ]]; then
 	args+=(-e "$MACHINEKEY_PARAM=$CORE_MACHINEKEY");
 fi
+
+args+=(-e "ELASTICSEARCH_SERVER_HOST=${ELASTICSEARCH_SERVER_HOST:-$ELASTICSEARCH_CONTAINER_NAME}");
+args+=(-e "ELASTICSEARCH_SERVER_HTTPPORT=${ELASTICSEARCH_SERVER_HTTPPORT:-9200}");
 
 args+=(-v "$HOST_DIR/CommunityServer/letsencrypt:/etc/letsencrypt");
 args+=(-v "/sys/fs/cgroup:/sys/fs/cgroup:ro");

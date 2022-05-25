@@ -92,7 +92,6 @@
     let uploadDir = "";
 
     router
-        .use(require('../middleware/quota.js')("sso"))
         .get("/", (req, res) => {
             res.setHeader('content-type', 'text/html');
             const data = new Model(req, req.resources.controlPanelResource.Sso);

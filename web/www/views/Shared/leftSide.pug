@@ -37,16 +37,14 @@
     li.with-icon.search
       a.nav-link.nav-search(href=config.makePath("search"), tab-index="-1")
         =controlPanelResource.Search
-    -if(quota.ssbranding && !customMode){
+    -if(!customMode){
     li.with-icon.rebranding
       a.nav-link.nav-rebranding(href=config.makePath("rebranding"), tab-index="-1")
         =controlPanelResource.WhiteLabel
     -}
-    -if(quota.countPortals > 0){
     li.with-icon.multiportals
       a.nav-link.nav-multiportals(href=config.makePath("multiPortals"), tab-index="-1")
         =multiPortals
-    -}
 
     -}
 
@@ -56,31 +54,26 @@
       div#portalSettingsHelper.popup_helper
         p= controlPanelResource.PortalSettingsHelper
 
-    -if(quota.privacyroom && !customMode){
+    -if(!customMode){
     li.with-icon.privacyroom
       a.nav-link.nav-privacyroom(href=config.makePath("privacyRoom"), tab-index="-1")
         =controlPanelResource.PrivacyRoom
     -}
-    -if(quota.ldap){
     li.with-icon.ldap
       a.nav-link.nav-ldap(href=config.makePath("ldap"), tab-index="-1")
         =controlPanelResource.Ldap
-    -}
-    -if(quota.sso){
     li.with-icon.sso
       a.nav-link.nav-sso(href=config.makePath("sso"), tab-index="-1")
         =controlPanelResource.Sso
-    -}
-    -if(quota.whiteLabel){
     li.with-icon.whitelabel
       a.nav-link.nav-whitelabel(href=config.makePath("whitelabel"), tab-index="-1")
         =controlPanelResource.WhiteLabel
-    -}
-    -if(quota.audit){
     li.with-icon.loginhistory
       a.nav-link.nav-loginhistory(href=config.makePath("loginHistory"), tab-index="-1")
         =controlPanelResource.LoginHistory
     li.with-icon.audittrail
       a.nav-link.nav-audittrail(href=config.makePath("auditTrail"), tab-index="-1")
         =controlPanelResource.AuditTrail
-    -}
+    li.with-icon.migration
+      a.nav-link.nav-migration(href=config.makePath("migration"), tab-index="-1")
+        =controlPanelResource.Migration

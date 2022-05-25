@@ -1,7 +1,7 @@
 ﻿{
   "version": {
     "current": "2.9.2",
-    "available-url": "http://download.onlyoffice.com/install/windows/updates.txt"
+    "available-url": "https://download.onlyoffice.com/install/windows/updates.txt"
   },
   "core.machinekey": "Vskoproizvolny Salt par Chivreski",
   "maxFileSize": 5242880,
@@ -28,7 +28,7 @@
       "script": "run-community-server.sh",
       "container": "onlyoffice-community-server",
       "image": "onlyoffice/communityserver",
-      "licenseAgreementsUrl": "http://www.apache.org/licenses/LICENSE-2.0"
+      "licenseAgreementsUrl": "https://www.apache.org/licenses/LICENSE-2.0"
     },
     "DocumentServer": {
       "script": "run-document-server.sh",
@@ -48,7 +48,7 @@
       "script": "run-control-panel.sh",
       "container": "onlyoffice-control-panel",
       "image": "onlyoffice/controlpanel",
-      "licenseAgreementsUrl": "http://www.apache.org/licenses/LICENSE-2.0"
+      "licenseAgreementsUrl": "https://www.apache.org/licenses/LICENSE-2.0"
     },
     "MysqlServer": {
       "container": "onlyoffice-mysql-server",
@@ -64,10 +64,15 @@
       "apiUrl": "/ds-vpath/",
       "internalUrl": "http://onlyoffice-document-server/",
       "portalUrl": "http://onlyoffice-community-server/"
+    },
+    "Elasticsearch": {
+      "container": "onlyoffice-elasticsearch",
+      "image": "onlyoffice/elasticsearch"
     }
   },
   "restore": "restore",
-  "hiddenControllers": ["update.js"],
+  "migration": "migration",
+  "hiddenControllers": ["update.js", "contactSupport.js"],
   "sso": {
     "baseUrl": "",
     "metadataUrl": "/sso/metadata",
@@ -75,7 +80,7 @@
     "consumerUrl": "/sso/acs",
     "logoutUrl": "/sso/slo/callback"
   },
-  "helpcenter": "http://helpcenter.onlyoffice.com",
+  "helpcenter": "https://helpcenter.onlyoffice.com",
   "product": {
     "name": "onlyoffice",
     "hostDir": "/app/${name}",

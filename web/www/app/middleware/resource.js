@@ -59,7 +59,6 @@ module.exports = function(req, res, next) {
         cpMultiPortalsResource: new Resource("MultiPortalsResource", "CPMultiPortalsResource", lang),
         cpLdapResource: new Resource("LdapResource", "CPLdapResource", lang),
         cpSsoResource: new Resource("CPSsoResource", "CPSsoResource", lang),
-        cpContactSupportResource: new Resource("CPContactSupportResource", "CPContactSupportResource", lang),
         cpWhiteLabelResource: new Resource("CPWhiteLabelResource", "CPWhiteLabelResource", lang)
     };
     next();

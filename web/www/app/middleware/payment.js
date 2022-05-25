@@ -20,7 +20,7 @@ const apiRequestManager = require('../apiRequestManager.js').apiManager,
     moment = require('moment');
 
 function paymentCheck(req, res, next, quota, tariff) {
-    if (quota && quota.features.indexOf('controlpanel') > -1 && tariff && tariff.state < 3) {
+    if (quota && tariff && tariff.state < 3) {
         next();
         return;
     }

@@ -9,11 +9,15 @@ block rightSide
     p!= controlPanelResource.format("HttpsInfo1", "<b>", "</b>")
 
     - var helpcenter = (config.get("helpcenter") || "")
-    - var type = (config.isMono ? "linux" : "windows" )
+    - var type = (config.isMono ? "Linux" : "Windows" )
+    - var customGenerateCertUrl = config.get("customMode:HttpsGenerateCert" + type +  "Url");
+    - var customOwnCertUrl = config.get("customMode:HttpsOwnCert" + type +  "Url");
+    - var httpsInfo2Url = (typeof customGenerateCertUrl !== "undefined" ? (customGenerateCertUrl || "") : controlPanelResource.format("HttpsInfo2Url", helpcenter, type.toLowerCase()));
+    - var httpsInfo3Url = (typeof customOwnCertUrl !== "undefined" ? (customOwnCertUrl || "") : controlPanelResource.format("HttpsInfo3Url", helpcenter, type.toLowerCase()));
 
     -if(helpcenter){
-    p!= controlPanelResource.format("HttpsInfo2", "<a class=\"link underline\" href=\"" + helpcenter + "/server/enterprise/" + type + "/community/switch-to-https.aspx\" target=\"_blank\">", "</a>")
-    p!= controlPanelResource.format('HttpsInfo3', "<a class=\"link underline\" href=\"" + helpcenter + "/server/" + type + "/community/switch-to-https.aspx\" target=\"_blank\">", "</a>")
+    p!= controlPanelResource.format("HttpsInfo2", "<a class=\"link underline\" href=\"" + httpsInfo2Url + "\" target=\"_blank\">", "</a>")
+    p!= controlPanelResource.format('HttpsInfo3', "<a class=\"link underline\" href=\"" + httpsInfo3Url + "\" target=\"_blank\">", "</a>")
     -}else{
     p!= controlPanelResource.HttpsInfo4
     -}

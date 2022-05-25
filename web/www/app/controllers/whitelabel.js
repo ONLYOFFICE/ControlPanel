@@ -210,7 +210,6 @@ function getUploadDir() {
 }
 
 router
-    .use(require('../middleware/quota.js')("whiteLabel"))
     .get("/", (req, res) => {
         res.setHeader('content-type', 'text/html');
         if (!uploadDir) {

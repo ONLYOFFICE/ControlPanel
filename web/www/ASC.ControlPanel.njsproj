@@ -36,12 +36,12 @@
     <Compile Include="app\controllers\audittrail.js" />
     <Compile Include="app\controllers\backup.js" />
     <Compile Include="app\controllers\base.js" />
-    <Compile Include="app\controllers\contactSupport.js" />
     <Compile Include="app\controllers\https.js" />
     <Compile Include="app\controllers\httpsWin.js" />
     <Compile Include="app\controllers\index.js" />
     <Compile Include="app\controllers\ldap.js" />
     <Compile Include="app\controllers\loginHistory.js" />
+    <Compile Include="app\controllers\migration.js" />
     <Compile Include="app\controllers\multiPortals.js" />
     <Compile Include="app\controllers\rebranding.js" />
     <Compile Include="app\controllers\resource.js" />
@@ -92,13 +92,12 @@
     <Compile Include="public\javascripts\upload.js" />
     <Compile Include="public\javascripts\views\audittrail.js" />
     <Compile Include="public\javascripts\views\backup.js" />
-    <Compile Include="public\javascripts\views\contactsupport.js" />
-    <Compile Include="public\javascripts\views\healthcheck.js" />
     <Compile Include="public\javascripts\views\home.js" />
     <Compile Include="public\javascripts\views\https.js" />
     <Compile Include="public\javascripts\views\ldapsettings.js" />
     <Compile Include="public\javascripts\views\login.js" />
     <Compile Include="public\javascripts\views\loginhistory.js" />
+    <Compile Include="public\javascripts\views\migration.js" />
     <Compile Include="public\javascripts\views\multiportals.js" />
     <Compile Include="public\javascripts\views\rebranding.js" />
     <Compile Include="public\javascripts\views\restore.js" />
@@ -147,7 +146,6 @@
     <Content Include="public\javascripts\views\storage.js" />
     <Content Include="public\javascripts\views\activate.js" />
     <Content Include="public\resources\ControlPanelResource.json" />
-    <Content Include="public\resources\CPContactSupportResource.json" />
     <Content Include="public\resources\CPCountriesResource.json" />
     <Content Include="public\resources\CPLdapResource.json" />
     <Content Include="public\resources\CPMultiPortalsResource.json" />
@@ -155,6 +153,7 @@
     <Content Include="public\resources\CPWhiteLabelResource.json" />
     <Content Include="public\stylesheets\action-menu.less" />
     <Content Include="public\stylesheets\audittrail.less" />
+    <Content Include="public\stylesheets\migration.less" />
     <Content Include="public\stylesheets\backup.less" />
     <Content Include="public\stylesheets\button.less" />
     <Content Include="public\stylesheets\common.less" />
@@ -162,6 +161,16 @@
     <Content Include="public\stylesheets\forms.less" />
     <Content Include="public\stylesheets\header.less" />
     <Content Include="public\stylesheets\images\audittrail.svg" />
+    <Content Include="public\stylesheets\images\migration.svg" />
+    <Content Include="public\stylesheets\images\pencil.svg" />
+    <Content Include="public\stylesheets\images\ok.svg" />
+    <Content Include="public\stylesheets\images\module-people.svg" />
+    <Content Include="public\stylesheets\images\module-mail.svg" />
+    <Content Include="public\stylesheets\images\module-document.svg" />
+    <Content Include="public\stylesheets\images\module-calendar.svg" />
+    <Content Include="public\stylesheets\images\cancel.svg" />
+    <Content Include="public\stylesheets\images\arrow-right.svg" />
+    <Content Include="public\stylesheets\images\arrow-next.svg" />
     <Content Include="public\stylesheets\images\audit_trail_empty_screen.jpg" />
     <Content Include="public\stylesheets\images\backup.svg" />
     <Content Include="public\stylesheets\images\banner-license.svg" />
@@ -188,7 +197,6 @@
     <Content Include="public\stylesheets\images\helper-corner-down.png" />
     <Content Include="public\stylesheets\images\helper-corner.png" />
     <Content Include="public\stylesheets\images\https.svg" />
-    <Content Include="public\stylesheets\images\icons_header.png" />
     <Content Include="public\stylesheets\images\icon_payments.png" />
     <Content Include="public\stylesheets\images\ldap.svg" />
     <Content Include="public\stylesheets\images\loader.gif" />
@@ -260,7 +268,6 @@
     <Content Include="typings.json" />
     <Content Include="views\audittrail.pug" />
     <Content Include="views\backup.pug" />
-    <Content Include="views\contactSupport.pug" />
     <Content Include="views\dateTimeSelector.pug" />
     <Content Include="views\https.pug" />
     <Content Include="views\httpsInfo.pug" />
@@ -268,6 +275,7 @@
     <Content Include="views\index.pug" />
     <Content Include="views\ldap.pug" />
     <Content Include="views\loginHistory.pug" />
+    <Content Include="views\migration.pug" />
     <Content Include="views\multiPortals.pug" />
     <Content Include="views\privacyRoom.pug" />
     <Content Include="views\rebranding.pug" />

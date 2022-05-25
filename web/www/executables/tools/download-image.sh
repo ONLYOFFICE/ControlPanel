@@ -44,6 +44,21 @@ while [ "$1" != "" ]; do
 			shift
 		;;
 
+		-ei | --elasticimage )
+			ELASTICSEARCH_IMAGE=$2
+			shift
+		;;
+
+		-ec | --elastic )
+			ELASTICSEARCH_CONTAINER_NAME=$2
+			shift
+		;;	
+
+		-cc | --community )
+			COMMUNITY_CONTAINER_NAME=$2
+			shift
+		;;
+
 		-? | -h | --help )
 			echo "  Usage $0 [PARAMETER] [[PARAMETER], ...]"
 			echo "    Parameters:"
@@ -53,6 +68,9 @@ while [ "$1" != "" ]; do
 			echo "      -hub, --hub         dockerhub name"
 			echo "      -u, --username      dockerhub username"
 			echo "      -p, --password      dockerhub password"
+			echo "      -ei, --elasticimage elasticsearch image name"
+			echo "      -ec, --elastic      elasticsearch container name"
+			echo "      -cc, --community    communityserver container name"
 			echo "      -?, -h, --help      this help"
 			echo
 			exit 0
@@ -84,4 +102,15 @@ if [[ -n ${USERNAME} && -n ${PASSWORD} ]]; then
 fi
 
 sudo docker pull $IMAGE:$VERSION
+
+#Download elasticsearch image when downloading communityserver
+if [[ -n ${COMMUNITY_CONTAINER_NAME} ]]; then
+	ELASTICSEARCH_SERVER_HOST=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "ELASTICSEARCH_SERVER_HOST=" | sed 's/^.*=//');
+	#Check that elasticsearch host is not external
+	if [[ -z ${ELASTICSEARCH_SERVER_HOST} || ${ELASTICSEARCH_SERVER_HOST} = ${ELASTICSEARCH_CONTAINER_NAME} ]]; then
+		ELASTICSEARCH_VERSION=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${IMAGE}:${VERSION} | grep "ELASTICSEARCH_VERSION=" | sed 's/^.*=//');
+		sudo docker pull ${ELASTICSEARCH_IMAGE}:${ELASTICSEARCH_VERSION}
+	fi
+fi
+
 exit 0;

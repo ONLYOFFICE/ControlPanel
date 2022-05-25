@@ -167,7 +167,7 @@ window.RestoreView = function($, apiService, loaderService) {
         }
         storages.forEach(function(item){
             if (!item.isThirdPartyDocs){ 
-            item.properties.push({name: "filePath", title: window.Resource.RestoreConsumerPath});
+            item.properties.push({name: "filePath", title: window.Resource.RestoreConsumerPath, description: window.Resource.RestoreConsumerPathDscr});
             }
         });
         initThirdPartyResources(storages);
@@ -426,11 +426,19 @@ window.RestoreView = function($, apiService, loaderService) {
     }
 
     function frameLoad(providerKey) {
-        $("#frameFolderSelector")[0].contentWindow.ASC.Files.FileChoice.eventAfter = function () {
-            $("#frameFolderSelector")[0].contentWindow.ASC.Files.FileSelector.showThirdPartyOnly(providerKey);
+        var contentWindow = $("#frameFolderSelector")[0].contentWindow;
+
+        var eventAfter = function () {
+            contentWindow.ASC.Files.FileSelector.showThirdPartyOnly(providerKey);
             loaderService.hideFormBlockLoader($thirdPartyPopupBody);
             $("#frameFolderSelector").css("visibility", "visible");
         };
+
+        contentWindow.ASC.Files.FileChoice.eventAfter = eventAfter;
+
+        if (contentWindow.ASC.Files.FileChoice.isEventAfterTriggered && contentWindow.ASC.Files.FileChoice.isEventAfterTriggered()){
+            eventAfter();
+        }
     }
 
 
@@ -601,6 +609,14 @@ window.RestoreView = function($, apiService, loaderService) {
         }
     }
 
+    function checkValid(consumer, key, value) {
+        var needCheck = true;
+        if  (consumer == "S3")  {
+            needCheck = key == "bucket" || key == "region" || key == "filePath";
+        }
+        return needCheck ? !!value : true;
+    }
+
     function getSource() {
         var $source = $restoreSources.filter('.checked');
         var storage = {
@@ -632,12 +648,14 @@ window.RestoreView = function($, apiService, loaderService) {
                 var settingsLength = $settings.length;
                 for (var i = 0; i < settingsLength; i++) {
                     var $item = $($settings[i]);
-                    if (!$item.val()) {
+                    var itemKey = $item.parent().attr("data-id");
+                    var itemValue = $item.val();
+                    if (!checkValid(selectedConsumer, itemKey, itemValue)) {
                         $item.addClass(withErrorClass);
                         isError = true;
-                    }
-                    else {
-                        storage.params.push({ key: $item.parent().attr("data-id"), value: $item.val() });
+                    } else {
+                        $item.removeClass(withErrorClass);
+                        storage.params.push({ key: itemKey, value: itemValue });
                     }
                 }
                 if (isError) {

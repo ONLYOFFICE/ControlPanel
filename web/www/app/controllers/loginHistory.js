@@ -23,7 +23,6 @@ const baseController = require('./base.js'),
     loginHistory = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'loginHistory.pug'));
 
 router
-    .use(require('../middleware/quota.js')("audit"))
     .get("/", (req, res) => {
         res.setHeader('content-type', 'text/html');
         res.end(loginHistory(new Model(req, req.resources.controlPanelResource.LoginHistory)));

@@ -109,7 +109,6 @@ function getVsyscallError(controlPanelResource, helpcenter) {
 }
 
 router
-    .use(require('../middleware/quota.js')("countPortals"))
     .use(fullAccess())
     .get("/", (req, res) => {
         res.setHeader('content-type', 'text/html');
@@ -149,17 +148,6 @@ router
             .catch((error) => {
                 onError(res, error);
             });
-    })
-    .get("/getPortalsQuota", (req, res) => {
-        res.send({
-            success: true,
-            countPortals: quota(req.session.quota).countportals,
-            dueDate: req.session.tariff.dueDate.startsWith('9999-12-31')
-                ? ''
-                : moment(req.session.tariff.dueDate).format('dddd, MMMM DD, YYYY')
-        });
-
-        res.end();
     })
     .post("/setBaseDomainAndTenantName", (req, res) => {
         try {
@@ -231,20 +219,8 @@ router
     })
     .post("/createNewTenant", (req, res) => {
         co(function*() {
-            const getPortalInfo = apiRequestManager.get("portal.json", req);
-            const getLinkedPortals = apiSystemManager.get("portal/get", req);
+            const portalInfo = yield apiRequestManager.get("portal.json", req);
 
-            const [portalInfo, linkedPortals] = yield [getPortalInfo, getLinkedPortals];
-            const countportals = quota(req.session.quota).countportals;
-
-            if (linkedPortals.length > countportals) {
-                res.send({
-                    success: false,
-                    message: "portalsCountTooMuch"
-                });
-                res.end();
-                return '';
-            }
             const user = req.session.user;
             const timeZoneName = portalInfo.timeZone ? portalInfo.timeZone.id : "";
             const language = portalInfo.language ? portalInfo.language.substring(0, 2) : "";

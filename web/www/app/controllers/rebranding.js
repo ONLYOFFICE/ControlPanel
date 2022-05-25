@@ -30,7 +30,6 @@ const baseController = require('./base.js'),
     notCustomMode = require('../middleware/notCustomMode.js');
 
 router
-    .use(require('../middleware/quota.js')("ssbranding"))
     .use(fullAccess())
     .use(tenantExtra())
     .use(notCustomMode())

@@ -4,7 +4,11 @@ block rightSide
     h1.blue-text
         span.header-icon.storage
         = controlPanelResource.Storage
+
     - var helpcenter = (config.get("helpcenter") || "")
+    - var tenantExtraExist = (typeof tenantExtra == "object")
+    - var customMode = (tenantExtraExist && tenantExtra.customMode)
+
     p!= controlPanelResource.StorageText + '&nbsp;'
         -if (helpcenter) {
         a.link.underline(href=controlPanelResource.format("StorageHelpCenterUrl", helpcenter), target="_blank")= controlPanelResource.StorageDetailedInstruction
@@ -31,7 +35,7 @@ block rightSide
                 div.middle-button-container
                     button#CDNButton.connectBtn.button.green= controlPanelResource.ConnectButton
 
-
+        -if(!customMode){
         div#encryptionBox.top-indent-big.display-none
             h2.blue-text
               span= controlPanelResource.EncryptionHeader
@@ -69,6 +73,7 @@ block rightSide
                     button#encryptionConfirmButton.button.green.confirmation-ok= controlPanelResource.Ok
                     span.splitter-buttons
                     button.button.black.cancelbtn= controlPanelResource.Cancel
+        -}
 
 
 append bodyscripts

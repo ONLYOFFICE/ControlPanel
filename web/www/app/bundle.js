@@ -19,12 +19,13 @@ const fs = require('fs'),
     path = require('path'),
     app = require('express')(),
     uglifyjs = require('uglify-js'),
-    config = require('../config');
+    config = require('../config'),
+    log = require("./log.js");
 
 let links = [
         "vars", "layout", "tl-combobox", "common", "common_style", "header", "paragraph", "link", "button", "forms",
         "toastr", "action-menu", "phonecontroller", "whitelabel", "site", "login", "update", "gift", "backup", "restore",
-        "loginhistory", "audittrail", "multiportals", "ldapsettings", "ssosettings", "search","storage", "jqCron",
+        "loginhistory", "audittrail", "migration", "multiportals", "ldapsettings", "ssosettings", "search", "storage", "jqCron",
         "rebranding", "privacyroom", "activate"
     ];
 
@@ -74,9 +75,14 @@ function getScripts() {
         return [config.makePath(`/javascripts/${combinedName}`)];
     }
 
-    scripts.forEach(function (item) {
+    log.info(`bundle generation from ${scripts.length} files:`);
+
+    scripts.forEach(function (item, index) {
         let data;
         item = path.join(__dirname, '../public', item);
+
+        log.info(`${index} ${item}`);
+
         if (item.endsWith(".min.js")) {
             data = fs.readFileSync(item);
         } else {

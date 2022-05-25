@@ -1,0 +1,246 @@
+extends Shared/homeLayout
+
+block rightSide
+  h1.blue-text
+    span.header-icon.migration
+    = controlPanelResource.Migration
+
+  div#migration-view
+
+    div#choice-of-migration.display-none
+      p= controlPanelResource.MigrationPermanentPrompt
+      div
+        h2.blue-text.top-indent-middle= controlPanelResource.MigrationGoogleWorkspace
+        div#migration-view.top-indent
+          p= controlPanelResource.MigrationGooglePrompt 
+        button#initial-import-google-Btn.button.green(type="button")= controlPanelResource.MigrationInitialImport
+
+      div
+        h2.blue-text.top-indent-middle= controlPanelResource.MigrationNextcloud
+        div#migration-view.top-indent
+          p= controlPanelResource.MigrationNextcloudPrompt
+        button#initial-import-nextcloud-Btn.button.green(type="button")= controlPanelResource.MigrationInitialImport
+
+      div
+        h2.blue-text.top-indent-middle= controlPanelResource.MigrationOwncloud
+        div#migration-view.top-indent
+          p= controlPanelResource.MigrationOwncloudPrompt
+        button#initial-import-owncloud-Btn.button.green(type="button")= controlPanelResource.MigrationInitialImport
+
+    div#initial-import.display-none
+      p= controlPanelResource.MigrationPermanentPrompt
+      h2=controlPanelResource.MigrationStepSelectFile
+      p#select-file-prompt
+      div#archives.inputWithBtn.withPlusBtn
+        div.migrationOptionsHeader= controlPanelResource.ChooseStorageLocationMsg + ":"
+        input#archivesInput.textBox(type="text" placeholder="")
+        div.button.black
+          input#archivesUploader(type="file")
+          |+
+      
+      div#migrationProgressBox.display-none
+        p.margin-0=controlPanelResource.MigrationParsingPleaseWait
+        div.asc-progress-wrapper
+          div#migrationProgressValue.asc-progress-value
+        div.text-medium-describe
+          span#migrationProgressTitle!= controlPanelResource.format("MigrationLoadingArchive", "")
+          span#migrationProgressText
+
+      p#warning-incorrect-archives.error.display-none=controlPanelResource.MigrationWarningIncorrectArchives
+        
+      div.button-container
+        button#initial-import-next.nextStep.button.green.disabled(type="button")= controlPanelResource.MigrationUploadToServer
+        button#cancel-upload-to-server.cancel-migration.button.black.display-none(type="button")= controlPanelResource.MigrationCancel
+        span.splitter-buttons
+        button#back-upload-to-server.previous-step.button.black(type="button")= controlPanelResource.MigrationBack
+        span.splitter-buttons 
+        button#download-incorrect-archives.p-padding-top.button.black.display-none(type="button")= controlPanelResource.MigrationDownloadIncorrectArchives
+        
+    div#check-users-for-import.display-none
+      p= controlPanelResource.MigrationPermanentPrompt
+      div.middle-button-container
+        button#check-users-for-import-next.button.green(type="button")= controlPanelResource.MigrationNextStep
+        span.splitter-buttons
+        button#back-check-users-for-import.button.black(type="button")= controlPanelResource.MigrationBack
+      h2.p-padding-top=controlPanelResource.MigrationStepSelectUsers
+      p#all-users-have-emails.display-none!=controlPanelResource.format("MigrationAllUsersHaveEmails","<strong>","</strong>")
+      p#not-filled-emails!=controlPanelResource.format("MigrationUsersNotFilledEmails", "<strong>","</strong>", "{0}")
+      p#dont-filled-emails.display-none!=controlPanelResource.format("MigrationDontUsersEmail", "<strong>","</strong>")
+      div#selected-limit
+      
+      div#pagination.margin-top-24
+        div#pageListTop
+          ul.splitter
+          div#next-top.splitter.button-page-list.page-list
+            span=controlPanelResource.Next
+            input.arrow-next
+          p.splitter.page-list.describe-text=controlPanelResource.MigrationShowOnPage
+          select.page-list
+
+        table#user-table-pagination
+          colgroup
+            col.checkbox-column
+            col.name-column
+            col
+          thead
+            tr
+              td 
+                input(id="allUsersCheckbox" type="checkbox")
+              td 
+                h3=controlPanelResource.Name
+              td
+                h3=controlPanelResource.Email
+          tbody.modules-inline.height48
+
+        div#pageListBottom
+          ul.splitter
+          div#next-bottom.splitter.button-page-list.page-list
+            span=controlPanelResource.Next
+            input.arrow-next
+          p.splitter.page-list.describe-text=controlPanelResource.MigrationShowOnPage
+          select.page-list
+
+    div#check-users-not-email.display-none
+      p= controlPanelResource.MigrationPermanentPrompt
+      div.middle-button-container
+        button#check-users-without-email-for-import-next.button.green(type="button")= controlPanelResource.MigrationNextStep
+        span.splitter-buttons
+        button#back-check-users-without-email-for-import.button.black(type="button")= controlPanelResource.MigrationBack
+        span.splitter-buttons
+        button#download-unimported-users.button.black(type="button")= controlPanelResource.MigrationDownloadUnimportedUsers
+      h2.p-padding-top=controlPanelResource.MigrationStepNotFilledEmails
+      p#not-filled-emails!=controlPanelResource.format("MigrationCheckUnimportedUsers", "</br>","<strong>","</strong>", "{0}")
+      p#dont-not-filled-emails.display-none!=controlPanelResource.format("MigrationDontUsersNotEmail", "</br></br>","<strong>","</strong>")
+      div#selected-limit
+      
+      div#pagination.margin-top-24
+        div#pageListTop
+          ul.splitter
+          div#next-top.splitter.button-page-list.page-list
+            span=controlPanelResource.Next
+            input.arrow-next
+          p.splitter.page-list.describe-text=controlPanelResource.MigrationShowOnPage
+          select.page-list
+
+        table#user-table-pagination
+          colgroup
+            col.checkbox-column
+            col.name-column
+            col.editable-column
+          thead
+            tr
+              td 
+                input(id="allUsersWithoutEmailCheckbox" type="checkbox")
+              td 
+                h3=controlPanelResource.Name
+              td
+                h3=controlPanelResource.Email
+          tbody.modules-inline.height48
+
+        div#pageListBottom
+          ul.splitter
+          div#next-bottom.splitter.button-page-list.page-list
+            span=controlPanelResource.Next
+            input.arrow-next
+          p.splitter.page-list.describe-text=controlPanelResource.MigrationShowOnPage
+          select.page-list
+      
+    div#select-modules-to-import.display-none
+      p= controlPanelResource.MigrationPermanentPrompt
+      h2.p-padding-top=controlPanelResource.MigrationStepSelectModules
+      p= controlPanelResource.MigrationSelectModulesForImport
+      table#modules-choose-table
+        thead
+          tr
+            td
+            td 
+              h2#modulesName
+            td 
+            td
+              h2#brand-modules
+        tbody.modules-inline.height48
+      button#select-modules-to-import-next.nextStep.button.green(type="button")= controlPanelResource.MigrationStartMigration
+      span.splitter-buttons
+      button#back-select-modules-to-import.button.black(type="button")= controlPanelResource.MigrationBack
+
+    div#migration.display-none
+      p= controlPanelResource.MigrationPermanentPrompt
+      h2.p-padding-top=controlPanelResource.MigrationStepProcessingMigration
+      p=controlPanelResource.MigrationPleaseWait
+
+      div#migrationProgressBoxMigrate.display-none
+        div.asc-progress-wrapper
+          div#migrationProgressValueMigrate.asc-progress-value
+        div.text-medium-describe
+          span#migrationProgressTitleMigrate
+          span#migrationProgressTextMigrate
+
+      button#migration-cancel.cancel-migration.button.black(type="button")= controlPanelResource.MigrationCancel
+
+    div#results-data-import.display-none
+      p= controlPanelResource.MigrationPermanentPrompt
+      h2.p-padding-top=controlPanelResource.MigrationStepFinishedMigration
+      p#message-short-result
+      p#success-message.display-none
+      div#sendWelcomeEmail.display-none
+        input#migrationSendWelcomeEmail(type="checkbox")
+        span.textSendWelcomeEmail= controlPanelResource.MigrationSendWelcomeEmail
+        span.helpCenterSwitcher.migrationSendWelcomeEmailHelperSwitcher(onclick="$(this).helper({ BlockHelperID: 'migrationSendWelcomeEmailHelper' }); ")
+        div#migrationSendWelcomeEmailHelper.popup_helper
+          p= controlPanelResource.MigrationSendWelcomeEmailHelper
+      button#result-close.cancel-migration.button.green(type="button")= controlPanelResource.MigrationFinish
+      span.splitter-buttons
+      button#result-download-log.cancel-migration.button.black(type="button")= controlPanelResource.MigrationDownloadLog
+
+  script#pageListTmpl(type="text/x-jquery-tmpl")
+    li.splitter
+      button.button-page-list(id="${itemId}" type="button") ${item}
+      
+  script#page-selector-tmpl(type="text/x-jquery-tmpl")
+    option(id="${itemId}" value="${item}") ${item}
+  
+  script#select-limit-tmpl(type="text/x-jquery-tmpl")
+    h3.splitter ${selected}
+
+
+  script#user-list-without-emails-tmpl(type="text/x-jquery-tmpl")
+    tr
+      td
+        input(id="${checkboxId}" type="checkbox")
+      td
+        span ${displayName}
+      td
+        input.border-text-box(type="text" value=controlPanelResource.MigrationNotFilled id="text${checkboxId}" maxlength="245" readonly)
+        input.icons.pencil(type="button" id="pencil${checkboxId}")
+        div.button.action-icons.btn-action.ok.display-none(type="button" id="ok${checkboxId}")
+        div.button.action-icons.btn-action.cancel.display-none(type="button" id="cancel${checkboxId}")
+
+  script#user-list-tmpl(type="text/x-jquery-tmpl")
+    tr
+      td
+        input(id="${checkboxId}" type="checkbox")
+      td
+        span ${displayName}
+      td 
+        span ${email}
+
+  script#modules-choose-tmpl(type="text/x-jquery-tmpl")
+    tr
+      td
+        input(id="${checkboxId}" type="checkbox" checked)
+      td
+        span ${moduleName}
+        span.helpCenterSwitcher.display-none(id="users${checkboxId}" onclick=" $(this).helper({ BlockHelperID: 'DefaultModuleHelper${checkboxId}' }); ")
+        div.popup_helper(id="DefaultModuleHelper${checkboxId}")
+          p!=controlPanelResource.MigrationDefaultModuleHelper
+      td
+        span.icon.arrow-right
+      td
+        div.icons(class="${ooModuleNameClass}")
+        span ${ooModuleName}
+
+append bodyscripts
+  script(type="text/javascript").
+    $(function() {
+      window.MigrationView.init();
+     });

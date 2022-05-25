@@ -1,4 +1,4 @@
-/*
+﻿/*
  *
  * (c) Copyright Ascensio System Limited 2010-2021
  * 
@@ -28,7 +28,6 @@ window.MultiPortalsManager = function ($, apiService, loaderService) {
             case "tooShortError": return window.MultiPortalsResource.ErrorPortalNameTooShort;
             case "portalNameIncorrect": return window.MultiPortalsResource.ErrorPortalNameIncorrect;
 
-            case "portalsCountTooMuch": return window.MultiPortalsResource.ErrorPortalsCountLimit;
             case "portalNameEmpty": return window.MultiPortalsResource.ErrorPortalNameEmpty;
             case "portalNameTooLong": return window.MultiPortalsResource.ErrorPortalNameTooLong;
 
@@ -162,9 +161,7 @@ window.MultiPortalsManager = function ($, apiService, loaderService) {
                                 tenantId: resp.tenant.tenantId
                             }).appendTo('#linkedPortalsList tbody');
 
-                       $("#portalCount").attr("data-createdPortals", parseInt($("#portalCount").attr("data-createdPortals")) + 1);
-                       updateCounts();
-
+                        $("#portalCount").text(parseInt($("#portalCount").text()) + 1);
                         Common.blockUI.hide();
                    }
                    catch (e) { }
@@ -281,54 +278,8 @@ window.MultiPortalsManager = function ($, apiService, loaderService) {
                         }).appendTo("#linkedPortalsList tbody");
                     }
 
-                    $("#portalCount").attr("data-createdPortals", _portalList.length);
-                    getPortalsQuota();
+                    $("#portalCount").text(_portalList.length);
                     getBaseDomainAndTenantDomain();
-                } else {
-                    _loadedSuccessfull = false;
-                    toastr.error(response.message);
-                }
-            })
-            .fail(function (jqXHR, textStatus, errorThrown) {
-                console.log(arguments);
-                if (apiService.unloaded || textStatus != null && textStatus === "abort") {
-                    _loadedSuccessfull = null;
-                    return;
-                }
-
-                _loadedSuccessfull = false;
-            });
-    }
-
-    function updateCounts () {
-        var createdPortals = $("#portalCount").attr("data-createdPortals");
-
-        var countPortals = $("#portalCount").attr("data-countPortal");
-
-        var unlim = countPortals == $("#portalCount").attr("data-max");
-
-        $("#portalCount").text(
-            unlim
-                ? createdPortals
-                : window.MultiPortalsResource.PortalCounts.format(createdPortals, countPortals));
-
-        if (countPortals == createdPortals) {
-            $("#newPortalBtn").addClass("disabled");
-        }
-    }
-
-    function getPortalsQuota () {
-        apiService.get("MultiPortals/GetPortalsQuota")
-            .done(function (response) {
-                if (response.success) {
-                    $("#portalCount").attr("data-countPortal", response.countPortals);
-                    updateCounts();
-                    var dueDate = response.dueDate;
-                    if (!dueDate) {
-                        $(".duedate-block").remove();
-                    } else {
-                        $("#dueDate").text(response.dueDate);
-                    }
                 } else {
                     _loadedSuccessfull = false;
                     toastr.error(response.message);

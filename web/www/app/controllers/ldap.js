@@ -51,7 +51,6 @@ function getStatus(req, res) {
 }
 
 router
-    .use(require('../middleware/quota.js')("ldap"))
     .get("/", (req, res) => {
         res.setHeader('content-type', 'text/html');
         const data = new Model(req, req.resources.controlPanelResource.Ldap);

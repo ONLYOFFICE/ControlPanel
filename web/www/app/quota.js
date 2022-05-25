@@ -27,14 +27,6 @@ module.exports = (quota) => {
                 const features = target.features.toLowerCase().split(','),
                     prop = property.toLowerCase();
 
-                if (prop === "countportals") {
-                    let result = features.find((item) => item.startsWith("portals:"));
-                    if (result) {
-                        result = result.split(':')[1];
-                        return Number.isNaN(result) ? 0 : new Number(result);
-                    }
-                }
-
                 if (features.indexOf(prop) > -1) {
                     return true;
                 };

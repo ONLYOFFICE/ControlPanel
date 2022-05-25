@@ -23,7 +23,6 @@ const baseController = require('./base.js'),
     auditCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'audittrail.pug'));
 
 router
-    .use(require('../middleware/quota.js')("audit"))
     .get("/", function (req, res) {
         res.setHeader('content-type', 'text/html');
         res.end(auditCompiled(new Model(req, req.resources.controlPanelResource.AuditTrail)));

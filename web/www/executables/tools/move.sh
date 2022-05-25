@@ -43,5 +43,5 @@ while [ "$1" != "" ]; do
 	shift
 done
 
-sudo docker cp ${FROM} ${COMMUNITY_CONTAINER_NAME}:${TO}
-sudo rm -rf ${FROM}
+sudo docker cp "${FROM}" ${COMMUNITY_CONTAINER_NAME}:"${TO}"
+sudo rm -rf "${FROM}"

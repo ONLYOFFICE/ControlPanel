@@ -70,7 +70,9 @@ class UpdateAction extends BaseAction {
             "-product",  config.get("product:name"),
             "-hostdir",  config.getProductDir("hostDir"),
             item.serverType === 0 ? "-dc" : "", item.serverType === 0 ? config.get("docker:DocumentServer:container") : "",
-            item.serverType === 0 ? "-mc" : "", item.serverType === 0 ? config.get("docker:MailServer:container") : ""
+            item.serverType === 0 ? "-mc" : "", item.serverType === 0 ? config.get("docker:MailServer:container") : "",
+            item.serverType === 0 ? "-ec" : "", item.serverType === 0 ? config.get("docker:Elasticsearch:container") : "",
+            item.serverType === 0 ? "-ei" : "", item.serverType === 0 ? config.get("docker:Elasticsearch:image") : ""
         ).then((result) => {
             log.info(result);
             item.setCurrentVersion(item.newVersion);
@@ -97,6 +99,9 @@ class DownloadAction extends BaseAction {
             "-i", `${item.image}`,
             "-v", `${item.newVersion}`,
             "-path", imagePath,
+            item.serverType === 0 ? "-ei" : "", item.serverType === 0 ? config.get("docker:Elasticsearch:image") : "",
+            item.serverType === 0 ? "-ec" : "", item.serverType === 0 ? config.get("docker:Elasticsearch:container") : "",
+            item.serverType === 0 ? "-cc" : "", item.serverType === 0 ? config.get("docker:CommunityServer:container") : "",
             dockerAuth && dockerAuth.hub ? "-hub" : "", dockerAuth && dockerAuth.hub ? dockerAuth.hub : "",
             dockerAuth && dockerAuth.login ? "-u" : "", dockerAuth && dockerAuth.login ? dockerAuth.login : "", 
             dockerAuth && dockerAuth.login ? "-p" : "", dockerAuth && dockerAuth.password ? dockerAuth.password : ""
@@ -127,7 +132,9 @@ class InstallAction extends BaseAction {
             "-product",  config.get("product:name"),
             "-hostdir",  config.getProductDir("hostDir"),
             item.serverType === 0 ? "-dc" : "", item.serverType === 0 ? config.get("docker:DocumentServer:container") : "",
-            item.serverType === 0 ? "-mc" : "", item.serverType === 0 ? config.get("docker:MailServer:container") : ""
+            item.serverType === 0 ? "-mc" : "", item.serverType === 0 ? config.get("docker:MailServer:container") : "",
+            item.serverType === 0 ? "-ec" : "", item.serverType === 0 ? config.get("docker:Elasticsearch:container") : "",
+            item.serverType === 0 ? "-ei" : "", item.serverType === 0 ? config.get("docker:Elasticsearch:image") : ""
         ).then((result) => {
             log.info(result);
             item.linkContainer(req);

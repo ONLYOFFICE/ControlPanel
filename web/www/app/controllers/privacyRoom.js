@@ -25,7 +25,6 @@ const baseController = require('./base.js'),
     notCustomMode = require('../middleware/notCustomMode.js');
 
 router
-    .use(require('../middleware/quota.js')("privacyroom"))
     .use(tenantExtra())
     .use(notCustomMode())
     .get("/", (req, res) => {

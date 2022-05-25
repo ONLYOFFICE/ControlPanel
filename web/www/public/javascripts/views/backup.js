@@ -100,7 +100,7 @@ window.BackupView = function ($, apiService, loaderService) {
     }
 
     function getThirdFolderSelectorIframeUrl(url) {
-        return currentPortal + '/Products/Files/FileChoice.aspx?root=1&onlyfolder=true&thirdParty=true&folderID=' + url;
+        return currentPortal + '/Products/Files/FileChoice.aspx?root=1&onlyFolder=true&thirdParty=true&folderID=' + url;
     }
 
     function init(portal) {
@@ -473,11 +473,19 @@ window.BackupView = function ($, apiService, loaderService) {
     }
 
     function frameLoad(providerKey) {
-        $("#frameFolderSelector")[0].contentWindow.ASC.Files.FileChoice.eventAfter = function () {
-            $("#frameFolderSelector")[0].contentWindow.ASC.Files.FileSelector.showThirdPartyOnly(providerKey);
+        var contentWindow = $("#frameFolderSelector")[0].contentWindow;
+
+        var eventAfter = function () {
+            contentWindow.ASC.Files.FileSelector.showThirdPartyOnly(providerKey);
             loaderService.hideFormBlockLoader($thirdPartyPopupBody);
             $("#frameFolderSelector").css("visibility", "visible");
         };
+
+        contentWindow.ASC.Files.FileChoice.eventAfter = eventAfter;
+
+        if (contentWindow.ASC.Files.FileChoice.isEventAfterTriggered && contentWindow.ASC.Files.FileChoice.isEventAfterTriggered()){
+            eventAfter();
+        }
     }
 
     function toggleScheduleSettingsBox() {
