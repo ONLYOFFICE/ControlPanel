@@ -48,7 +48,7 @@ append bodyscripts
       td.storeSize
         span ${storeSize}
       td.reindex
-        |{{if $data.count!=undefined && docsCount<count}}
+        |{{if started}}
         |{{if parseInt(docsCount*100/count)<50}}
         button.button.black.middle(style="width:100%;background:linear-gradient(270deg, #bcbcbc ${parseInt(100-parseInt(docsCount*100/count))}%, #4c4c4c ${parseInt(docsCount*100/count)}%)") ${parseInt(docsCount*100/count)}%
         |{{else}}

@@ -283,7 +283,7 @@
   "MigrationWarningIncorrectArchives": "Some archives may be incorrect. You can download the list of archives by pressing “Download incorrect archives”. If you want to continue, press “Upload to server”",
   "MigrationStepFinishedMigration":"6/6. Finish of data import",
   "MigrationAllUsersHaveEmails": "Check the list of users to be imported into ONLYOFFICE. Only users with indicated emails will be migrated. {0}All users have emails{1}. You can skip next step",
-  "MigrationUsersNotFilledEmails":"Check the list of users to be imported into ONLYOFFICE. Only users with indicated emails will be migrated.{0}{2} users{1} have NOT FILLED emails. In the next step, you can fill their emails.",
+  "MigrationUsersNotFilledEmails":"Check the list of users to be imported into ONLYOFFICE. Only users with indicated emails will be migrated. {0}{2} users{1} have NOT FILLED emails. In the next step, you can fill their emails.",
   "MigrationCheckUnimportedUsers":"Check the list of unimported users to import them into ONLYOFFICE.{0}{1}{3} users{2} have NOT FILLED emails. You can fill their emails or continue without this action.",
   "MigrationIncorrectFileType": "You have selected the incorrect file. Please select the correct archive.",
   "MigrationIncorrectEmail":"Incorrect format of email. Please correct email",

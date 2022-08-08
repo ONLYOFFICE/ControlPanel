@@ -210,7 +210,8 @@ block rightSide
       td
         span ${displayName}
       td
-        input.border-text-box(type="text" value=controlPanelResource.MigrationNotFilled id="text${checkboxId}" maxlength="245" readonly)
+        p#email-not-filled.splitter=controlPanelResource.MigrationNotFilled
+        input.border-text-box.display-none(type="text" value=controlPanelResource.MigrationNotFilled id="text${checkboxId}" maxlength="245" readonly)
         input.icons.pencil(type="button" id="pencil${checkboxId}")
         div.button.action-icons.btn-action.ok.display-none(type="button" id="ok${checkboxId}")
         div.button.action-icons.btn-action.cancel.display-none(type="button" id="cancel${checkboxId}")

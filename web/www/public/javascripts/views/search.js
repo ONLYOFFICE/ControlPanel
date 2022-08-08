@@ -61,8 +61,8 @@ window.SearchView = function($, apiService, loaderService) {
 
             var state = res[1];
 
-            if (state && state.indices) {
-                drawIndices(state.indices);
+            if (state) {
+                drawIndices(state);
             }
 
             $(window).trigger("rightSideReady", null);
@@ -97,14 +97,16 @@ window.SearchView = function($, apiService, loaderService) {
         });
     }
 
-    function drawIndices(indices){
-        if (!indices) return;
+    function drawIndices(state){
+        if (!state.indices) return;
 
         $searchTableView.removeClass("display-none");
 
         $searchTableView.on(clickEv, ".middle-button-container button", reindex.bind(null, ""));
 
-        if (!indices.length) return;
+        if (!state.indices.length) return;
+
+        var indices = getIndices(state);
 
         $searchTable.removeClass("display-none");
 
@@ -119,11 +121,25 @@ window.SearchView = function($, apiService, loaderService) {
         timeoutID = setTimeout(checkState, 5000);
     }
 
+    function getIndices(data) {
+        if (Array.isArray(data.state.indexing)) {
+            for (var i = 0; i < data.indices.length; i++) {
+                data.indices[i].started = data.state.indexing.includes(data.indices[i].index);
+            }
+        } else {
+            for (var i = 0; i < data.indices.length; i++) {
+                data.indices[i].started = data.indices[i].count > 0 && data.indices[i].docsCount < data.indices[i].count;
+            }
+        }
+        return data.indices;
+    }
+
     function checkState() {
         apiService.get('search/state', false)
             .done(function(res) {
                 if (res && res.indices && res.indices.length) {
-                    $searchTable.find("tbody").html($("#searchDataTmpl").tmpl(res.indices));
+                    var indices = getIndices(res);
+                    $searchTable.find("tbody").html($("#searchDataTmpl").tmpl(indices));
                     timeoutID = setTimeout(checkState, 5000);
                 }
             });
@@ -141,8 +157,9 @@ window.SearchView = function($, apiService, loaderService) {
     }
 
     function onReindex(res) {
-        $searchTable.find("tbody").html($("#searchDataTmpl").tmpl(res.indices));
-        $searchTable.toggleClass("display-none", !res.indices.length);
+        var indices = getIndices(res);
+        $searchTable.find("tbody").html($("#searchDataTmpl").tmpl(indices));
+        $searchTable.toggleClass("display-none", !indices.length);
         loaderService.hideFormBlockLoader($searchTableView);
         toastr.success(window.Resource.ReindexSuccessMsg || window.Resource.OperationSucceededMsg);
         timeoutID = setTimeout(checkState, 5000);

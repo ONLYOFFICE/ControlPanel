@@ -466,18 +466,6 @@ window.MigrationView = function ($, apiService, loaderService) {
             userImportInfoUpdate(currentLicense, usersLength, without);
         });
     }
-
-    function activateEmailTextbox($textbox) {
-        $textbox.removeClass('border-text-box');
-        $textbox.addClass('textbox');
-        $textbox.css({
-            'width': '210px',
-            'height': '20px',
-            'font-size': '13px',
-            'padding': '0',
-            'margin': '0'
-        });
-    }
     var usersCheck = false;
 
     function generateBodyCheckUsersWithoutEmailsForImport() {
@@ -530,13 +518,14 @@ window.MigrationView = function ($, apiService, loaderService) {
             $checkbox.prop('disabled', true);
         }
         $pencil.click(function () {
-            if ($textbox.val() == window.Resource.MigrationNotFilled) {
+            if ($('#email-not-filled').text() == window.Resource.MigrationNotFilled) {
                 $textbox.val("");
             }
-            if ($textbox.val().slice(-3) == "...") {
+            if ($('#email-not-filled').text().slice(-3) == "...") {
                 $textbox.val(tempTextbox);
             }
-            activateEmailTextbox($textbox);
+            $('#email-not-filled').hide();
+            $textbox.show();
             $textbox.prop('readonly', false);
             $pencil.addClass('display-none');
             $ok.removeClass('display-none');
@@ -553,22 +542,21 @@ window.MigrationView = function ($, apiService, loaderService) {
         });
         $ok.click(function () {
             if ($textbox.val().trim() != "" && re.test($textbox.val().trim().toLowerCase())) {
-                $textbox.css({
-                    'width': '245px'
-                });
                 $pencil.removeClass('display-none');
                 $ok.addClass('display-none');
                 $cancel.addClass('display-none');
-                $textbox.addClass('border-text-box');
+                $textbox.hide();
+                $('#email-not-filled').show();
                 $textbox.removeClass('borderError');
-                $textbox.removeClass('textbox');
                 tempTextbox = $textbox.val();
+                $('#email-not-filled').text(tempTextbox);
                 user.email = tempTextbox;
                 $textbox.prop('readonly', true);
                 $checkbox.prop('disabled', false);
                 $allUsersWithoutEmailCheckbox.prop('disabled', false);
                 if (tempTextbox.length > 25) {
                     $textbox.val(tempTextbox.slice(0, 25) + "...");
+                    $('#email-not-filled').text(tempTextbox.slice(0, 25) + "...");
                 }
             } else {
                 toastr.error(window.Resource.MigrationIncorrectEmail);
@@ -581,22 +569,16 @@ window.MigrationView = function ($, apiService, loaderService) {
             $pencil.removeClass('display-none');
             $ok.addClass('display-none');
             $cancel.addClass('display-none');
-            if (tempTextbox == window.Resource.MigrationNotFilled) {
-                $textbox.css({
-                    'width': '85px'
-                });
-            } else {
-                $textbox.css({
-                    'width': '245px'
-                });
-            }
+            $('#email-not-filled').show();
             if (tempTextbox.length > 25) {
                 $textbox.val(tempTextbox.slice(0, 25) + "...");
+                $('#email-not-filled').text(tempTextbox.slice(0, 25) + "...");
             } else {
                 $textbox.val(tempTextbox);
+                $('#email-not-filled').text(tempTextbox);
             }
-            $textbox.addClass('border-text-box');
-            $textbox.removeClass('textbox');
+
+            $textbox.hide();
             $textbox.prop('readonly', true);
         });
 

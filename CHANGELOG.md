@@ -1,5 +1,14 @@
 # Change log
+
+## 3.1.1
+
+* Fixed issue with file indexing.
+* Fixed elasticsearch container errors when updating communityserver.
+* Fixed issue with brand logos after updating in the Docker installation.
+* Fixed texts and layout for the Migration feature.
+
 ## 3.1.0
+
 * Added the Data Import page that allows to import data from Nextcloud, ownCloud and GoogleWorkspace to ONLYOFFICE Workspace
 * Moved Elasticsearch to a separate container
 * Fixed bugs

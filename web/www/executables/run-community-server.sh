@@ -249,6 +249,8 @@ if [ "$UPDATE" == "1" ]; then
 fi
 
 if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
+	sudo docker exec -d ${COMMUNITY_CONTAINER_NAME} bash -c "cp -rf /var/www/${PRODUCT}/WebStudio/App_Data/static/partnerdata /var/www/${PRODUCT}/Data/"
+
 	if [ "$REFRESH" == "1" ]; then
 		sudo docker exec ${COMMUNITY_CONTAINER_NAME} bash /app/${PRODUCT}/run-community-server.sh;
 		exit 0;
@@ -308,13 +310,23 @@ if [[ ${ELASTICSEARCH_CURRENT_VERSION} != ${ELASTICSEARCH_AVAILABLE_VERSION} \
 
 	args+=(-e "discovery.type=single-node");
 	args+=(-e "bootstrap.memory_lock=true");
-	args+=(-e "ES_JAVA_OPTS=-Xms512m -Xmx512m -Dlog4j2.formatMsgNoLookups=true");
+	
+	TOTAL_MEMORY=$(free -m | grep -oP '\d+' | head -n 1);
+	MEMORY_REQUIREMENTS=12228; #RAM ~12Gb
+	if [ ${TOTAL_MEMORY} -gt ${MEMORY_REQUIREMENTS} ]; then
+		args+=(-e "ES_JAVA_OPTS=-Xms4g -Xmx4g -Dlog4j2.formatMsgNoLookups=true");
+	else
+		args+=(-e "ES_JAVA_OPTS=-Xms1g -Xmx1g -Dlog4j2.formatMsgNoLookups=true");
+	fi
+
 	args+=(-e "indices.fielddata.cache.size=30%");
 	args+=(-e "indices.memory.index_buffer_size=30%");
 	args+=(--ulimit "nofile=65535:65535");
 	args+=(--ulimit "memlock=-1:-1");
 	args+=(-v "es_data:/usr/share/elasticsearch/data");
 	args+=("$ELASTICSEARCH_IMAGE_NAME:$ELASTICSEARCH_AVAILABLE_VERSION");
+
+	ELASTICSEARCH_SERVER_HOST=${ELASTICSEARCH_CONTAINER_NAME}
 
 	sudo docker run --net ${PRODUCT} -itd --restart=always "${args[@]}";
 fi
@@ -372,8 +384,10 @@ if [[ -n ${CORE_MACHINEKEY} ]]; then
 	args+=(-e "$MACHINEKEY_PARAM=$CORE_MACHINEKEY");
 fi
 
-args+=(-e "ELASTICSEARCH_SERVER_HOST=${ELASTICSEARCH_SERVER_HOST:-$ELASTICSEARCH_CONTAINER_NAME}");
-args+=(-e "ELASTICSEARCH_SERVER_HTTPPORT=${ELASTICSEARCH_SERVER_HTTPPORT:-9200}");
+if [[ -n ${ELASTICSEARCH_SERVER_HOST} ]]; then
+	args+=(-e "ELASTICSEARCH_SERVER_HOST=${ELASTICSEARCH_SERVER_HOST}");
+	args+=(-e "ELASTICSEARCH_SERVER_HTTPPORT=${ELASTICSEARCH_SERVER_HTTPPORT:-9200}");
+fi
 
 args+=(-v "$HOST_DIR/CommunityServer/letsencrypt:/etc/letsencrypt");
 args+=(-v "/sys/fs/cgroup:/sys/fs/cgroup:ro");
@@ -394,6 +408,8 @@ if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
 	if [ -f "$IMAGEPATH/${COMMUNITY_IMAGE_NAME//\//-}_$VERSION.tar.gz" ]; then
 		sudo rm "$IMAGEPATH/${COMMUNITY_IMAGE_NAME//\//-}_$VERSION.tar.gz";
 	fi
+
+	docker exec -d ${COMMUNITY_CONTAINER_NAME} bash -c "[ -d /var/www/${PRODUCT}/Data/partnerdata ] && cp /var/www/${PRODUCT}/Data/partnerdata/* /var/www/${PRODUCT}/WebStudio/App_Data/static/partnerdata/ && rm -rf /var/www/${PRODUCT}/Data/partnerdata"
 
 	exit 0;
 fi
