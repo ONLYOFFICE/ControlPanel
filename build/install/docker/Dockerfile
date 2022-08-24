@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:22.04
 
 ARG ONLYOFFICE_ROOT_DIR="/var/www/onlyoffice/controlpanel"
 ARG RELEASE_DATE="2020-07-07" 
@@ -25,6 +25,7 @@ LABEL onlyoffice.controlpanel.release-date="${RELEASE_DATE}" \
 RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get install -yq sudo \
+                        gpg \
                         locales \
                         wget \
                         curl \
@@ -36,12 +37,17 @@ RUN apt-get -y update && \
     locale-gen en_US.UTF-8 && \
     echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d && \
     echo "" >> /etc/init.d/cgroup-lite && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - && \
-    echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" | tee /etc/apt/sources.list.d/docker.list && \
-    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - && \
+    mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+    jammy stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    echo "deb https://deb.nodesource.com/node_12.x focal main" | tee /etc/apt/sources.list.d/nodesource.list && \
+    echo "deb-src https://deb.nodesource.com/node_12.x focal main" >> /etc/apt/sources.list.d/nodesource.list && \
+    curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
+    apt-get -y update && \
     apt-get install -yq nodejs \
                         supervisor \
-                        docker-ce=17.03.0~ce-0~ubuntu-xenial && \
+                        docker-ce=5:20.10.16~3-0~ubuntu-jammy && \
     chmod -R a+x ${ONLYOFFICE_ROOT_DIR}/www/executables && \
     chmod a+x ${ONLYOFFICE_ROOT_DIR}/run-controlpanel.sh && \
     apt-get clean && \
