@@ -39,12 +39,9 @@ RUN apt-get -y update && \
     echo "" >> /etc/init.d/cgroup-lite && \
     mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-    jammy stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    echo "deb https://deb.nodesource.com/node_12.x focal main" | tee /etc/apt/sources.list.d/nodesource.list && \
-    echo "deb-src https://deb.nodesource.com/node_12.x focal main" >> /etc/apt/sources.list.d/nodesource.list && \
-    curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
-    apt-get -y update && \
+    echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - && \
     apt-get install -yq nodejs \
                         supervisor \
                         docker-ce=5:20.10.16~3-0~ubuntu-jammy && \
