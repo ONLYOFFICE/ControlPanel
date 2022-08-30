@@ -12,7 +12,7 @@ ENV LANG=en_US.UTF-8 \
     ONLYOFFICE_COMMUNITYSERVER_HOST=onlyoffice-community-server \
     ONLYOFFICE_CORE_MACHINEKEY="Vskoproizvolny Salt par Chivreski"
 
-#RUN mkdir -p ${ONLYOFFICE_ROOT_DIR}
+RUN mkdir -p ${ONLYOFFICE_ROOT_DIR}
 
 ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR} \
 ADD web ${ONLYOFFICE_ROOT_DIR}
