@@ -25,7 +25,8 @@ LABEL onlyoffice.controlpanel.release-date="${RELEASE_DATE}" \
       maintainer="Ascensio System SIA <support@onlyoffice.com>" \
       securitytxt="https://www.onlyoffice.com/.well-known/security.txt"
 
-RUN apt-get -y update && \
+RUN ls -l ${ONLYOFFICE_ROOT_DIR} && \
+    apt-get -y update && \
     apt-get -y upgrade && \
     apt-get install -yq sudo \
                         gpg \
