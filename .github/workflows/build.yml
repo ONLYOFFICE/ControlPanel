@@ -26,8 +26,9 @@ jobs:
       
       - name: run sources
         run: |
-             cd ./web
-             cp -r ./www ../build/install/docker/
+             mkdir -p ./build/install/docker/www
+             cp -r web/www/ ./build/install/docker/
+            
 
       - name: Build and push
         uses: docker/build-push-action@v3
