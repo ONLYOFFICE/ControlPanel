@@ -26,7 +26,7 @@ jobs:
       
       - name: run sources
         run: |
-             cp -r web/www/ ./build/install/docker/
+             cp -r web/ ./build/install/docker/
             
 
       - name: Build and push
