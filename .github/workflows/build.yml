@@ -3,7 +3,7 @@ name: ci
 on:
   push:
     branches:
-      - 'master'
+      - 'feature/update-base-image'
 
 jobs:
   docker:
