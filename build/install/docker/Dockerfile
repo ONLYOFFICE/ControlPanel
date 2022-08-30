@@ -14,7 +14,7 @@ ENV LANG=en_US.UTF-8 \
 
 RUN mkdir -p ${ONLYOFFICE_ROOT_DIR}
 
-ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR} \
+ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR}/
 ADD web ${ONLYOFFICE_ROOT_DIR}
 
 LABEL onlyoffice.controlpanel.release-date="${RELEASE_DATE}" \
