@@ -12,8 +12,9 @@ ENV LANG=en_US.UTF-8 \
     ONLYOFFICE_COMMUNITYSERVER_HOST=onlyoffice-community-server \
     ONLYOFFICE_CORE_MACHINEKEY="Vskoproizvolny Salt par Chivreski"
 
-ADD www ${ONLYOFFICE_ROOT_DIR}
-ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR}/ 
+ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR}
+
+COPY www ${ONLYOFFICE_ROOT_DIR}
 
 LABEL onlyoffice.controlpanel.release-date="${RELEASE_DATE}" \
       onlyoffice.controlpanel.version="${VERSION}" \
