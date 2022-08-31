@@ -12,7 +12,7 @@ ENV LANG=en_US.UTF-8 \
     ONLYOFFICE_COMMUNITYSERVER_HOST=onlyoffice-community-server \
     ONLYOFFICE_CORE_MACHINEKEY="Vskoproizvolny Salt par Chivreski"
 
-ADD src ${ONLYOFFICE_ROOT_DIR}
+#ADD src ${ONLYOFFICE_ROOT_DIR}
 ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR}/ 
 
 LABEL onlyoffice.controlpanel.release-date="${RELEASE_DATE}" \
@@ -41,7 +41,7 @@ RUN apt-get -y update && \
     apt-get install -yq nodejs \
                         supervisor && \
     apt install -yq docker.io && \
-    chmod -R a+x ${ONLYOFFICE_ROOT_DIR}/www/executables && \
+    #chmod -R a+x ${ONLYOFFICE_ROOT_DIR}/www/executables && \
     chmod a+x ${ONLYOFFICE_ROOT_DIR}/run-controlpanel.sh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
