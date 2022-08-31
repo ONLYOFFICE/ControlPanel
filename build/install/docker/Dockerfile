@@ -12,10 +12,8 @@ ENV LANG=en_US.UTF-8 \
     ONLYOFFICE_COMMUNITYSERVER_HOST=onlyoffice-community-server \
     ONLYOFFICE_CORE_MACHINEKEY="Vskoproizvolny Salt par Chivreski"
 
-RUN mkdir -p ${ONLYOFFICE_ROOT_DIR}
-
+ADD arc ${ONLYOFFICE_ROOT_DIR}
 ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR}/
-ADD web ${ONLYOFFICE_ROOT_DIR}
 
 LABEL onlyoffice.controlpanel.release-date="${RELEASE_DATE}" \
       onlyoffice.controlpanel.version="${VERSION}" \
@@ -24,8 +22,7 @@ LABEL onlyoffice.controlpanel.release-date="${RELEASE_DATE}" \
       maintainer="Ascensio System SIA <support@onlyoffice.com>" \
       securitytxt="https://www.onlyoffice.com/.well-known/security.txt"
 
-RUN ls -l ${ONLYOFFICE_ROOT_DIR} && \
-    apt-get -y update && \
+RUN apt-get -y update && \
     apt-get -y upgrade && \
     apt-get install -yq sudo \
                         gpg \
@@ -40,10 +37,6 @@ RUN ls -l ${ONLYOFFICE_ROOT_DIR} && \
     locale-gen en_US.UTF-8 && \
     echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d && \
     echo "" >> /etc/init.d/cgroup-lite && \
-    #mkdir -p /etc/apt/keyrings && \
-    #curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-    #echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu jammy stable" | \
-    #tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - && \
     apt-get install -yq nodejs \
                         supervisor && \
