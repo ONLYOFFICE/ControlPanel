@@ -47,7 +47,7 @@ RUN ls -l ${ONLYOFFICE_ROOT_DIR} && \
     curl -sL https://deb.nodesource.com/setup_18.x | sudo -E bash - && \
     apt-get install -yq nodejs \
                         supervisor && \
-    apt install -yq docker-ce && \
+    apt install -yq docker.io && \
     chmod -R a+x ${ONLYOFFICE_ROOT_DIR}/www/executables && \
     chmod a+x ${ONLYOFFICE_ROOT_DIR}/run-controlpanel.sh && \
     apt-get clean && \
