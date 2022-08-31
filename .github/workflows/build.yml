@@ -34,4 +34,4 @@ jobs:
         with:
           context: ./build/install/docker/.
           push: true
-          tags: danilaworker/paneltest:latest
+          tags: danilaworker/paneltest:3.1.1.467
