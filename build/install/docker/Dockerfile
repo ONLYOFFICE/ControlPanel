@@ -13,7 +13,7 @@ ENV LANG=en_US.UTF-8 \
     ONLYOFFICE_CORE_MACHINEKEY="Vskoproizvolny Salt par Chivreski"
 
 ADD src ${ONLYOFFICE_ROOT_DIR}
-ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR}/
+ADD run-controlpanel.sh ${ONLYOFFICE_ROOT_DIR}/ 
 
 LABEL onlyoffice.controlpanel.release-date="${RELEASE_DATE}" \
       onlyoffice.controlpanel.version="${VERSION}" \
