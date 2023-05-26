@@ -61,6 +61,119 @@ window.RebrandingManager = (function() {
     $mailSettingsSaveBtn = $("#mailSettingsSaveBtn");
     $mailSettingsResetBtn = $("#mailSettingsResetBtn");
 
+    function uploadWhiteLabelLogoComplete(data, params) {
+        if (data.success) {
+            $('#companySettingsSpoiler .logo_' + data.logotype).attr('src', data.message);
+            $("[id^=canvas_logo_" + data.logotype + "]").hide();
+            $('#logoPath_' + data.logotype).val(data.filePath);
+        } else {
+            toastr.error(data.message);
+        }
+    };
+    function bindUploadEvent() {
+        var $uploaderBtns = $('[id^=logoUploaderAbout_]');
+
+        for (var i = 0, n = $uploaderBtns.length; i < n; i++) {
+            var inputID = $($uploaderBtns[i]).attr('id'),
+                logotype = inputID.split('_')[1];
+            
+            UploadBinder.init(
+                '#' + inputID,
+                Common.basePath + 'WhiteLabel/UploadLogo?logotype=' + logotype,
+                {
+                    onSuccess: uploadWhiteLabelLogoComplete,
+                    onError: function (error) {
+                        toastr.error(error.message);
+                    },
+                    onComplete: function () {
+                        Common.loader.hide();
+                    }
+                });
+        }
+
+        $uploaderBtns.parent().on("mouseenter", function () {
+            $(this).children(".button.black").addClass("hover");
+        });
+        $uploaderBtns.parent().on("mouseleave", function () {
+            $(this).children(".button.black.hover").removeClass("hover");
+        });
+    };
+    function getWhiteLabelData() {
+        window.ApiService.get('WhiteLabel/GetLogos?isDefault=true')
+                .always(function () {
+                    window.Common.loader.hide;
+                })
+                .done(function (response) {
+                    if (response.success) {
+                        $("#whiteLabelLogoText").val(response.logoText).attr("data-value", response.logoText);
+                        $('[id^=logoPath_]').val('');
+
+                        var logos = response.logos,
+                            t = new Date().getTime();
+
+                        var $logoImgs = $("#companySettingsSpoiler .logo-img-container>img"),
+                            count = $logoImgs.length,
+                            loaded_count = 0;
+                        for(var i =0; i < count; i ++)
+                        {
+                            $($logoImgs[i]).one("load", function () {
+                                loaded_count ++;
+                                if(loaded_count == count) {
+                                    $("[id^=canvas_logo_]").hide();
+                                }
+                            });
+                        }
+                        for (var l in logos) {
+                            $("img.logo_" + l).attr("src", logos[l] + "?t=" + t);
+                        }
+                        $("#rebrandingMainContainer").removeClass("display-none");
+                    } else {
+                        $("#errorBlockTmpl").tmpl({ content: response.message }).appendTo('.layoutRightSide:first');
+                    }
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (window.ApiService.unloaded || textStatus != null && textStatus === "abort") { return; }
+
+                })
+                .complete(function (jqXHR, textStatus) {
+                    if (window.ApiService.unloaded || textStatus != null && textStatus === "abort") { return; }
+                });
+
+    };
+
+    function restoreWhiteLabelOptions () {
+        Common.loader.show();
+        var data = {
+            restoreLogoText: false,
+            logoTypes: []
+        };
+        $logoPaths = $('#companySettingsSpoiler [id^=logoPath_]');
+
+        for(var k = 0, l = $logoPaths.length; k < l;  k++)
+        {
+            var logotype = $($logoPaths[k]).attr('id').split('_')[1];
+            data.logoTypes.push(logotype);
+
+        }
+        window.ApiService.post('rebranding/restoreSelectedLogos', data)
+            .always(function () {
+                Common.loader.hide();
+            })
+            .done(function (response) {
+                if (response.success) {
+                    getWhiteLabelData();
+                } else {
+                    window.toastr.error(response.message);
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                if (window.ApiService.unloaded || textStatus != null && textStatus === "abort") { return; }
+                console.log(arguments);
+                window.toastr.error(errorThrown);
+            });
+
+    };
+
     function showError(error) {
         window.toastr.error((error ? error.responseText || error.statusText : null) || window.Resource.OperationFailedError);
     }
@@ -139,6 +252,42 @@ window.RebrandingManager = (function() {
     }
 
     function saveCompanySettings() {
+        var data = {
+            logo: []
+        };
+        $logoPaths = $('#companySettingsSpoiler [id^=logoPath_]'),
+            needToSave = false;
+        
+        for (var i = 0, n = $logoPaths.length; i < n; i++) {
+            var logotype = $($logoPaths[i]).attr('id').split('_')[1],
+                logoPath = $.trim($($logoPaths[i]).val());
+
+            data.logo.push({
+                key: logotype,
+                value: logoPath
+            });
+
+            if (logoPath != "") { needToSave = true; }
+        }
+
+        if (needToSave) {
+            window.Common.loader.show();
+            window.ApiService.post('WhiteLabel/SaveLogos?isDefault=true', data)
+                .done(function (response) {
+                    if (response.success) {
+                        getWhiteLabelData();
+                    } else {
+                        Common.loader.hide();
+                        window.toastr.error(response.message);
+                    }
+                })
+                .fail(function (jqXHR, textStatus, errorThrown) {
+                    if (window.ApiService.unloaded || textStatus != null && textStatus === "abort") { return; }
+                    Common.loader.hide();
+                    window.toastr.error(errorThrown);
+                });
+        }
+
         var settings = getValidCompanySettings();
 
         if (!settings) {
@@ -155,6 +304,7 @@ window.RebrandingManager = (function() {
     }
 
     function resetCompanySettings() {
+        restoreWhiteLabelOptions();
         window.Common.loader.show();
 
         window.ApiService.delete("rebranding/company")
@@ -433,6 +583,8 @@ window.RebrandingManager = (function() {
             return;
         }
 
+        getWhiteLabelData();
+
         successMessage = success;
         companySettings = company;
         additionalSettings = additional;
@@ -442,6 +594,7 @@ window.RebrandingManager = (function() {
         initAdditionalSettings();
         initMailSettings();
         bindEvents();
+        bindUploadEvent();
 
         isInit = true;
         $(window).trigger("rightSideReady", null);

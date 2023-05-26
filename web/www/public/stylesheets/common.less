@@ -256,9 +256,32 @@ input[type="checkbox"][disabled="disabled"] {
         &:nth-child(odd) {
             margin-right: 10px;
         }
-    input.textBox {
-        margin-top: 6px;
+
+        input.textBox, .selectBox {
+            margin-top: 6px;
         }
+    }
+}
+
+.flexTextBox.storage {
+    .fullWidth {
+        width: 100%;
+        margin-left: 0;
+        margin-right: 0;
+    }
+
+    .emptyMargin {
+        margin: 0;
+    }
+
+    .checkBox {
+        margin: 10px 0;
+    }
+
+    .radioBox {
+        display: block;
+        width: 100%;
+        margin: 14px 0;
     }
 }
 

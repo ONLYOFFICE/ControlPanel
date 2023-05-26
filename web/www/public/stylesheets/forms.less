@@ -163,6 +163,10 @@ input[type="password"].textBox {
 
     .selectBoxValue {
         float: left;
+        width: calc(100% - 16px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .selectBoxSwitch {
@@ -174,36 +178,37 @@ input[type="password"].textBox {
         border-width: 4px 4px 0 4px;
         border-color: #4c4c4c transparent transparent transparent;
     }
+}
 
-    .selectOptionsBox {
-        display: none;
-        position: absolute;
-        padding: 5px;
-        background-color: @backgroundColor;
-        border: 1px solid @formsBorderColor;
-        .borderRadius(2px);
-        .boxShadow(1px, 1px, 8px, rgba(0,0,0,.2));
-        z-index: 1000;
+.selectOptionsBox {
+    display: none;
+    position: absolute;
+    padding: 5px;
+    background-color: @backgroundColor;
+    border: 1px solid @formsBorderColor;
+    .borderRadius(2px);
+    .boxShadow(1px, 1px, 8px, rgba(0,0,0,.2));
+    z-index: 1000;
 
-        .selectOptionsInnerBox {
-            max-height: 200px;
-            padding-right: 20px;
-            overflow-y: auto;
-            
-            .option {
-                display: block;
-                text-decoration: none;
-                padding: 2px 14px 2px 4px;
-                min-width: 50px;
+    .selectOptionsInnerBox {
+        max-height: 200px;
+        padding-right: 20px;
+        overflow-y: auto;
+        
+        .option {
+            display: block;
+            text-decoration: none;
+            padding: 2px 4px;
+            min-width: 50px;
+            white-space: nowrap;
 
-                &:hover {
-                    background-color: @selectOptionsHoverColor;
-                    cursor: pointer;
-                }
+            &:hover {
+                background-color: @selectOptionsHoverColor;
+                cursor: pointer;
+            }
 
-                &.selected {
-                    color: @selectOptionsSelectedColor;
-                }
+            &.selected {
+                color: @selectOptionsSelectedColor;
             }
         }
     }

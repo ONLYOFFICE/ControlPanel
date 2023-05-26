@@ -17,6 +17,7 @@
 
 const router = require('express').Router(),
     Model = require('../model/update.js'),
+    updateActionType = require('../model/updateActionType.js'),
     pug = require('pug'),
     path = require('path'),
     updateCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'update.pug')),
@@ -64,6 +65,11 @@ router
             });
     })
     .post("/start", (req, res) => {
+        const updateStarted = updateList.some((item) => item.updateAction.started && (item.updateAction.type == updateActionType.Update || item.updateAction.type == updateActionType.Install));
+        if (updateStarted) {
+            res.send({ success: false, message: req.resources.controlPanelResource.ErrorUpdateAlreadyStarted });
+            res.end();
+        }
         const updateItem = updateList.find((item) => item.serverType == req.body.serverType);
         if (req.body.domainName) {
             updateItem.domainName = req.body.domainName;

@@ -90,7 +90,7 @@ if [ "$OFFLINE" != "" ]; then
 fi
 
 if ! command_exists jq ; then
-	sudo apt-get install -yq jq
+	apt-get install -yq jq
 fi
 
 CREDENTIALS="";

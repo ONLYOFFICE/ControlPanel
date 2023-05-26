@@ -126,21 +126,27 @@ done
 
 DIR=$(dirname $(readlink -f $0));
 JWT_SECRET=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_SECRET=" | sed 's/^.*=//');
+JWT_ENABLED=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_ENABLED=" | sed 's/^.*=//');
+JWT_HEADER=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_HEADER=" | sed 's/^.*=//');
 
 if [ "$UPDATE" == "1" ]; then
-	DOCUMENT_SERVER_ID=$(sudo docker ps -aqf "name=$DOCUMENT_CONTAINER_NAME");
-	JWT_SECRET=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_SECRET=" | sed 's/^.*=//');
-	sudo bash ${DIR}/tools/check-bindings.sh ${DOCUMENT_SERVER_ID} "/etc/$PRODUCT,/var/lib/$PRODUCT,/var/lib/postgresql,/usr/share/fonts/truetype/custom,/var/lib/rabbitmq,/var/lib/redis";
-	sudo docker exec ${DOCUMENT_CONTAINER_NAME} bash /usr/bin/documentserver-prepare4shutdown.sh
-	sudo bash ${DIR}/tools/remove-container.sh ${DOCUMENT_CONTAINER_NAME}
+	DOCUMENT_SERVER_ID=$(docker ps -aqf "name=$DOCUMENT_CONTAINER_NAME");
+
+	JWT_ENABLED=${JWT_ENABLED:-$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_ENABLED=" | sed 's/^.*=//')}
+	JWT_SECRET=${JWT_SECRET:$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_SECRET=" | sed 's/^.*=//')}
+	JWT_HEADER=${JWT_HEADER:$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_HEADER=" | sed 's/^.*=//')}
+
+	bash ${DIR}/tools/check-bindings.sh ${DOCUMENT_SERVER_ID} "/etc/$PRODUCT,/var/lib/$PRODUCT,/var/lib/postgresql,/usr/share/fonts/truetype/custom,/var/lib/rabbitmq,/var/lib/redis";
+	docker exec ${DOCUMENT_CONTAINER_NAME} bash /usr/bin/documentserver-prepare4shutdown.sh
+	bash ${DIR}/tools/remove-container.sh ${DOCUMENT_CONTAINER_NAME}
 fi
 
 if [[ -n ${USERNAME} && -n ${PASSWORD} ]]; then
-	sudo docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
+	docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
 fi
 
 if [[ -z ${VERSION} ]]; then
-	GET_VERSION_COMMAND="sudo bash ${DIR}/tools/get-available-version.sh -i $DOCUMENT_IMAGE_NAME -path $IMAGEPATH";
+	GET_VERSION_COMMAND="bash ${DIR}/tools/get-available-version.sh -i $DOCUMENT_IMAGE_NAME -path $IMAGEPATH";
 
 	if [[ -n ${PASSWORD} && -n ${USERNAME} ]]; then
 		GET_VERSION_COMMAND="$GET_VERSION_COMMAND -u $USERNAME -p $PASSWORD";
@@ -152,35 +158,33 @@ fi
 args=();
 args+=(--name "$DOCUMENT_CONTAINER_NAME");
 
-if [[ -n ${JWT_SECRET} ]]; then
-	args+=(-e "JWT_ENABLED=true");
-	args+=(-e "JWT_HEADER=AuthorizationJwt");
-	args+=(-e "JWT_SECRET=$JWT_SECRET");
-fi
+args+=(-e "JWT_ENABLED=${JWT_ENABLED:-true}");
+args+=(-e "JWT_HEADER=${JWT_HEADER:-AuthorizationJwt}");
+args+=(-e "JWT_SECRET=${JWT_SECRET:-$(cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 32)}");
 
 args+=(-v "$HOST_DIR/DocumentServer/data:/var/www/$PRODUCT/Data");
 args+=(-v "$HOST_DIR/DocumentServer/logs:/var/log/$PRODUCT");
 args+=("$DOCUMENT_IMAGE_NAME:$VERSION");
 
-sudo docker run --net ${PRODUCT} -i -t -d --restart=always "${args[@]}";
+docker run --net ${PRODUCT} -i -t -d --restart=always "${args[@]}";
 
 sleep 5
 
-DOCUMENT_SERVER_ID=$(sudo docker ps -aqf "name=$DOCUMENT_CONTAINER_NAME");
+DOCUMENT_SERVER_ID=$(docker ps -aqf "name=$DOCUMENT_CONTAINER_NAME");
 
 if [[ -n ${DOCUMENT_SERVER_ID} ]]; then
-	sudo docker exec ${COMMUNITY_CONTAINER_NAME} chown -R ${PRODUCT}:${PRODUCT} /var/www/${PRODUCT}/DocumentServerData
+	docker exec ${COMMUNITY_CONTAINER_NAME} chown -R ${PRODUCT}:${PRODUCT} /var/www/${PRODUCT}/DocumentServerData
 	
 	echo "DOCUMENT SERVER successfully installed."
 
 	if [ -f "$IMAGEPATH/${DOCUMENT_IMAGE_NAME//\//-}_$VERSION.tar.gz" ]; then
-		sudo rm "$IMAGEPATH/${DOCUMENT_IMAGE_NAME//\//-}_$VERSION.tar.gz";
+		rm "$IMAGEPATH/${DOCUMENT_IMAGE_NAME//\//-}_$VERSION.tar.gz";
 	fi
 
 	if [ "$UPDATE" == "0" ]; then
-		sudo docker exec ${COMMUNITY_CONTAINER_NAME} cp /etc/nginx/includes/${PRODUCT}-communityserver-proxy-to-documentserver.conf.template /etc/nginx/includes/${PRODUCT}-communityserver-proxy-to-documentserver.conf
-		sudo docker exec ${COMMUNITY_CONTAINER_NAME} sed 's,{{DOCUMENT_SERVER_HOST_ADDR}},'"${PROTOCOL}:\/\/${DOCUMENT_CONTAINER_NAME}"',' -i /etc/nginx/includes/${PRODUCT}-communityserver-proxy-to-documentserver.conf
-		sudo docker exec ${COMMUNITY_CONTAINER_NAME} service nginx reload
+		docker exec ${COMMUNITY_CONTAINER_NAME} cp /etc/nginx/includes/${PRODUCT}-communityserver-proxy-to-documentserver.conf.template /etc/nginx/includes/${PRODUCT}-communityserver-proxy-to-documentserver.conf
+		docker exec ${COMMUNITY_CONTAINER_NAME} sed 's,{{DOCUMENT_SERVER_HOST_ADDR}},'"${PROTOCOL}:\/\/${DOCUMENT_CONTAINER_NAME}"',' -i /etc/nginx/includes/${PRODUCT}-communityserver-proxy-to-documentserver.conf
+		docker exec ${COMMUNITY_CONTAINER_NAME} service nginx reload
 	fi
 
 	exit 0;

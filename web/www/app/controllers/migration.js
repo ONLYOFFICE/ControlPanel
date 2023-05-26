@@ -1,3 +1,20 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2021
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
 const {
     error
 } = require('console');
@@ -25,18 +42,23 @@ function upload(req, res, ext) {
         form.parse(req, function (err, fields, files) {
             co(function* () {
                 const uploaded = files["files[]"];
-                const resPath = path.join(form.uploadDir, uploaded.name);
 
-                if (err || !uploaded || !uploaded.name.endsWith(ext)) {
-                    res.send({
-                        success: false
-                    });
+                if (err || !uploaded) {
+                    res.send({ success: false });
                     res.end();
                     return;
                 }
 
-                yield fileManager.copyFile(uploaded.path, resPath, true);
-                yield fileManager.deleteFile(uploaded.path);
+                if (!uploaded.originalFilename.endsWith(ext)) {
+                    yield fileManager.deleteFile(uploaded.filepath);
+                    res.send({ success: false });
+                    res.end();
+                    return;
+                }
+
+                const resPath = path.join(form.uploadDir, uploaded.originalFilename);
+                yield fileManager.copyFile(uploaded.filepath, resPath, true);
+                yield fileManager.deleteFile(uploaded.filepath);
 
                 res.send({
                     success: true,
@@ -57,7 +79,7 @@ function upload(req, res, ext) {
 
 function uploadComplete(req, res) {
     co(function* () {
-        const tmpPath = yield apiRequestManager.get("migration/backuptmp", req);
+        const tmpPath = yield apiRequestManager.get("migration/tmp", req);
         const uploadedPath = req.body.file;
         const uploadedName = path.basename(uploadedPath);
 
@@ -125,6 +147,17 @@ router
         });
         res.end();
     })
+    .get("/list", (req, res) => {
+        apiRequestManager.makeRequest("migration/list", req, {
+                method: "GET",
+                json: true
+            })
+            .then((result) => {
+                res.send(result);
+                res.end();
+            });
+
+    })
     .get("/status", (req, res) => {
         apiRequestManager.makeRequest("migration/status", req, {
                 method: "GET",
@@ -136,6 +169,23 @@ router
             .catch((error) => {
                 res.statusCode = 500;
                 log.error("migration status", error);
+                res.send(error);
+            });
+    })
+    .post("/migratorsInfo", (req, res) => {
+        apiRequestManager.makeRequest("migration/migratorsInfo", req, {
+                method: "POST",
+                body: {
+                    migratorsName: req.body.migratorsName
+                },
+                json: true
+            })
+            .then((result) => {
+                res.send(result);
+                res.end();
+            })
+            .catch((error) => {
+                log.error("migration migratorsInfo", error);
                 res.send(error);
             });
     })
@@ -193,8 +243,8 @@ router
         });
         res.end();
     })
-    .post("/NextcloudMigrate", (req, res) => {
-        apiRequestManager.makeRequest("migration/init/NextcloudMigrate", req, {
+    .post("/init", (req, res) => {
+        apiRequestManager.makeRequest("migration/init/" + req.body.migrator, req, {
                 method: "POST",
                 body: {
                     path: req.body.path
@@ -202,35 +252,7 @@ router
                 json: true
             })
             .catch((error) => {
-                log.error("migration NextcloudMigrate ", error);
-                res.send(error);
-            });
-        res.end();
-    })
-    .post("/OwncloudMigrate", (req, res) => {
-        apiRequestManager.makeRequest("migration/init/OwncloudMigrate", req, {
-                method: "POST",
-                body: {
-                    path: req.body.path
-                },
-                json: true
-            })
-            .catch((error) => {
-                log.error("migration OwncloudMigrate ", error);
-                res.send(error);
-            });
-        res.end();
-    })
-    .post("/GoogleWorkspace", (req, res) => {
-        apiRequestManager.makeRequest("migration/init/GoogleWorkspace", req, {
-                method: "POST",
-                body: {
-                    path: req.body.path
-                },
-                json: true
-            })
-            .catch((error) => {
-                log.error("migration GoogleWorkspace", error);
+                log.error("migration " + req.body.migrator, error);
                 res.send(error);
             });
         res.end();

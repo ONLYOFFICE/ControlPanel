@@ -1,0 +1,99 @@
+﻿append bodyscripts
+  script#consumerItemBaseTmpl(type="text/x-jquery-tmpl").
+    <div data-id="${id}" class="storage display-none">
+        {{each properties}}
+        <div class="flexContainer" data-id="${name}">
+            <span class="{{if !isOptional}}requiredTitle{{/if}}">${title}</span>
+        {{if description}}
+            <span class="helpCenterSwitcher"></span>
+        {{/if}}
+        {{if !isSet}} 
+            <input class="textBox {{if !isOptional}}requiredField{{/if}} disabled" type="text" disabled>
+        {{else}}
+            <input class="textBox {{if !isOptional}}requiredField{{/if}}" type="text">
+        {{/if}}
+        </div>
+        {{/each}}
+    </div>
+
+  script#consumerItemS3Tmpl(type="text/x-jquery-tmpl").
+    <div data-id="${id}" class="storage display-none">
+        {{each properties}}
+        {{if name == "region" && regions.length > 0}}
+        <div class="flexContainer" data-id="${name}">
+          <span class="{{if !isOptional}}requiredTitle{{/if}}">${title}</span>{{if description}}<span class="helpCenterSwitcher"></span>{{/if}} 
+          <div class="selectBox {{if !isSet}}disabled{{/if}}" data-value="${regions[0].systemName}">
+            <div class="selectBoxValue">${regions[0].displayName} (${regions[0].systemName})</div>
+            <div class="selectBoxSwitch"></div>
+            <div class="selectOptionsBox" style="display: none;">
+              <div class="selectOptionsInnerBox">
+                {{each(i, region) regions}}
+                <div class="option {{if i==0}}selected{{/if}}" data-value="${region.systemName}">${region.displayName} (${region.systemName})</div>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+        </div>
+        {{else name == "forcepathstyle" || name == "usehttp"}}
+        <div class="flexContainer fullWidth emptyMargin" data-id="${name}">
+            <div class="checkBox {{if !isSet}}disabled{{/if}}">
+              <button class="icon" type="button"></button>
+              <span>${title}</span>{{if description}}<span class="helpCenterSwitcher"></span>{{/if}}
+            </div>
+        </div>
+        {{else name == "sse"}}
+        <div class="flexContainer fullWidth emptyMargin"></div>
+        <div class="flexContainer" prop-id="${name}">
+          <span>${title}</span>{{if description}}<span class="helpCenterSwitcher"></span>{{/if}} 
+          <div class="selectBox comboBoxEncryption {{if !isSet}}disabled{{/if}}" data-value="${encryptionTypes[0].id}">
+            <div class="selectBoxValue">${encryptionTypes[0].title}</div>
+            <div class="selectBoxSwitch"></div>
+            <div class="selectOptionsBox" style="display: none;">
+              <div class="selectOptionsInnerBox">
+                {{each(i, encryptionType) encryptionTypes}}
+                <div class="option {{if i==0}}selected{{/if}}" data-value="${encryptionType.id}">${encryptionType.title}</div>
+                {{/each}}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="flexContainer fullWidth emptyMargin encryption-method display-none" data-id="${name}">
+            {{each(j, method) encryptionMethods}}
+            <div class="radioBox {{if j==0}}checked{{/if}} {{if !isSet}}disabled{{/if}}" data-value="${method.id}" data-name="${settingName}${name}" style="display: none;">
+              <button class="icon" type="button"></button>
+              <span>${method.title}</span>{{if method.description}}<span class="helpCenterSwitcher" data-type="encryptionMethod"></span>{{/if}}
+            </div>
+            {{/each}}
+        </div>
+        <div class="flexContainer encryption-kms display-none">
+            <span>${Resource.ConsumersS3EncryprionCMK}</span>
+            <div class="selectBox {{if !isSet}}disabled{{/if}}" data-value="0">
+              <div class="selectBoxValue">${Resource.ConsumersS3EncryprionCMKDefault}</div>
+              <div class="selectBoxSwitch"></div>
+              <div class="selectOptionsBox" style="display: none;">
+                <div class="selectOptionsInnerBox">
+                  <div class="option selected" data-value="0">${Resource.ConsumersS3EncryprionCMKDefault}</div>
+                  <div class="option" data-value="1">${Resource.ConsumersS3EncryprionCMKCustom}</div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div class="flexContainer encryption-key display-none" data-id="ssekey">
+            <span class="requiredTitle">${Resource.ConsumersS3EncryprionKey}</span>
+            {{if !isSet}}<input class="textBox requiredField disabled" type="text" disabled>{{else}}<input class="textBox requiredField" type="text">{{/if}}
+        </div>
+        {{else name == "ssekey"}}
+        {{else}}
+        <div class="flexContainer" data-id="${name}">
+            <span class="{{if !isOptional}}requiredTitle{{/if}}">${title}</span>{{if description}}<span class="helpCenterSwitcher"></span>{{/if}}
+            {{if !isSet}}<input class="textBox disabled {{if !isOptional}}requiredField{{/if}}" type="text" disabled>{{else}}<input class="textBox {{if !isOptional}}requiredField{{/if}}" type="text">{{/if}}
+        </div>
+        {{/if}}
+        {{/each}}
+    </div>
+
+  script#consumerHelpBox(type="text/x-jquery-tmpl").
+    <div class="popup_helper" id="${descriptionId}">
+      <p>${description}</p>
+      <div class="cornerHelpBlock pos_top"></div>
+    </div>

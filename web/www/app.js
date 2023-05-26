@@ -23,6 +23,7 @@ const express = require('express'),
     bodyParser = require('body-parser'),
     { v4: uuidv4 } = require('uuid'),
     session = require('express-session'),
+    MemoryStore = require('memorystore')(session),
     fs = require('fs'),
     log = require('./app/log.js'),
     config = require('./config'),
@@ -45,7 +46,8 @@ app.use(favicon(__dirname + '/public/stylesheets/images/favicon.ico'))
         secret: uuidv4(),
         resave: false,
         saveUninitialized: false,
-        cookie: { maxAge: 60000 }
+        cookie: { maxAge: 60000 },
+        store: new MemoryStore({ checkPeriod: 600000 })
     }))
     .use(config.makePath(), require('less-middleware')(path.join(__dirname, 'public')));
 

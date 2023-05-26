@@ -1,5 +1,12 @@
 # Change log
 
+## 3.5.0
+
+* Changed API methods for migration, implemented progressQueue.
+* Changed settings for connecting third-party storages. Added tooltips for fields. Added the 'Server Side Encryption Method' block for Amazon AWS S3.
+* Added logos for dark theme in the Branding section. Logos for the About page are now separate fields in the Advanced tab.
+* Added the ability to set the portal memory quota.
+
 ## 3.1.1
 
 * Fixed issue with file indexing.

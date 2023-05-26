@@ -32,7 +32,7 @@ function setPortalUrl(req, res) {
         yield portalManager.setPortalUrl(body);
         const response = yield apiRequestManager.post('authentication.json', req);
         const expires = new Date();
-        expires.setFullYear(expires.getFullYear + 1);
+        expires.setFullYear(expires.getFullYear() + 1);
         res.cookie('asc_auth_key', response.token, { expires: expires });
         res.status(200);
         res.send({ success: typeof response.token === "string" && response.token.length });

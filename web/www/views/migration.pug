@@ -9,27 +9,11 @@ block rightSide
 
     div#choice-of-migration.display-none
       p= controlPanelResource.MigrationPermanentPrompt
-      div
-        h2.blue-text.top-indent-middle= controlPanelResource.MigrationGoogleWorkspace
-        div#migration-view.top-indent
-          p= controlPanelResource.MigrationGooglePrompt 
-        button#initial-import-google-Btn.button.green(type="button")= controlPanelResource.MigrationInitialImport
-
-      div
-        h2.blue-text.top-indent-middle= controlPanelResource.MigrationNextcloud
-        div#migration-view.top-indent
-          p= controlPanelResource.MigrationNextcloudPrompt
-        button#initial-import-nextcloud-Btn.button.green(type="button")= controlPanelResource.MigrationInitialImport
-
-      div
-        h2.blue-text.top-indent-middle= controlPanelResource.MigrationOwncloud
-        div#migration-view.top-indent
-          p= controlPanelResource.MigrationOwncloudPrompt
-        button#initial-import-owncloud-Btn.button.green(type="button")= controlPanelResource.MigrationInitialImport
+      div#list-type-of-migration
 
     div#initial-import.display-none
       p= controlPanelResource.MigrationPermanentPrompt
-      h2=controlPanelResource.MigrationStepSelectFile
+      h2#migration-step-select-file
       p#select-file-prompt
       div#archives.inputWithBtn.withPlusBtn
         div.migrationOptionsHeader= controlPanelResource.ChooseStorageLocationMsg + ":"
@@ -62,7 +46,7 @@ block rightSide
         button#check-users-for-import-next.button.green(type="button")= controlPanelResource.MigrationNextStep
         span.splitter-buttons
         button#back-check-users-for-import.button.black(type="button")= controlPanelResource.MigrationBack
-      h2.p-padding-top=controlPanelResource.MigrationStepSelectUsers
+      h2#migration-step-select-users.p-padding-top
       p#all-users-have-emails.display-none!=controlPanelResource.format("MigrationAllUsersHaveEmails","<strong>","</strong>")
       p#not-filled-emails!=controlPanelResource.format("MigrationUsersNotFilledEmails", "<strong>","</strong>", "{0}")
       p#dont-filled-emails.display-none!=controlPanelResource.format("MigrationDontUsersEmail", "<strong>","</strong>")
@@ -108,7 +92,7 @@ block rightSide
         button#back-check-users-without-email-for-import.button.black(type="button")= controlPanelResource.MigrationBack
         span.splitter-buttons
         button#download-unimported-users.button.black(type="button")= controlPanelResource.MigrationDownloadUnimportedUsers
-      h2.p-padding-top=controlPanelResource.MigrationStepNotFilledEmails
+      h2#migration-step-not-filled-emails.p-padding-top
       p#not-filled-emails!=controlPanelResource.format("MigrationCheckUnimportedUsers", "</br>","<strong>","</strong>", "{0}")
       p#dont-not-filled-emails.display-none!=controlPanelResource.format("MigrationDontUsersNotEmail", "</br></br>","<strong>","</strong>")
       div#selected-limit
@@ -147,7 +131,7 @@ block rightSide
       
     div#select-modules-to-import.display-none
       p= controlPanelResource.MigrationPermanentPrompt
-      h2.p-padding-top=controlPanelResource.MigrationStepSelectModules
+      h2#migration-step-select-modules.p-padding-top
       p= controlPanelResource.MigrationSelectModulesForImport
       table#modules-choose-table
         thead
@@ -165,7 +149,7 @@ block rightSide
 
     div#migration.display-none
       p= controlPanelResource.MigrationPermanentPrompt
-      h2.p-padding-top=controlPanelResource.MigrationStepProcessingMigration
+      h2#migration-step-processing-migration.p-padding-top
       p=controlPanelResource.MigrationPleaseWait
 
       div#migrationProgressBoxMigrate.display-none
@@ -179,7 +163,7 @@ block rightSide
 
     div#results-data-import.display-none
       p= controlPanelResource.MigrationPermanentPrompt
-      h2.p-padding-top=controlPanelResource.MigrationStepFinishedMigration
+      h2#migration-step-finished-migration.p-padding-top
       p#message-short-result
       p#success-message.display-none
       div#sendWelcomeEmail.display-none
@@ -202,6 +186,12 @@ block rightSide
   script#select-limit-tmpl(type="text/x-jquery-tmpl")
     h3.splitter ${selected}
 
+  script#typeOfMigration(type="text/x-jquery-tmpl")
+    div
+      h2.blue-text.top-indent-middle ${migrationName}
+      div.top-indent
+        p ${migrationPrompt}
+      button.button.green.initial-import-btn(id="${nextStepId}" type="button")= controlPanelResource.MigrationInitialImport
 
   script#user-list-without-emails-tmpl(type="text/x-jquery-tmpl")
     tr

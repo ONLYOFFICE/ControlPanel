@@ -44,14 +44,14 @@ function uploadLicense(req, res) {
         let params = {
             method: "POST",
             formData: {
-                file: fs.createReadStream(licenseFile.path)
+                file: fs.createReadStream(licenseFile.filepath)
             },
             json: true
         };
 
         apiManager.makeRequest("portal/uploadlicense", req, params)
             .then((result) => {
-                result.data = licenseFile.name;
+                result.data = licenseFile.originalFilename;
                 res.send(result);
                 res.end();
             })

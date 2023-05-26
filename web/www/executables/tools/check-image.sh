@@ -12,5 +12,5 @@
 # limitations under the License.
 
 
-echo $(sudo docker images | grep $1 | grep $2)
+echo $(docker images | grep $1 | grep $2)
 exit 0;

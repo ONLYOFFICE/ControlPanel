@@ -229,6 +229,7 @@ class UpdateItem extends UpdateItemBase {
         const dockerAuth = config.get("docker:auth");
 
         const currentVersionPromise = executeHelper("tools/get-current-version.sh", result.container)
+            .then((value) => { return value == "Unknown" ? null : value; })
             .catch((err) => {
                 log.error(err);
 
@@ -293,6 +294,7 @@ class UpdateItem extends UpdateItemBase {
             const mailServerContainerName = this.container;
             const dockerMailServerSqlAuth = config.get("docker:MailServerSqlAuth");
             const currentVersionPromise = executeHelper("tools/get-current-version.sh", dockerMailServerSqlAuth.host)
+                .then((value) => { return value == "Unknown" ? null : value; })
                 .catch((err) => { return null; });
 
             return co(function* () {

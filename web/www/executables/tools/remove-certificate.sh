@@ -19,14 +19,14 @@ shift
 CRT_PATH=$1
 shift
 
-sudo docker exec $CONTAINER_NAME rm -rf $CRT_PATH 2>/dev/null
+docker exec $CONTAINER_NAME rm -rf $CRT_PATH 2>/dev/null
 
 SCRIPT_PATH="/var/www/$PRODUCT/Tools/default-$PRODUCT.sh"
 
-if [[ -n $(sudo docker exec $CONTAINER_NAME ls $SCRIPT_PATH 2>/dev/null) ]]; then
-	sudo docker exec $CONTAINER_NAME bash $SCRIPT_PATH &>/dev/null
+if [[ -n $(docker exec $CONTAINER_NAME ls $SCRIPT_PATH 2>/dev/null) ]]; then
+	docker exec $CONTAINER_NAME bash $SCRIPT_PATH &>/dev/null
 	exit 0;
 fi
 
-sudo docker exec $CONTAINER_NAME /app/$PRODUCT/run-community-server.sh
+docker exec $CONTAINER_NAME /app/$PRODUCT/run-community-server.sh
 exit 0;

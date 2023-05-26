@@ -104,12 +104,12 @@ function uploadLogo(req, res) {
                 res.end();
                 return;
             }
-            const newName = logotype + path.extname(uploaded.name);
+            const newName = logotype + path.extname(uploaded.originalFilename);
 
             co(function*() {
-                    yield checkSize(uploaded.path, requiredSize, req.resources.cpWhiteLabelResource.ErrorImageSize);
+                    yield checkSize(uploaded.filepath, requiredSize, req.resources.cpWhiteLabelResource.ErrorImageSize);
                     const filePath = path.join(form.uploadDir, newName);
-                    yield fileManager.moveFile(uploaded.path, filePath);
+                    yield fileManager.moveFile(uploaded.filepath, filePath);
                     res.send({
                         success: true,
                         message: `${conf.makePath(conf.rebranding)}/${newName}`,
@@ -120,7 +120,7 @@ function uploadLogo(req, res) {
                 })
                 .catch((err) => {
                     co(function*() {
-                        yield fileManager.deleteFile(uploaded.path);
+                        yield fileManager.deleteFile(uploaded.filepath);
                         res.send({
                             success: false,
                             message: err || req.resources.cpWhiteLabelResource.ErrorImageSize,

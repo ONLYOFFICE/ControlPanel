@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:22.04
 
 ARG ONLYOFFICE_ROOT_DIR="/var/www/onlyoffice/controlpanel"
 ARG RELEASE_DATE="2020-07-07" 
@@ -31,17 +31,19 @@ RUN apt-get -y update && \
                         htop \
                         nano \
                         apt-transport-https \
+                        gnupg2 \
+                        dnsutils \
                         jq && \
     DEBIAN_FRONTEND=noninteractive  && \
     locale-gen en_US.UTF-8 && \
     echo "#!/bin/sh\nexit 0" > /usr/sbin/policy-rc.d && \
     echo "" >> /etc/init.d/cgroup-lite && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add - && \
-    echo "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable" | tee /etc/apt/sources.list.d/docker.list && \
-    curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash - && \
+    echo "deb https://deb.nodesource.com/node_12.x focal main" | tee /etc/apt/sources.list.d/nodesource.list && \
+    echo "deb-src https://deb.nodesource.com/node_12.x focal main" >> /etc/apt/sources.list.d/nodesource.list && \
+    curl -s https://deb.nodesource.com/gpgkey/nodesource.gpg.key | apt-key add - && \
     apt-get install -yq nodejs \
                         supervisor \
-                        docker-ce=17.03.0~ce-0~ubuntu-xenial && \
+                        docker.io && \
     chmod -R a+x ${ONLYOFFICE_ROOT_DIR}/www/executables && \
     chmod a+x ${ONLYOFFICE_ROOT_DIR}/run-controlpanel.sh && \
     apt-get clean && \

@@ -23,12 +23,12 @@ shift
 
 SCRIPT_PATH="/var/www/$PRODUCT/Tools/letsencrypt.sh"
 
-if [[ -z $(sudo docker exec $CONTAINER_NAME ls $SCRIPT_PATH 2>/dev/null) ]]; then
+if [[ -z $(docker exec $CONTAINER_NAME ls $SCRIPT_PATH 2>/dev/null) ]]; then
 	SCRIPT_PATH="/app/$PRODUCT/assets/tools/letsencrypt.sh"
 fi
 
-sudo docker exec $CONTAINER_NAME bash $SCRIPT_PATH "$@" &>/dev/null
+docker exec $CONTAINER_NAME bash $SCRIPT_PATH "$@" &>/dev/null
 
-sudo docker cp ${CONTAINER_NAME}:${FROM} ${TO}
+docker cp ${CONTAINER_NAME}:${FROM} ${TO}
 
 exit 0;

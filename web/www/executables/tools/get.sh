@@ -43,7 +43,7 @@ while [ "$1" != "" ]; do
 	shift
 done
 
-if [[ -n $(sudo docker exec $COMMUNITY_CONTAINER_NAME ls $FROM 2>/dev/null) ]]; then
-	sudo docker cp ${COMMUNITY_CONTAINER_NAME}:${FROM} ${TO}
+if [[ -n $(docker exec $COMMUNITY_CONTAINER_NAME ls $FROM 2>/dev/null) ]]; then
+	docker cp ${COMMUNITY_CONTAINER_NAME}:${FROM} ${TO}
 	exit 0;
 fi

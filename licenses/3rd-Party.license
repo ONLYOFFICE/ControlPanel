@@ -44,7 +44,7 @@ gulp-just-replace - The gulp-replace is fine. But it's painful to install it o
 License:        MIT License
 License File:   gulp-just-replace.license
 
-image-size - A Node module to get dimensions of any image file (https://github.com/image-size/image-size/blob/master/LICENSE)
+image-size - A Node module to get dimensions of any image file (https://github.com/image-size/image-size/blob/main/LICENSE)
 License:        MIT License
 License File:   image-size.license
 
@@ -55,6 +55,10 @@ License File:   less.license
 less-middleware - This middleware was created to allow processing of Less files for Connect JS framework and by extension the Express JS framework. (https://github.com/emberfeather/less.js-middleware/blob/master/license)
 License:        MIT License
 License File:   less-middleware.license
+
+memorystore - A session store implementation for Express using lru-cache. (https://github.com/roccomuso/memorystore/blob/master/LICENSE)
+License:        MIT License
+License File:   memorystore.license
 
 moment - A lightweight JavaScript date library for parsing, validating, manipulating, and formatting dates. (https://github.com/moment/moment/blob/develop/LICENSE)
 License:        MIT License
@@ -100,7 +104,7 @@ url - This module has utilities for URL resolution and parsing meant to have fea
 License:        MIT License
 License File:   url.license
 
-uuid - Simple, fast generation of RFC4122 UUIDS. (https://github.com/uuidjs/uuid/blob/master/LICENSE.md)
+uuid - Simple, fast generation of RFC4122 UUIDS. (https://github.com/uuidjs/uuid/blob/main/LICENSE.md)
 License:        MIT License
 License File:   uuid.license
 
@@ -116,7 +120,7 @@ x509.js - parsing of x509 certificates and keys in javascript (via emscripten) (
 License:        MIT License
 License File:   x509.js.license
 
-yargs - Yargs helps you build interactive command line tools, by parsing arguments and generating an elegant user interface. (https://github.com/yargs/yargs/blob/master/LICENSE)
+yargs - Yargs helps you build interactive command line tools, by parsing arguments and generating an elegant user interface. (https://github.com/yargs/yargs/blob/main/LICENSE)
 License:        MIT License
 License File:   yargs.license
 

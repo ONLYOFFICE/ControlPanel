@@ -22,7 +22,14 @@ window.StorageView = function ($, apiService, loaderService) {
         clickEvent = "click",
         disabledClass = "disabled",
         displayNoneClass = "display-none",
-        withErrorClass = "withError";
+        withErrorClass = "withError",
+        sizeNames = {
+            bytes: "bytes",
+            kb: "KB",
+            mb: "MB",
+            gb: "GB",
+            tb: "TB",
+        };
     var $storageSettingsBox = $view.find("#storageSettingsBox");
     var $CDNSettingsBox = $view.find("#CDNSettingsBox");
     var $radioButtons;
@@ -46,7 +53,6 @@ window.StorageView = function ($, apiService, loaderService) {
     var id;
     var currentStorageProps;
     var currentCdnProps;
-    var thirdPartyDescriptions = {};
     var encryptionAvailable = true;
 
     function init(portal) {
@@ -70,7 +76,8 @@ window.StorageView = function ($, apiService, loaderService) {
         async.parallel([
             makeRequest('storage/getAllStorages'),
             makeRequest('storage/getAllCdnStorages'),
-            makeRequest('storage/encryptionSettings', true)],
+            makeRequest('storage/encryptionSettings', true),
+            makeRequest('storage/getAmazonS3Regions', true)],
             function (textStatus, res) {
                 if (apiService.unloaded || textStatus != null && textStatus === "abort") { return; }
 
@@ -81,8 +88,11 @@ window.StorageView = function ($, apiService, loaderService) {
 
                     $view.removeClass(displayNoneClass);
                     $(window).trigger("rightSideReady", null);
+
+                    window.ConsumerStorageSettings.initS3Regions(res[3] || []);
+
                     var thirdPartyJSON = res[0];
-                    initThirdPartyResources(thirdPartyJSON);
+                    window.ConsumerStorageSettings.init($view, thirdPartyJSON);
 
                     var allStorages = initStorages(Object.assign({}, diskDefault), thirdPartyJSON);
                     encryptionAvailable = allStorages[0].current;
@@ -92,7 +102,7 @@ window.StorageView = function ($, apiService, loaderService) {
                     encryptionAvailable = encryptionAvailable && allStorages[0].current;
                     initAllCdnStorages(allStorages);
 
-                    $radioButtons = $view.find('.radioBox');
+                    $radioButtons = $view.find('.thirdSelectStorage .radioBox');
                     $helpCenterSwitchers = $view.find('.helpCenterSwitcher');
                     bindEvents();
                     initStorageType($storageSettingsBox);
@@ -102,22 +112,20 @@ window.StorageView = function ($, apiService, loaderService) {
 
                 loaderService.hideFormBlockLoader($('.layoutRightSide:first'));
             });
-    }
 
-    function initThirdPartyResources(thirdPartyStorages) {
-        var storagesLength = thirdPartyStorages.length;
-        for (var i = 0; i < storagesLength; i++) {
-            var properties = thirdPartyStorages[i].properties;
-            var propertiesLength = thirdPartyStorages[i].properties.length;
-            thirdPartyDescriptions[thirdPartyStorages[i].id] = {};
-            var thirdPartyItem = thirdPartyDescriptions[thirdPartyStorages[i].id];
-            for (var j = 0; j < propertiesLength; j++) {
-                var key = properties[j].name;
-                var value = properties[j].description;
-                thirdPartyItem[key] = value;
+        $("body").on("click", function (event) {
+            var $rows = $view.find('td.edit-quota');
+
+            var target = (event.target) ? event.target : event.srcElement,
+                element = $(target);
+
+            if (!element.is('.edit-quota-btn') && !element.is('.selectBoxValue') && !element.is('.selectBoxSwitch')) {
+                $rows.find('.selectOptionsBox').hide();
             }
-        }
-    };
+        });
+
+        getLinkedPortals();
+    }
 
     function initAllStorages(storages) {
         var selected = storages.find(function (item) { return item.current }) || storages[0];
@@ -148,17 +156,21 @@ window.StorageView = function ($, apiService, loaderService) {
     }
 
     function initStorage($box, selected, storages) {
-        $box.html($("#consumerSettingsTmpl").tmpl({ storages: storages }));
+        var tmplData = window.ConsumerStorageSettings.getTmplData({ storages: storages }, "storage");
+
+        $box.html($("#consumerSettingsTmpl").tmpl(tmplData));
         $box.find(".radioBox[data-value='" + selected.id + "']").addClass(checked);
 
-        $box.off("input.textbox").on("input.textbox", ".textBox", function () {
-            $(this).removeClass(withErrorClass);
-        });
+        window.ConsumerStorageSettings.bindEvents($box);
+
+        if (selected.properties && selected.properties.length && selected.current) {
+            window.ConsumerStorageSettings.setProps($box, selected);
+        }
     }
 
     function bindEvents() {
         $radioButtons.on(clickEvent, selectStorage);
-        $helpCenterSwitchers.on(clickEvent, showStorageHelpBox);
+        $helpCenterSwitchers.on(clickEvent, window.ConsumerStorageSettings.showStorageHelpBox);
         $connectBtn.on(clickEvent, connectWithStorage);
         currentStorageProps.on(changeEvent, enableConnectBtn);
         currentCdnProps.on(changeEvent, enableConnectBtn);
@@ -166,10 +178,127 @@ window.StorageView = function ($, apiService, loaderService) {
         $encryptionConfirmButton.on(clickEvent, encryptionStart);
     }
 
+    function buildMappingOptions(collection) {
+        var htmlMappingOptions = "";
+
+        for (var key in collection) {
+            htmlMappingOptions += "<div class=\"option\" data-value=\"" + key + "\">" + collection[key] + "</div>";
+        }
+
+        return htmlMappingOptions;
+    }
+
+    function getLinkedPortals() {
+        loaderService.showFormBlockLoader($('#quotaBox'), 0, $(".layoutBody:first").height() + 70);
+        apiService.get('storage/getLinkedPortals')
+            .done(function (response) {
+                if (response.success) {
+                    var data = response.data;
+                    var portalList = data.tenants;
+                    var protocol = location.href.split("://")[0];
+
+                    for (var i = 0, n = portalList.length; i < n; i++) {
+                        var curDomainName = portalList[i].domain;
+
+                        var quota = filesSizeToString(portalList[i].quota);
+                        var usedSize = filesSizeToString(portalList[i].usedSize);
+
+                        var row = $("#linkedPortalTmpl").tmpl({
+                            domainName: curDomainName,
+                            tenantId: portalList[i].tenantId,
+                            href: "{0}://{1}".format(protocol, curDomainName),
+                            quota: portalList[i].quota > -1 ? '{0} {1}'.format(quota.resultSize, quota.sizeName) : window.Resource.NoQuota,
+                            quotaBytes: portalList[i].quota,
+                            usedSize: '{0} {1}'.format(usedSize.resultSize, usedSize.sizeName),
+                            usedSizeBytes: portalList[i].usedSize
+                        });
+                        var $editQuotaTd = row.find("td.edit-quota.form");
+
+                        row.find(".selectOptionsBox .option.edit-quota").on(clickEvent, openEditQuotaForm);
+                        row.find(".selectOptionsBox .option.no-quota").on(clickEvent, setNoQuota);
+
+                        var options = buildMappingOptions(sizeNames);
+
+                        $("#sizeMappingFieldTmpl")
+                            .tmpl({ sizeName: portalList[i].quota > -1 ? quota.sizeName : sizeNames.bytes, options: options }).appendTo($editQuotaTd);
+
+                        var $inputForm = row.find("td.memory-quota.form input");
+
+                        $inputForm.on('input', function () {
+                            this.value = this.value.replace(/[^0-9\.\,]/g, '');
+                        });
+
+                        $inputForm.val(portalList[i].quota > -1 ? quota.resultSize : 0);
+                        row.appendTo("#linkedPortalsList tbody");
+
+                        $(".edit-quota-btn").on(clickEvent, editQuota);
+                        $(".save-quota-btn").on(clickEvent, saveQuota);
+
+                        $("#linkedPortalsList").removeClass("display-none");
+                        loaderService.hideFormBlockLoader($('#quotaBox'));
+
+                    }
+                } else {
+                    toastr.error(response.message);
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error(textStatus);
+            });
+    }
+
+    function filesSizeToBytes(size) {
+        var bytes = -1;
+        switch (size.name.toLowerCase()) {
+            case "bytes":
+                bytes = size.value;
+                break;
+            case "kb":
+                bytes = size.value * 1024;
+                break;
+            case "mb":
+                bytes = size.value * Math.pow(1024, 2);
+                break;
+            case "gb":
+                bytes = size.value * Math.pow(1024, 3);
+                break;
+            case "tb":
+                bytes = size.value * Math.pow(1024, 4);
+                break;
+            case "pb":
+                bytes = size.value * Math.pow(1024, 5);
+                break;
+        }
+        return bytes;
+    }
+    function filesSizeToString(size) {
+        var sizeNames = ["bytes", "KB", "MB", "GB", "TB"];
+        var power = 0;
+
+        var resultSize = size || 0;
+        if (1024 <= resultSize) {
+            power = parseInt(Math.log(resultSize) / Math.log(1024));
+            power = power < sizeNames.length ? power : sizeNames.length - 1;
+            resultSize = resultSize / Math.pow(1024, power);
+        }
+
+        var intRegex = /^\d+$/;
+        if (intRegex.test(resultSize)) {
+            resultSize = parseInt(resultSize);
+        } else {
+            resultSize = parseFloat(resultSize.toFixed(2));
+        }
+
+        return {
+            resultSize: resultSize,
+            sizeName: sizeNames[power]
+        }
+    };
+
     function selectStorage() {
         var $self = $(this);
         var $box = $self.closest('.selectTypeStorageBox');
-        var $radio = $box.find('.radioBox');
+        var $radio = $box.find('.thirdSelectStorage .radioBox');
 
         if ($self.hasClass(disabledClass)) {
             return;
@@ -187,15 +316,14 @@ window.StorageView = function ($, apiService, loaderService) {
         var finded = findElement(storagesMass[id]);
         if (finded.id === newVal && finded.isChange === false) {
             currentConnectBtn.addClass(disabledClass);
-        }
-        else {
+        } else {
             currentConnectBtn.removeClass(disabledClass);
         }
 
     }
 
     function initStorageType($box) {
-        $box.find(".radioBox.checked").click();
+        $box.find(".thirdSelectStorage .radioBox.checked").click();
     }
 
     function initStorages(diskStorages, consumerStorages) {
@@ -217,25 +345,6 @@ window.StorageView = function ($, apiService, loaderService) {
             allStorages = [diskStorages];
         }
         return allStorages;
-    }
-
-    function showStorageHelpBox() {
-        var $box = $(this).closest('.helpCenterSwitcher');
-        var existPopup = $box.find('.popup_helper');
-        if (existPopup.length) {
-            existPopup.remove();
-            return;
-        }
-        $view.find(".popup_helper").remove();
-        var storageName = $(this).parents(".flexTextBox").attr('data-id');
-        var textBoxName = $(this).parent().attr('data-id');
-        var description = thirdPartyDescriptions[storageName][textBoxName];
-        var descriptionId = textBoxName + 'storageHelper';
-        $box.html($("#storageHelpBox").tmpl({ description: description, descriptionId: descriptionId }));
-
-        $(this).helper({
-            BlockHelperID: descriptionId
-        });
     }
 
     function connectWithStorage() {
@@ -295,14 +404,6 @@ window.StorageView = function ($, apiService, loaderService) {
 
     }
 
-    function checkValid(consumer, key, value) {
-        var needCheck = true;
-        if  (consumer == "S3")  {
-            needCheck = key == "bucket" || key == "region";
-        }
-        return needCheck ? !!value : true;
-    }
-
     function getStorage($box) {
         var $storage = $box.find('.radioBox.checked');
         var storage = {
@@ -310,28 +411,13 @@ window.StorageView = function ($, apiService, loaderService) {
             params: []
         };
 
-        var storageTextBoxes = $box.find("[data-id='" + storage.id + "']");
-        var flexContainer = storageTextBoxes.find(".flexContainer");
-        var countTextBoxes = flexContainer.length;
-        if (countTextBoxes == 0) {
+        var storageBox = $box.find("[data-id='" + storage.id + "']");
+        var flexContainers = storageBox.find(".flexContainer");
+        if (flexContainers.length == 0) {
             storage.default = true;
-        }
-        else {
-            var isError;
-            for (var i = 0; i < countTextBoxes; i++) {
-                var $item = $(flexContainer[i]).find('.textBox');
-                var itemKey = $item.parent().attr("data-id");
-                var itemValue = $item.val();
-                if (!checkValid(storage.id, itemKey, itemValue)) {
-                    $item.addClass(withErrorClass);
-                    isError = true;
-                } else {
-                    $item.removeClass(withErrorClass);
-                    storage.params.push({ key: itemKey, value: itemValue })
-                }
-            }
-
-            if (isError) {
+        } else {
+            storage.params = window.ConsumerStorageSettings.getProps(storage.id, $box);
+            if (!storage.params) {
                 return false;
             }
         }
@@ -371,13 +457,13 @@ window.StorageView = function ($, apiService, loaderService) {
         $encryptionSettingsNotify.toggleClass(checked, settings.notifyUsers);
     }
 
-    function showEncryptionConfirmDialog () {
+    function showEncryptionConfirmDialog() {
         if ($encryptionButton.hasClass(disabledClass)) return;
 
         Common.blockUI.show("encryptionConfirmDialog", 500, 350, 0, 0, 1000);
     }
 
-    function encryptionStart () {
+    function encryptionStart() {
         if ($encryptionConfirmButton.hasClass(disabledClass)) {
             return;
         }
@@ -399,6 +485,122 @@ window.StorageView = function ($, apiService, loaderService) {
                 Common.blockUI.hide();
                 $encryptionConfirmButton.removeClass(disabledClass);
             });
+    }
+
+    function editQuota() {
+        var $select = $(this).parent().find(".selectOptionsBox");
+        $select.show();
+    }
+    function setNoQuota() {
+
+        var $row = $(this).closest("tr");
+        var tenantId = $row.closest("tr").attr("data-id");
+
+        var data = {
+            tenantId: tenantId,
+            disableQuota: true
+        }
+
+        apiService.put("storage/setTenantQuotaSettings", data)
+            .done(function (res) {
+                $row.find(".memory-quota span").html(window.Resource.NoQuota);
+                window.toastr.success(window.Resource.OperationSucceededMsg);
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                toastr.error(textStatus);
+            });
+    }
+
+    function saveQuota() {
+
+        var $row = $(this).closest("tr");
+        var tenantId = $row.closest("tr").attr("data-id");
+        var $form = $('tr.form[data-id=' + tenantId + ']');
+
+        var quotaValue = $form.find("input").val();
+        var quotaSize = $form.find(".selectBox").attr("data-value");
+
+        var quotaSizeByte = filesSizeToBytes({
+            name: quotaSize,
+            value: quotaValue
+        });
+
+        var usedSize = parseInt($row.find(".used-memory").attr("data"));
+
+        if (usedSize > quotaSizeByte) {
+            toastr.error(window.Resource.ErrorSetQuota);
+            return;
+        }
+
+        var data = {
+            maxTotalSize: quotaSizeByte,
+            tenantId: tenantId
+        };
+
+        apiService.put("storage/quota", data)
+            .done(function (res) {
+                if (res.success) {
+
+                    var quota = filesSizeToString(res.data.tariff.maxTotalSize);
+                    var currentQuota = parseInt($row.find(".memory-quota").attr("data"));
+                    if (currentQuota == -1) {
+
+                        apiService.put("storage/setTenantQuotaSettings", {
+                            tenantId: tenantId,
+                            disableQuota: false
+                        })
+                            .done(function (r) {
+                                $row.find(".memory-quota").attr("data", res.data.tariff.maxTotalSize)
+                                $row.find(".memory-quota span").html('{0} {1}'.format(quota.resultSize, quota.sizeName));
+                                window.toastr.success(window.Resource.OperationSucceededMsg);
+                            })
+                            .fail(function (jqXHR, textStatus, errorThrown) {
+                                toastr.error(textStatus);
+                            });
+                    } else {
+                        $row.find(".memory-quota").attr("data", res.data.tariff.maxTotalSize)
+                        $row.find(".memory-quota span").html('{0} {1}'.format(quota.resultSize, quota.sizeName));
+                        window.toastr.success(window.Resource.OperationSucceededMsg);
+                    }
+                }
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                toastr.error(textStatus);
+            });
+
+        closeEditQuotaForm($row)
+    }
+    
+    function openEditQuotaForm() {
+        var $row = $(this).closest("tr");
+        var portalId = $row.attr("data-id");
+        var $form = $('tr.form[data-id=' + portalId + ']');
+
+        if (!$form.is(":visible")) {
+
+            $form.show();
+            $row.find(".edit-quota-btn").hide();
+            $row.find(".save-quota-btn").show();
+
+            $('table.table-list tbody tr').removeClass("border-bottom");
+            $('table.table-list tbody tr:visible:last').addClass("border-bottom");
+
+        }
+    }
+
+    function closeEditQuotaForm($row) {
+        var portalId = $row.attr("data-id");
+        var $form = $('tr.form[data-id=' + portalId + ']');
+
+        if ($form.is(":visible")) {
+
+            $form.hide();
+            $row.find(".edit-quota-btn").show();
+            $row.find(".save-quota-btn").hide();
+
+            $('table.table-list tbody tr').removeClass("border-bottom");
+            $('table.table-list tbody tr:visible:last').addClass("border-bottom");
+        }
     }
 
     return {

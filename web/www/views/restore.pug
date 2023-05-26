@@ -83,6 +83,8 @@ block rightSide
             td.trash
           |{{/each}}
 
+include consumerSettingsPartial
+
 append bodyscripts
   script#consumerSettingsTmpl(type="text/x-jquery-tmpl").
     <div class="thirdSelectStorageFlexbox" id = "thirdSelectStorageBox">
@@ -94,30 +96,13 @@ append bodyscripts
       {{/each}}
     </div>
 
-    {{each storages}}
-    <div data-id="${id}" class="display-none">
-        {{each properties}}
-        <div class = 'flexContainer' data-id='${name}'>
-            <span>${title}</span>
-        {{if description}}
-            <span class = "helpCenterSwitcher"></span>
-        {{/if}}
-        {{if !isSet}} 
-            <input class='textBox disabled' type='text' disabled>
-        {{else}}
-            <input class='textBox' type='text'>
-        {{/if}}
-        </div>
-        {{/each}}
-    </div>
+    {{each(i, item) storages}}
+    {{if id == "S3"}}
+    {{tmpl(Object.assign(item, {settingName: $data.settingName, regions: $data.regions, encryptionTypes: $data.encryptionTypes, encryptionMethods: $data.encryptionMethods})) "#consumerItemS3Tmpl"}}
+    {{else}}
+    {{tmpl(item) "#consumerItemBaseTmpl"}}
+    {{/if}}
     {{/each}}
-
-  script#consumerHelpBox(type="text/x-jquery-tmpl").
-   <div class="popup_helper" id="${descriptionId}">
-      <p>${description}</p>
-      <div class="cornerHelpBlock pos_top">
-      </div>
-    </div>
     
   script(type="text/javascript").
     $(function() {

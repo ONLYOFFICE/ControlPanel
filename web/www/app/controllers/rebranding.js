@@ -27,7 +27,20 @@ const baseController = require('./base.js'),
     mailSettingsApiUrl = "settings/rebranding/mail.json",
     fullAccess = require('../middleware/fullAccess.js'),
     tenantExtra = require('../middleware/tenantExtra.js'),
-    notCustomMode = require('../middleware/notCustomMode.js');
+    notCustomMode = require('../middleware/notCustomMode.js'),
+    co = require('co');   
+
+function restoreSelectedLogos(req, res) {
+    co(function*(){
+        const value = yield apiManager.put("settings/whitelabel/restorelogos.json?isDefault=true", req, req.body.logo);
+        res.send({ success: true, message:"", value});
+        res.end();
+    })
+    .catch((err) => {
+        res.send({ success: false, message: err });
+        res.end();
+    });
+}
 
 router
     .use(fullAccess())
@@ -58,6 +71,7 @@ router
     .post("/company", baseController.post.bind(baseController, companySettingsApiUrl))
     .post("/additional", baseController.post.bind(baseController, additionalSettingsApiUrl))
     .post("/mail", baseController.post.bind(baseController, mailSettingsApiUrl))
+    .post("/restoreSelectedLogos", restoreSelectedLogos)
     .delete("/company", baseController.dlt.bind(baseController, companySettingsApiUrl))
     .delete("/additional", baseController.dlt.bind(baseController, additionalSettingsApiUrl))
     .delete("/mail", baseController.dlt.bind(baseController, mailSettingsApiUrl))

@@ -163,14 +163,13 @@ MYSQL_USER="${PRODUCT}_user";
 MYSQL_PASSWORD="${PRODUCT}_pass";
 DIR=$(dirname $(readlink -f $0));
 
-COMMUNITY_SERVER_ID=$(sudo docker ps -aqf "name=$COMMUNITY_CONTAINER_NAME");
-DOCUMENT_SERVER_ID=$(sudo docker ps -aqf "name=$DOCUMENT_CONTAINER_NAME");
-MAIL_SERVER_ID=$(sudo docker ps -aqf "name=$MAIL_CONTAINER_NAME");
-CONTROL_PANEL_ID=$(sudo docker ps -aqf "name=$CONTROLPANEL_CONTAINER_NAME");
-MYSQL_SERVER_ID=$(sudo docker ps -aqf "name=$MYSQL_CONTAINER_NAME");
-ELASTICSEARCH_SERVER_ID=$(sudo docker ps -aqf "name=$ELASTICSEARCH_CONTAINER_NAME");
-JWT_SECRET="";
-CORE_MACHINEKEY=$(sudo bash ${DIR}/tools/get-machinekey.sh $CONTROLPANEL_CONTAINER_NAME $COMMUNITY_CONTAINER_NAME $PRODUCT);
+COMMUNITY_SERVER_ID=$(docker ps -aqf "name=$COMMUNITY_CONTAINER_NAME");
+DOCUMENT_SERVER_ID=$(docker ps -aqf "name=$DOCUMENT_CONTAINER_NAME");
+MAIL_SERVER_ID=$(docker ps -aqf "name=$MAIL_CONTAINER_NAME");
+CONTROL_PANEL_ID=$(docker ps -aqf "name=$CONTROLPANEL_CONTAINER_NAME");
+MYSQL_SERVER_ID=$(docker ps -aqf "name=$MYSQL_CONTAINER_NAME");
+ELASTICSEARCH_SERVER_ID=$(docker ps -aqf "name=$ELASTICSEARCH_CONTAINER_NAME");
+CORE_MACHINEKEY=$(bash ${DIR}/tools/get-machinekey.sh $CONTROLPANEL_CONTAINER_NAME $COMMUNITY_CONTAINER_NAME $PRODUCT);
 MACHINEKEY_PARAM=$(echo "${PRODUCT}_CORE_MACHINEKEY" | awk '{print toupper($0)}');
 
 if [ "$UPDATE" == "1" ]; then
@@ -245,25 +244,39 @@ if [ "$UPDATE" == "1" ]; then
 		if [[ -n ${PARAMETER_VALUE} ]]; then
 			MYSQL_MAIL_DATABASE="$PARAMETER_VALUE";
 		fi
+
+		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "MAIL_DOMAIN_NAME=" | sed 's/^.*=//');
+		if [[ -n ${PARAMETER_VALUE} ]]; then
+			MAIL_DOMAIN_NAME="$PARAMETER_VALUE";
+		else
+			MAIL_DOMAIN_NAME=$(docker exec $MAIL_SERVER_ID hostname -f);
+		fi
 	fi
 fi
 
 if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
-	sudo docker exec -d ${COMMUNITY_CONTAINER_NAME} bash -c "cp -rf /var/www/${PRODUCT}/WebStudio/App_Data/static/partnerdata /var/www/${PRODUCT}/Data/"
+	docker exec -d ${COMMUNITY_CONTAINER_NAME} bash -c "cp -rf /var/www/${PRODUCT}/WebStudio/App_Data/static/partnerdata /var/www/${PRODUCT}/Data/"
 
 	if [ "$REFRESH" == "1" ]; then
-		sudo docker exec ${COMMUNITY_CONTAINER_NAME} bash /app/${PRODUCT}/run-community-server.sh;
+		docker exec ${COMMUNITY_CONTAINER_NAME} bash /app/${PRODUCT}/run-community-server.sh;
 		exit 0;
 	elif [ "$UPDATE" == "1" ]; then
-		sudo bash ${DIR}/tools/check-bindings.sh ${COMMUNITY_SERVER_ID} "/var/lib/mysql";
+		bash ${DIR}/tools/check-bindings.sh ${COMMUNITY_SERVER_ID} "/var/lib/mysql";
 
-		COMMUNITY_PORT=$(sudo docker port $COMMUNITY_SERVER_ID 80 | sed 's/.*://' | head -n1)
+		COMMUNITY_PORT=$(docker port $COMMUNITY_SERVER_ID 80 | sed 's/.*://' | head -n1)
 
 		if [[ -z ${COMMUNITY_PORT} ]]; then
 			COMMUNITY_PORT=80
 		fi
-
-		JWT_SECRET=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_SECRET=" | sed 's/^.*=//');
+		
+		if [[ -n ${DOCUMENT_SERVER_ID} ]]; then
+			JWT_ENABLED=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_ENABLED=" | sed 's/^.*=//')
+			JWT_SECRET=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_SECRET=" | sed 's/^.*=//')
+			JWT_HEADER=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${DOCUMENT_CONTAINER_NAME} | grep "JWT_HEADER=" | sed 's/^.*=//')
+		fi
+		JWT_ENABLED=${JWT_ENABLED:-$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_ENABLED=" | sed 's/^.*=//')}
+		JWT_SECRET=${JWT_SECRET:-$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_SECRET=" | sed 's/^.*=//')}
+		JWT_HEADER=${JWT_HEADER:-$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${COMMUNITY_CONTAINER_NAME} | grep "DOCUMENT_SERVER_JWT_HEADER=" | sed 's/^.*=//')}
 
 		if [[ -z ${MYSQL_SERVER_ID} ]]; then
 			if ! docker exec -it ${COMMUNITY_CONTAINER_NAME} service god stop; then
@@ -275,20 +288,20 @@ if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
 			fi
 		fi
 
-		sudo bash ${DIR}/tools/remove-container.sh ${COMMUNITY_CONTAINER_NAME}
+		bash ${DIR}/tools/remove-container.sh ${COMMUNITY_CONTAINER_NAME}
 	else
 		echo "COMMUNITY SERVER is already installed."
-		sudo docker start ${COMMUNITY_SERVER_ID};
+		docker start ${COMMUNITY_SERVER_ID};
 		exit 0;
 	fi
 fi
 
 if [[ -n ${USERNAME} && -n ${PASSWORD} ]]; then
-	sudo docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
+	docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
 fi
 
 if [[ -z ${VERSION} ]]; then
-	GET_VERSION_COMMAND="sudo bash ${DIR}/tools/get-available-version.sh -i $COMMUNITY_IMAGE_NAME -path $IMAGEPATH";
+	GET_VERSION_COMMAND="bash ${DIR}/tools/get-available-version.sh -i $COMMUNITY_IMAGE_NAME -path $IMAGEPATH";
 
 	if [[ -n ${PASSWORD} && -n ${USERNAME} ]]; then
 		GET_VERSION_COMMAND="$GET_VERSION_COMMAND -u $USERNAME -p $PASSWORD";
@@ -297,13 +310,13 @@ if [[ -z ${VERSION} ]]; then
 	VERSION=$(${GET_VERSION_COMMAND});
 fi
 
-ELASTICSEARCH_CURRENT_VERSION=$(sudo bash ${DIR}/tools/get-current-version.sh $ELASTICSEARCH_CONTAINER_NAME);
+ELASTICSEARCH_CURRENT_VERSION=$(bash ${DIR}/tools/get-current-version.sh $ELASTICSEARCH_CONTAINER_NAME);
 ELASTICSEARCH_AVAILABLE_VERSION=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' $COMMUNITY_IMAGE_NAME:$VERSION | grep "ELASTICSEARCH_VERSION=" | sed 's/^.*=//');
 
 if [[ ${ELASTICSEARCH_CURRENT_VERSION} != ${ELASTICSEARCH_AVAILABLE_VERSION} \
    && ${ELASTICSEARCH_SERVER_HOST} = ${ELASTICSEARCH_CONTAINER_NAME} || -z ${ELASTICSEARCH_SERVER_HOST} ]]; then
 	if [[ -n ${ELASTICSEARCH_SERVER_ID} ]]; then
-		sudo bash ${DIR}/tools/remove-container.sh $ELASTICSEARCH_CONTAINER_NAME
+		bash ${DIR}/tools/remove-container.sh $ELASTICSEARCH_CONTAINER_NAME
 	fi
 	args=();
 	args+=(--name "$ELASTICSEARCH_CONTAINER_NAME");
@@ -328,7 +341,7 @@ if [[ ${ELASTICSEARCH_CURRENT_VERSION} != ${ELASTICSEARCH_AVAILABLE_VERSION} \
 
 	ELASTICSEARCH_SERVER_HOST=${ELASTICSEARCH_CONTAINER_NAME}
 
-	sudo docker run --net ${PRODUCT} -itd --restart=always "${args[@]}";
+	docker run --net ${PRODUCT} -itd --restart=always "${args[@]}";
 fi
 
 args=();
@@ -336,6 +349,7 @@ args+=(--name "$COMMUNITY_CONTAINER_NAME")
 args+=(-p "$COMMUNITY_PORT:80")
 args+=(-p 443:443)
 args+=(-p 5222:5222)
+args+=(--cgroupns host)
 
 if [[ -n ${MYSQL_SERVER_ID} ]]; then
 	args+=(-e "MYSQL_SERVER_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD");
@@ -360,6 +374,7 @@ if [[ -n ${MAIL_SERVER_ID} ]]; then
 		args+=(-e "MAIL_SERVER_DB_PORT=$MYSQL_PORT");
 		args+=(-e "MAIL_SERVER_DB_USER=$MYSQL_ROOT_USER");
 		args+=(-e "MAIL_SERVER_DB_PASS=$MYSQL_ROOT_PASSWORD");
+		args+=(-e "MAIL_DOMAIN_NAME=$MAIL_DOMAIN_NAME");
 	else
 		args+=(-e "MAIL_SERVER_DB_HOST=$MAIL_CONTAINER_NAME");
 	fi
@@ -375,9 +390,9 @@ if [[ -n ${CONTROL_PANEL_ID} ]]; then
 fi
 
 if [[ -n ${JWT_SECRET} ]]; then
-	args+=(-e "DOCUMENT_SERVER_JWT_ENABLED=true");
-	args+=(-e "DOCUMENT_SERVER_JWT_HEADER=AuthorizationJwt");
-	args+=(-e "DOCUMENT_SERVER_JWT_SECRET=$JWT_SECRET");
+	args+=(-e "DOCUMENT_SERVER_JWT_ENABLED=${JWT_ENABLED:-true}");
+	args+=(-e "DOCUMENT_SERVER_JWT_HEADER=${JWT_HEADER:-AuthorizationJwt}");
+	args+=(-e "DOCUMENT_SERVER_JWT_SECRET=${JWT_SECRET:-$(cat /dev/urandom | tr -dc A-Za-z0-9 | head -c 32)}");
 fi
 
 if [[ -n ${CORE_MACHINEKEY} ]]; then
@@ -390,23 +405,23 @@ if [[ -n ${ELASTICSEARCH_SERVER_HOST} ]]; then
 fi
 
 args+=(-v "$HOST_DIR/CommunityServer/letsencrypt:/etc/letsencrypt");
-args+=(-v "/sys/fs/cgroup:/sys/fs/cgroup:ro");
+args+=(-v "/sys/fs/cgroup:/sys/fs/cgroup:rw");
 args+=(-v "$HOST_DIR/CommunityServer/data:/var/www/$PRODUCT/Data");
 args+=(-v "$HOST_DIR/CommunityServer/logs:/var/log/$PRODUCT");
 args+=(-v "$HOST_DIR/DocumentServer/data:/var/www/$PRODUCT/DocumentServerData");
 args+=("$COMMUNITY_IMAGE_NAME:$VERSION");
 
-sudo docker run --net ${PRODUCT} -itd  --privileged --restart=always "${args[@]}";
+docker run --net ${PRODUCT} -itd  --privileged --restart=always "${args[@]}";
 
 sleep 5
 
-COMMUNITY_SERVER_ID=$(sudo docker ps -aqf "name=$COMMUNITY_CONTAINER_NAME");
+COMMUNITY_SERVER_ID=$(docker ps -aqf "name=$COMMUNITY_CONTAINER_NAME");
 
 if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
 	echo "COMMUNITY SERVER successfully installed."
 
 	if [ -f "$IMAGEPATH/${COMMUNITY_IMAGE_NAME//\//-}_$VERSION.tar.gz" ]; then
-		sudo rm "$IMAGEPATH/${COMMUNITY_IMAGE_NAME//\//-}_$VERSION.tar.gz";
+		rm "$IMAGEPATH/${COMMUNITY_IMAGE_NAME//\//-}_$VERSION.tar.gz";
 	fi
 
 	docker exec -d ${COMMUNITY_CONTAINER_NAME} bash -c "[ -d /var/www/${PRODUCT}/Data/partnerdata ] && cp /var/www/${PRODUCT}/Data/partnerdata/* /var/www/${PRODUCT}/WebStudio/App_Data/static/partnerdata/ && rm -rf /var/www/${PRODUCT}/Data/partnerdata"

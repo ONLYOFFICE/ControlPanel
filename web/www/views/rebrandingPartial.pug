@@ -10,6 +10,36 @@ div#rebrandingMainContainer.display-none
     p!= cpWhiteLabelResource.format("RebrandingCompanySettingsDscr", "<a data-id='aboutImg' data-width='788' data-height='396' class='link dotted img-popup-helper'>","</a>")
     img#aboutImg.img-popup(src=config.makePath("/stylesheets/images/rebranding_about.png"), alt="", onclick="Common.blockUI.hide()")
 
+    div.clear-fix.container-base
+      div.table-header= cpWhiteLabelResource.LogoDarkAbout + " (" + config.logoAboutDarkSize.width + "x" + config.logoAboutDarkSize.height + "):"
+      div.container-with-border
+        table
+          tr
+            td.paddingBase
+              div.logo-img-container
+                img.borderBase.logo_7
+                canvas#canvas_logo_7.borderBase(width="432" height="70" data-fontsize="54" data-fontcolor="#333")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase
+              input#logoPath_7(type="hidden" value="")
+              div.logo-change-container
+                input#logoUploaderAbout_7(type="file" name="logoUploader_7")
+                a.button.black= cpWhiteLabelResource.ChangeLogoButton
+    
+    div.clear-fix.container-base
+      div.table-header= cpWhiteLabelResource.LogoDarkAbout + " (" + config.logoAboutLightSize.width + "x" + config.logoAboutLightSize.height + "):"
+      div.container-with-border
+        table
+          tr
+            td.paddingBase
+              div.logo-img-container
+                img.borderBase.logo_8
+                canvas#canvas_logo_8.borderBase(width="432" height="70" data-fontsize="54" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase
+              input#logoPath_8(type="hidden" value="")
+              div.logo-change-container
+                input#logoUploaderAbout_8(type="file" name="logoUploader_8")
+                a.button.black= cpWhiteLabelResource.ChangeLogoButton
+
     div.clear-fix
       div.left-column
         div.settings-block

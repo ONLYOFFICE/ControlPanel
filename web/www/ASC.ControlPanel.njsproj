@@ -145,6 +145,7 @@
     <Content Include="public\javascripts\views\search.js" />
     <Content Include="public\javascripts\views\storage.js" />
     <Content Include="public\javascripts\views\activate.js" />
+    <Content Include="public\javascripts\views\consumersettings.js" />
     <Content Include="public\resources\ControlPanelResource.json" />
     <Content Include="public\resources\CPCountriesResource.json" />
     <Content Include="public\resources\CPLdapResource.json" />
@@ -295,6 +296,7 @@
     <Content Include="views\gift.pug" />
     <Content Include="views\whitelabel.pug" />
     <Content Include="views\whitelabelPartial.pug" />
+    <Content Include="views\consumerSettingsPartial.pug" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="app\controllers\" />

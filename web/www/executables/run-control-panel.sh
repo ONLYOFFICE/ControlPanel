@@ -120,23 +120,23 @@ done
 
 
 DIR=$(dirname $(readlink -f $0));
-CORE_MACHINEKEY=$(sudo bash ${DIR}/tools/get-machinekey.sh $CONTROLPANEL_CONTAINER_NAME $COMMUNITY_CONTAINER_NAME $PRODUCT);
+CORE_MACHINEKEY=$(bash ${DIR}/tools/get-machinekey.sh $CONTROLPANEL_CONTAINER_NAME $COMMUNITY_CONTAINER_NAME $PRODUCT);
 MACHINEKEY_PARAM=$(echo "${PRODUCT}_CORE_MACHINEKEY" | awk '{print toupper($0)}');
 
 if [ "$UPDATE" == "1" ]; then
-	CONTROL_PANEL_ID=$(sudo docker ps -aqf "name=$CONTROLPANEL_CONTAINER_NAME");
-	sudo bash ${DIR}/tools/check-bindings.sh ${CONTROL_PANEL_ID} "/var/lib/mysql";
+	CONTROL_PANEL_ID=$(docker ps -aqf "name=$CONTROLPANEL_CONTAINER_NAME");
+	bash ${DIR}/tools/check-bindings.sh ${CONTROL_PANEL_ID} "/var/lib/mysql";
 	echo "Rename CONTROL PANEL."
 	OLD_CONTROLPANEL_CONTAINER_NAME="${CONTROLPANEL_CONTAINER_NAME}_$RANDOM";
-	sudo docker rename ${CONTROLPANEL_CONTAINER_NAME} ${OLD_CONTROLPANEL_CONTAINER_NAME};
+	docker rename ${CONTROLPANEL_CONTAINER_NAME} ${OLD_CONTROLPANEL_CONTAINER_NAME};
 fi
 
 if [[ -n ${USERNAME} && -n ${PASSWORD} ]]; then
-	sudo docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
+	docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
 fi
 
 if [[ -z ${VERSION} ]]; then
-	GET_VERSION_COMMAND="sudo bash ${DIR}/tools/get-available-version.sh -i $CONTROLPANEL_IMAGE_NAME -path $IMAGEPATH";
+	GET_VERSION_COMMAND="bash ${DIR}/tools/get-available-version.sh -i $CONTROLPANEL_IMAGE_NAME -path $IMAGEPATH";
 
 	if [[ -n ${PASSWORD} && -n ${USERNAME} ]]; then
 		GET_VERSION_COMMAND="$GET_VERSION_COMMAND -u $USERNAME -p $PASSWORD";
@@ -158,22 +158,22 @@ args+=(-v "$HOST_DIR/ControlPanel/data:/var/www/$PRODUCT/Data");
 args+=(-v "$HOST_DIR/ControlPanel/logs:/var/log/$PRODUCT");
 args+=("$CONTROLPANEL_IMAGE_NAME:$VERSION");
 
-sudo docker run --net $PRODUCT -i -t -d --restart=always "${args[@]}";
+docker run --net $PRODUCT -i -t -d --restart=always "${args[@]}";
 
 sleep 5
 
-CONTROL_PANEL_ID=$(sudo docker ps -aqf "name=$CONTROLPANEL_CONTAINER_NAME");
+CONTROL_PANEL_ID=$(docker ps -aqf "name=$CONTROLPANEL_CONTAINER_NAME");
 
 if [[ -n ${CONTROL_PANEL_ID} ]]; then
 	echo "CONTROL PANEL successfully installed."
 
 	if [ -f "$IMAGEPATH/${CONTROLPANEL_IMAGE_NAME//\//-}_$VERSION.tar.gz" ]; then
-		sudo rm "$IMAGEPATH/${CONTROLPANEL_IMAGE_NAME//\//-}_$VERSION.tar.gz";
+		rm "$IMAGEPATH/${CONTROLPANEL_IMAGE_NAME//\//-}_$VERSION.tar.gz";
 	fi
 
 	if [[ -n ${OLD_CONTROLPANEL_CONTAINER_NAME} ]]; then
-		sudo docker exec ${COMMUNITY_CONTAINER_NAME} service nginx restart
-		sudo bash ${DIR}/tools/remove-container.sh ${OLD_CONTROLPANEL_CONTAINER_NAME} true
+		docker exec ${COMMUNITY_CONTAINER_NAME} service nginx restart
+		bash ${DIR}/tools/remove-container.sh ${OLD_CONTROLPANEL_CONTAINER_NAME} true
 	fi
 
 	exit 0;

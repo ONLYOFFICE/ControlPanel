@@ -63,7 +63,7 @@ window.RestoreView = function($, apiService, loaderService) {
     var newProviderKey;
     var folderId;
     var $thirdPartyPopupBody;
-    var thirdPartyDescriptions = {};
+
     function init(portal) {
         currentPortal = portal;
 
@@ -86,10 +86,11 @@ window.RestoreView = function($, apiService, loaderService) {
 
         async.parallel([
             makeRequest('restore/getBackupHistory'),
-            makeRequest('Backup/getThirdParty'),
+            makeRequest('backup/getThirdParty'),
             makeRequest('restore/getProgress'),
             makeRequest('backup/getStorages'),
-            makeRequest('backup/getAllThirdParty')],
+            makeRequest('backup/getAllThirdParty'),
+            makeRequest('storage/getAmazonS3Regions', true)],
             function (textStatus, res) {
                 if (apiService.unloaded || textStatus != null && textStatus === "abort") { return; }
 
@@ -100,6 +101,8 @@ window.RestoreView = function($, apiService, loaderService) {
                     initThirdPartySource(res[1]);
                     $view.removeClass("display-none");
                     
+                    window.ConsumerStorageSettings.initS3Regions(res[5] || []);
+
                     thirdPartyJSON = res[3];
                     initAllThirdStorages(res[4], res[1], thirdPartyJSON);
                     handleStartedRestore(res[2]);
@@ -114,21 +117,6 @@ window.RestoreView = function($, apiService, loaderService) {
                 loaderService.hideFormBlockLoader($('.layoutRightSide:first'));
             });
     }
-
-    function initThirdPartyResources(thirdPartyStorages) {
-        var storagesLength = thirdPartyStorages.length;
-        for (var i = 0; i < storagesLength; i++) {
-            var properties = thirdPartyStorages[i].properties;
-            var propertiesLength = thirdPartyStorages[i].properties.length;
-            thirdPartyDescriptions[thirdPartyStorages[i].id] = {};
-            var thirdPartyItem = thirdPartyDescriptions[thirdPartyStorages[i].id];
-            for (var j = 0; j < propertiesLength; j++) {
-                var key = properties[j].name;
-                var value = properties[j].description;
-                thirdPartyItem[key] = value;
-            }
-        }
-    };
 
     function initAllThirdStorages(storages, comparedStorages, thirdPartyJSON) {
         if (!storages || storages.length === 0) return;
@@ -167,19 +155,23 @@ window.RestoreView = function($, apiService, loaderService) {
         }
         storages.forEach(function(item){
             if (!item.isThirdPartyDocs){ 
-            item.properties.push({name: "filePath", title: window.Resource.RestoreConsumerPath, description: window.Resource.RestoreConsumerPathDscr});
+            item.properties.push({name: "filePath", title: window.Resource.RestoreConsumerPath, description: window.Resource.RestoreConsumerPathDscr, isOptional: false});
             }
         });
-        initThirdPartyResources(storages);
+        window.ConsumerStorageSettings.init($view, storages);
         var $backupConsumerStorageSettingsBox = $view.find("#consumerStorageSettingsBox");
         var selectedConsumer = storages.find(function (item) { return item.isSet }) || storages[0];
         initConsumerStorage($backupConsumerStorageSettingsBox, selectedConsumer, storages);
     }
     
     function initConsumerStorage($box, selectedConsumer, storages) {
-        $box.html($("#consumerSettingsTmpl").tmpl({ storages: storages, selectedConsumer: selectedConsumer }));
+        var tmplData = window.ConsumerStorageSettings.getTmplData({ storages: storages }, "restore");
 
-        var $radio = $restoreForm.find('.radioBox');
+        $box.html($("#consumerSettingsTmpl").tmpl(tmplData));
+
+        window.ConsumerStorageSettings.bindEvents($box);
+
+        var $radio = $restoreForm.find('.thirdSelectStorageFlexbox .radioBox');
         $radio.on(clickEvent, function () {
             var $self = $(this);
 
@@ -209,9 +201,6 @@ window.RestoreView = function($, apiService, loaderService) {
         });
 
         $box.find(".radioBox[data-value='" + selectedConsumer.id + "']").trigger(clickEvent, selectedConsumer.id);
-        $box.off("input.textbox").on("input.textbox", ".textBox", function () {
-            $(this).removeClass(withErrorClass);
-        });
     }
 
     function bindFileSelector() {
@@ -312,7 +301,7 @@ window.RestoreView = function($, apiService, loaderService) {
 
     function bindEvents() {
         $restoreSources.on('click', changeCurrentRestoreSource);
-        $thirdPartySourceHelper.on('click', showThirdPartySourceHelper);
+        $thirdPartySourceHelper.on('click', window.ConsumerStorageSettings.showStorageHelpBox);
         $sourceFileSelectorBtn.on('click', showSourceFileSelectorPopup);
         $showBackupHistoryBtn.on('click', showBackupHistory);
 
@@ -356,25 +345,6 @@ window.RestoreView = function($, apiService, loaderService) {
                 $sourceFileSelector.show();
             }
         }
-    }
-
-    function showThirdPartySourceHelper() {
-        var $box =  $(this).closest('.helpCenterSwitcher');
-        var existPopup = $box.find('.popup_helper');
-        if (existPopup.length){
-            existPopup.remove();
-            return;
-        }
-        $view.find(".popup_helper").remove();
-        var storageName = $(this).parents(".flexTextBox").attr('data-id');
-        var textBoxName = $(this).parent().attr('data-id');
-        var description = thirdPartyDescriptions[storageName][textBoxName];
-        var descriptionId = textBoxName + 'ThirdStorageHelper';
-        $box.html($("#consumerHelpBox").tmpl({ description: description, descriptionId: descriptionId }));
-        
-        $(this).helper({
-            BlockHelperID: descriptionId
-        });
     }
 
     function showSourceFileSelectorPopup() {
@@ -609,14 +579,6 @@ window.RestoreView = function($, apiService, loaderService) {
         }
     }
 
-    function checkValid(consumer, key, value) {
-        var needCheck = true;
-        if  (consumer == "S3")  {
-            needCheck = key == "bucket" || key == "region" || key == "filePath";
-        }
-        return needCheck ? !!value : true;
-    }
-
     function getSource() {
         var $source = $restoreSources.filter('.checked');
         var storage = {
@@ -635,33 +597,18 @@ window.RestoreView = function($, apiService, loaderService) {
                 if (checkedThirdParty && checkedThirdParty.isThirdPartyDocs) {
                     storage.params.push({ key: "filePath", value: $sourceFileSelector.attr('data-backupid') });
                     storage.value = '1';
-                }
-                else {
-                var isError;
-                var selectedConsumer = $consumerStorageSettingsBox.find('.radioBox.checked').attr("data-value");
-                if (!selectedConsumer) {
-                    toastr.error(window.Resource.ErrorStorageIsNull);
-                    return false;
-                }
-                var $settings = $consumerStorageSettingsBox.find('div[data-id="' + selectedConsumer + '"] .textBox');
-                storage.params.push({ key: "module", value: selectedConsumer });
-                var settingsLength = $settings.length;
-                for (var i = 0; i < settingsLength; i++) {
-                    var $item = $($settings[i]);
-                    var itemKey = $item.parent().attr("data-id");
-                    var itemValue = $item.val();
-                    if (!checkValid(selectedConsumer, itemKey, itemValue)) {
-                        $item.addClass(withErrorClass);
-                        isError = true;
-                    } else {
-                        $item.removeClass(withErrorClass);
-                        storage.params.push({ key: itemKey, value: itemValue });
+                } else {
+                    var selectedConsumer = $consumerStorageSettingsBox.find('.radioBox.checked').attr("data-value");
+                    if (!selectedConsumer) {
+                        toastr.error(window.Resource.ErrorStorageIsNull);
+                        return false;
                     }
+                    storage.params = window.ConsumerStorageSettings.getProps(selectedConsumer, $consumerStorageSettingsBox);
+                    if (!storage.params) {
+                        return false;
+                    }
+                    storage.params.unshift({ key: "module", value: selectedConsumer });
                 }
-                if (isError) {
-                    return false;
-                }
-            }
                 break;
         }
 

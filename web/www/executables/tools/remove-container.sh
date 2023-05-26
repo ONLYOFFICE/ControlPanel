@@ -22,18 +22,18 @@ fi
 
 if [ "$FAST_REMOVE" == "true" ]; then
 	echo "fast remove container:"
-	sudo docker rm -f ${CONTAINER_NAME};
+	docker rm -f ${CONTAINER_NAME};
 else
 	echo "stop container:"
-	sudo docker stop ${CONTAINER_NAME};
+	docker stop ${CONTAINER_NAME};
 	echo "remove container:"
-	sudo docker rm ${CONTAINER_NAME};
+	docker rm ${CONTAINER_NAME};
 fi
 
 sleep 10 #Hack for SuSe: exception "Error response from daemon: devmapper: Unknown device xxx"
 
 echo "check removed container:"
-CONTAINER_ID=$(sudo docker ps -aqf "name=$CONTAINER_NAME");
+CONTAINER_ID=$(docker ps -aqf "name=$CONTAINER_NAME");
 
 if [[ -n ${CONTAINER_ID} ]]; then
 	echo "try again remove ${CONTAINER_NAME}"

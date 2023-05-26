@@ -12,8 +12,13 @@
 # limitations under the License.
 
 
-image=$(sudo docker inspect --format='{{.Config.Image}}' $1)
-imageNameVersion=($(echo $image | tr ":" "\n"))
-echo ${imageNameVersion[1]}
+containerExistence=$(docker ps -q -f name=$1)
+if [ "${containerExistence}" ]; then
+    image=$(docker inspect --format='{{.Config.Image}}' $1)
+    imageNameVersion=($(echo $image | tr ":" "\n"))
+    echo ${imageNameVersion[1]}
+else
+    echo "Unknown";
+fi
 
 exit 0;

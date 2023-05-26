@@ -110,10 +110,16 @@ window.versionManager = (function () {
 
                     loaderService.hideFormBlockLoader($('.container-base'));
 
-                    data.updateQueueItems.forEach(function (item) {
-                        var container = $("[data-update-server=" + item.serverType + "]").parents(".container-base:first");
-                        loaderService.showFormBlockLoader(container);
-                    });
+                    if (updateStarted(data.updateQueueItems)) {
+                        loaderService.showFormBlockLoader($updatesOrInstallationsList);
+                    } else {
+                        loaderService.hideFormBlockLoader($updatesOrInstallationsList);
+
+                        data.updateQueueItems.forEach(function (item) {
+                            var container = $("[data-update-server=" + item.serverType + "]").parents(".container-base:first");
+                            loaderService.showFormBlockLoader(container);
+                        });
+                    }
                 }
 
                 var isDocker = $.grep(data.updateList, function (item) {
@@ -150,6 +156,10 @@ window.versionManager = (function () {
         if (requestList.length === 1 && requestList[0].updateAction.type === 4) return true;
 
         return requestList.some(function (item) { return item.serverType === 3 && item.updateAction.type === 1;});
+    }
+
+    function updateStarted(requestList) {
+        return requestList.some(function (item) { return item.updateAction.type === 1 && item.updateAction.type === 3;});
     }
 
     function isUpdatesAvailable() {
@@ -293,8 +303,13 @@ window.versionManager = (function () {
 
     function updateComplete(request, btn) {
         clearTimeout(updateTimeOut);
-        var container = $(btn).parents(".container-base:first");
-        loaderService.showFormBlockLoader(container);
+
+        if (isReqForInstallOrUpdate(request)) {
+            loaderService.showFormBlockLoader($updatesOrInstallationsList);
+        } else {
+            var container = $(btn).parents(".container-base:first");
+            loaderService.showFormBlockLoader(container);
+        }
 
         apiService.post('update/Start', request)
             .done(function (data) {

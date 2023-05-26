@@ -74,45 +74,84 @@ block rightSide
                     span.splitter-buttons
                     button.button.black.cancelbtn= controlPanelResource.Cancel
         -}
+         div#quotaBox.top-indent-big
+            h2.blue-text
+              span= controlPanelResource.QuotaHeader
+            p.gray-text!= controlPanelResource.format("QuotaDescription", "<br/>")
+            table#linkedPortalsList.table-list.height32.display-none
+              thead
+                tr
+                  th.portal-name
+                    span= controlPanelResource.PortalName
+                  th.used-memory
+                    span= controlPanelResource.UsedMemory
+                  th.memory-quota
+                    span= controlPanelResource.MemoryQuota
+                  th.edit-quota
+              colgroup 
+                col
+                col(style="width: 32px;")
+              tbody  
 
+include consumerSettingsPartial
 
 append bodyscripts
+  script#sizeMappingFieldTmpl(type="text/x-jquery-tmpl")
+      div.selectContainer.clear-fix
+        div.selectBox(data-value= "${sizeName}")
+          div.selectBoxValue
+            | ${sizeName}
+          div.selectBoxSwitch
+          div.selectOptionsBox
+            div.selectOptionsInnerBox.fullwidth
+              | {{html options}}
+        span.requiredErrorText= controlPanelResource.EmptyField
+  script#linkedPortalTmpl(type="text/x-jquery-tmpl")
+    tr(data-id="${tenantId}").portal-quota-info.border-bottom
+      td.portal-name
+        div
+          a(href="${href}" target="_blank") ${domainName}
+      td.used-memory(data="${usedSizeBytes}")
+        span= "${usedSize}"
+      td.memory-quota(data="${quotaBytes}")
+        span= "${quota}"
+        input.textBox.display-none(type="text")
+      td.edit-quota
+        a.button.black.edit-quota-btn= controlPanelResource.EditBtn
+        a(style="display: none").button.black.save-quota-btn= controlPanelResource.SaveBtn
+        div.selectOptionsBox(style="display: none")
+          ul.selectOptionsInnerBox
+            li.option
+              a.option.edit-quota= controlPanelResource.EditQuota
+            li.option
+              a.option.no-quota= controlPanelResource.NoQuota
+    tr(style="display: none", data-id="${tenantId}").form
+      td.portal-name
+      td.used-memory
+      td.memory-quota.form
+        input.textBox(type="text")
+      td.edit-quota.form
+         
+
   script#consumerSettingsTmpl(type="text/x-jquery-tmpl").
-    <ul>
+    <ul class="thirdSelectStorage">
       {{each storages}}
         <li>
           <div class="radioBox {{if !isSet}}disabled{{/if}}"  data-value="${id}" {{if dataFolderId}}title="${boxTitle}" {{/if}}>
             <button class="icon" type="button"></button>
             <span>${title}</span>
-        </li>
           </div>
+        </li>
       {{/each}}
     </ul>
 
-    {{each storages}}
-    <div data-id="${id}" class="display-none">
-        {{each properties}}
-        <div class = 'flexContainer' data-id='${name}'>
-            <span>${title}</span>
-        {{if description}}
-            <span class = "helpCenterSwitcher"></span>
-        {{/if}}
-        {{if !isSet}} 
-            <input class='textBox disabled' type='text' disabled>
-        {{else}}
-            <input class='textBox' type='text'>
-        {{/if}}
-        </div>
-        {{/each}}
-    </div>
+    {{each(i, item) storages}}
+    {{if id == "S3"}}
+    {{tmpl(Object.assign(item, {settingName: $data.settingName, regions: $data.regions, encryptionTypes: $data.encryptionTypes, encryptionMethods: $data.encryptionMethods})) "#consumerItemS3Tmpl"}}
+    {{else}}
+    {{tmpl(item) "#consumerItemBaseTmpl"}}
+    {{/if}}
     {{/each}}
-
-  script#storageHelpBox(type="text/x-jquery-tmpl").
-   <div class="popup_helper" id="${descriptionId}">
-      <p>${description}</p>
-      <div class="cornerHelpBlock pos_top">
-      </div>
-    </div>
 
   script(type="text/javascript").
     $(function() {

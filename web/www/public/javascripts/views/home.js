@@ -14,8 +14,7 @@
  *
 */
 
-
-$(".radioBox").on("click", function () {
+window.onRadioBoxClick = function () {
     if ($(this).hasClass("disabled")) {
         return;
     }
@@ -25,16 +24,19 @@ $(".radioBox").on("click", function () {
         $(".radioBox[data-name={0}]".format(dataName)).removeClass("checked");
     }
     $(this).addClass("checked");
-});
+}
 
-
-$(".custom-checkbox, .checkBox").on("click", function () {
+window.onCheckBoxClick = function () {
     if ($(this).hasClass("disabled")) {
         return;
     }
 
     $(this).toggleClass("checked");
-});
+}
+
+$(".radioBox").on("click", window.onRadioBoxClick);
+
+$(".custom-checkbox, .checkBox").on("click", window.onCheckBoxClick);
 
 window.HomeView = function ($, apiService) {
 

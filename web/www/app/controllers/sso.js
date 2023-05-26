@@ -44,8 +44,8 @@
                 return;
             }
 
-            if (!files.metadata.name.toLowerCase().endsWith(".xml")) {
-                fileManager.deleteFile(files.metadata.path);
+            if (!files.metadata.originalFilename.toLowerCase().endsWith(".xml")) {
+                fileManager.deleteFile(files.metadata.filepath);
                 res.status(500).send(req.resources.controlPanelResource.SsoMetadataFileTypeError).end();
                 return;
             }
@@ -58,10 +58,10 @@
                 json: true
             };
 
-            params.formData.metadata = fs.createReadStream(files.metadata.path);
-            params.formData.metadata.name = files.metadata.name;
+            params.formData.metadata = fs.createReadStream(files.metadata.filepath);
+            params.formData.metadata.name = files.metadata.originalFilename;
 
-            fileManager.deleteFile(files.metadata.path);
+            fileManager.deleteFile(files.metadata.filepath);
 
             apiRequestManager.makeRequest(portalManager.getAbsolutePortalUrl('sso/uploadmetadata'), req, params)
                 .then(onSuccess.bind(null, res))

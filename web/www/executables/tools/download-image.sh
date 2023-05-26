@@ -92,16 +92,16 @@ fi
 if [ -n "$IMAGEPATH" ]; then
 	ARCHIVE=$(find "$IMAGEPATH" -name "${IMAGE//\//-}_$VERSION.tar.gz" -type f -printf "%f\n" | sort -r | head -n 1);
 	if [[ -n "$ARCHIVE" ]]; then
-			sudo docker load < "$IMAGEPATH$ARCHIVE";
+			docker load < "$IMAGEPATH$ARCHIVE";
 			exit 0;
 	fi
 fi
 
 if [[ -n ${USERNAME} && -n ${PASSWORD} ]]; then
-	sudo docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
+	docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
 fi
 
-sudo docker pull $IMAGE:$VERSION
+docker pull $IMAGE:$VERSION
 
 #Download elasticsearch image when downloading communityserver
 if [[ -n ${COMMUNITY_CONTAINER_NAME} ]]; then
@@ -109,7 +109,7 @@ if [[ -n ${COMMUNITY_CONTAINER_NAME} ]]; then
 	#Check that elasticsearch host is not external
 	if [[ -z ${ELASTICSEARCH_SERVER_HOST} || ${ELASTICSEARCH_SERVER_HOST} = ${ELASTICSEARCH_CONTAINER_NAME} ]]; then
 		ELASTICSEARCH_VERSION=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${IMAGE}:${VERSION} | grep "ELASTICSEARCH_VERSION=" | sed 's/^.*=//');
-		sudo docker pull ${ELASTICSEARCH_IMAGE}:${ELASTICSEARCH_VERSION}
+		docker pull ${ELASTICSEARCH_IMAGE}:${ELASTICSEARCH_VERSION}
 	fi
 fi
 

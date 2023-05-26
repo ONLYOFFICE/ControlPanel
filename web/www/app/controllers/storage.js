@@ -22,7 +22,20 @@ const baseController = require('./base.js'),
     path = require('path'),
     storageCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'storage.pug')),
     fullAccess = require('../middleware/fullAccess.js'),
-    notCustomMode = require('../middleware/notCustomMode.js');
+    notCustomMode = require('../middleware/notCustomMode.js'),
+    apiSystemManager = require('../apiRequestManager.js').apiSystemManager;
+
+function onError(response, error) {
+    response.status(500);
+    response.send(error);
+}
+function onSuccess(response, result) {
+    response.send({
+        success: true,
+        data: result
+    });
+    response.end();
+}
 
 router
     .use(fullAccess())
@@ -33,7 +46,19 @@ router
     })
     .get("/getAllStorages", baseController.get.bind(baseController, 'settings/storage.json'))
     .get("/getAllCdnStorages", baseController.get.bind(baseController, 'settings/storage/cdn.json'))
+    .get("/getAmazonS3Regions", baseController.get.bind(baseController, 'settings/storage/s3/regions.json'))
     .get("/encryptionSettings", baseController.get.bind(baseController, 'settings/encryption/settings.json'))
+    .get("/getLinkedPortals", (req, res) => {
+        apiSystemManager.get("portal/get", req)
+            .then((result) => { onSuccess(res, result); })
+            .catch((error) => { onError(res, error); });
+    })
+    .put("/quota", (req, res) => {
+        apiSystemManager.put("tariff/set", req)
+            .then((result) => { onSuccess(res, result); })
+            .catch((error) => { onError(res, error); });
+    })
+    .put("/setTenantQuotaSettings", baseController.put.bind(baseController, 'settings/tenantquotasettings'))
     .put("/updateStorage", baseController.put.bind(baseController, 'settings/storage.json'))
     .put("/updateCdnStorage", baseController.put.bind(baseController, 'settings/storage/cdn.json'))
     .delete("/resetStorageToDefault", baseController.dlt.bind(baseController, 'settings/storage.json'))

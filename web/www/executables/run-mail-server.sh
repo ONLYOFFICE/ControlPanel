@@ -135,8 +135,8 @@ MYSQL_ROOT_PASSWORD="my-secret-pw";
 
 DIR=$(dirname $(readlink -f $0));
 
-MYSQL_SERVER_ID=$(sudo docker ps -aqf "name=$MYSQL_CONTAINER_NAME");
-COMMUNITY_SERVER_ID=$(sudo docker ps -aqf "name=$COMMUNITY_CONTAINER_NAME");
+MYSQL_SERVER_ID=$(docker ps -aqf "name=$MYSQL_CONTAINER_NAME");
+COMMUNITY_SERVER_ID=$(docker ps -aqf "name=$COMMUNITY_CONTAINER_NAME");
 
 PARAMETER_VALUE="";
 
@@ -148,7 +148,7 @@ if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
 fi
 
 if [ "$UPDATE" == "1" ]; then
-	MAIL_SERVER_ID=$(sudo docker ps -aqf "name=$MAIL_CONTAINER_NAME");
+	MAIL_SERVER_ID=$(docker ps -aqf "name=$MAIL_CONTAINER_NAME");
 
 	if [[ -n ${MAIL_SERVER_ID} ]]; then
 		PARAMETER_VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${MAIL_CONTAINER_NAME} | grep "MYSQL_SERVER=" | sed 's/^.*=//');
@@ -177,27 +177,27 @@ if [ "$UPDATE" == "1" ]; then
 		fi
 	fi
 
-	sudo bash ${DIR}/tools/check-bindings.sh ${MAIL_SERVER_ID} "/var/lib/mysql";
+	bash ${DIR}/tools/check-bindings.sh ${MAIL_SERVER_ID} "/var/lib/mysql";
 
 	if  [[ -z ${MAIL_DOMAIN_NAME} ]]; then
-		MAIL_DOMAIN_NAME=$(sudo docker exec $MAIL_SERVER_ID hostname -f)
+		MAIL_DOMAIN_NAME=$(docker exec $MAIL_SERVER_ID hostname -f)
 	fi
 
 	if [[ -z ${MYSQL_SERVER_ID} ]]; then
-		if ! docker exec -it ${MAIL_CONTAINER_NAME} service mysqld stop; then
+		if ! docker exec ${MAIL_CONTAINER_NAME} service mysqld stop; then
 			echo "$MAIL_CONTAINER_NAME mysqld service could not be stopped correctly."
 		fi
 	fi
 
-	sudo bash ${DIR}/tools/remove-container.sh ${MAIL_CONTAINER_NAME}
+	bash ${DIR}/tools/remove-container.sh ${MAIL_CONTAINER_NAME}
 fi
 
 if [[ -n ${USERNAME} && -n ${PASSWORD} ]]; then
-	sudo docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
+	docker login ${HUB} --username ${USERNAME} --password ${PASSWORD}
 fi
 
 if [[ -z ${VERSION} ]]; then
-	GET_VERSION_COMMAND="sudo bash ${DIR}/tools/get-available-version.sh -i $MAIL_IMAGE_NAME -path $IMAGEPATH";
+	GET_VERSION_COMMAND="bash ${DIR}/tools/get-available-version.sh -i $MAIL_IMAGE_NAME -path $IMAGEPATH";
 
 	if [[ -n ${PASSWORD} && -n ${USERNAME} ]]; then
 		GET_VERSION_COMMAND="$GET_VERSION_COMMAND -u $USERNAME -p $PASSWORD";
@@ -235,27 +235,31 @@ args+=(-v "$HOST_DIR/MailServer/logs:/var/log");
 args+=(-h "$MAIL_DOMAIN_NAME");
 args+=("$MAIL_IMAGE_NAME:$VERSION");
 
-sudo docker run --net ${PRODUCT} --privileged -i -t -d --restart=always "${args[@]}";
+docker run --net ${PRODUCT} --privileged -i -t -d --restart=always "${args[@]}";
 
 sleep 5
 
-MAIL_SERVER_ID=$(sudo docker ps -aqf "name=$MAIL_CONTAINER_NAME");
+MAIL_SERVER_ID=$(docker ps -aqf "name=$MAIL_CONTAINER_NAME");
 
 if [[ -n ${MAIL_SERVER_ID} ]]; then
 	echo "MAIL SERVER successfully installed."
 
 	if [ -f "$IMAGEPATH/${MAIL_IMAGE_NAME//\//-}_$VERSION.tar.gz" ]; then
-		sudo rm "$IMAGEPATH/${MAIL_IMAGE_NAME//\//-}_$VERSION.tar.gz";
+		rm "$IMAGEPATH/${MAIL_IMAGE_NAME//\//-}_$VERSION.tar.gz";
 	fi
 
 	if [ "$UPDATE" == "0" ]; then
-		while ! sudo bash ${DIR}/tools/wait-for-it.sh  ${MAIL_CONTAINER_NAME}:25 --quiet -s -- echo "MailServer:25 is up"; do
+		while ! bash ${DIR}/tools/wait-for-it.sh  ${MAIL_CONTAINER_NAME}:25 --quiet -s -- echo "MailServer:25 is up"; do
 			sleep 5
 		done
 
-		while ! sudo bash ${DIR}/tools/wait-for-it.sh  ${MAIL_CONTAINER_NAME}:8081 --quiet -s -- echo "MailServer:8081 is up"; do
+		while ! bash ${DIR}/tools/wait-for-it.sh  ${MAIL_CONTAINER_NAME}:8081 --quiet -s -- echo "MailServer:8081 is up"; do
 			sleep 5
 		done
+	fi
+	
+	if ! docker exec ${COMMUNITY_CONTAINER_NAME} grep -q "${MAIL_DOMAIN_NAME}" /etc/hosts; then
+		docker exec -u 0 ${COMMUNITY_CONTAINER_NAME} /bin/sh -c "echo \"$(dig +short myip.opendns.com @resolver1.opendns.com) ${MAIL_DOMAIN_NAME}\" >> /etc/hosts"  
 	fi
 
 	exit 0;

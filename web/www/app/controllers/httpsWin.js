@@ -22,6 +22,7 @@ const httpsCompiled = require('pug').compileFile(path.join(__dirname, '..', '..'
 const Model = require('../model/base.js');
 const baseController = require('./base.js');
 const fullAccess = require('../middleware/fullAccess.js');
+const fileManager = require('../fileManager');
 
 function upload(req, res, ext) {
     const form = new formidable.IncomingForm();
@@ -30,12 +31,20 @@ function upload(req, res, ext) {
         res.status(200);
         const uploaded = files["files[]"];
 
-        if (err || !uploaded || !uploaded.name.endsWith(ext)) {
+        if (err || !uploaded) {
             res.send({ success: false });
             res.end();
             return;
         }
-        res.send({ success: true, file: uploaded.path });
+
+        if (!uploaded.originalFilename.endsWith(ext)) {
+            fileManager.deleteFile(uploaded.filepath);
+            res.send({ success: false });
+            res.end();
+            return;
+        }
+
+        res.send({ success: true, file: uploaded.filepath });
         res.end();
     });
 }

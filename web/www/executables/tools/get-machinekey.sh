@@ -51,7 +51,7 @@ get_container_env_parameter () {
 	fi
 
 	if command_exists docker ; then
-		CONTAINER_EXIST=$(sudo docker ps -aqf "name=$CONTAINER_NAME");
+		CONTAINER_EXIST=$(docker ps -aqf "name=$CONTAINER_NAME");
 
 		if [[ -n ${CONTAINER_EXIST} ]]; then
 			VALUE=$(docker inspect --format='{{range .Config.Env}}{{println .}}{{end}}' ${CONTAINER_NAME} | grep "${PARAMETER_NAME}=" | sed 's/^.*=//');

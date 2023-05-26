@@ -30,7 +30,7 @@
     position: relative;
     background: #83888D;
 
-    &::after{
+    &::after {
         content: 'i';
         font-size: 11px;
         font-weight: 900;
@@ -41,5 +41,100 @@
         text-align: center;
         line-height: 12px;
         font-family: Arial;
+    }
+}
+
+#linkedPortalsList thead th {
+    text-align: left;
+
+    &.portal-name,
+    td.portal-name {
+        padding-left: 10px;
+    }
+}
+
+#linkedPortalsList tbody tr {
+
+    &:last-child {
+        border-bottom: none;
+    }
+
+    &.border-bottom {
+        border-bottom: 1px solid #d1d1d1;
+    }
+
+    &.form {
+        border-top: none;
+
+        td.memory-quota {
+            margin-bottom: 18px;
+            display: block;
+
+            .textBox {
+                float: right;
+                margin-right: 29px;
+            }
+        }
+
+        input {
+            display: block;
+            margin-top: 11px;
+        }
+
+        .selectContainer {
+            margin-top: 11px;
+            margin-bottom: 18px;
+        }
+    }
+
+
+
+    td {
+        &.used-memory {
+            width: 146px;
+        }
+
+        &.memory-quota {
+            width: 132px;
+        }
+
+        &.used-memory,
+        &.memory-quota {
+            text-align: left;
+
+            input {
+                width: 109px;
+            }
+        }
+
+        &.edit-quota {
+            width: 100px;
+            position: relative;
+            text-align: right;
+
+            .selectBoxValue {
+                text-align: left;
+            }
+        }
+
+        .button {
+            display: block;
+            height: 24px;
+            line-height: 24px;
+            width: 61px;
+            text-align: center;
+            margin: 2px 8px 2px 7px
+        }
+
+    }
+}
+
+.selectContainer {
+    width: 109px;
+    line-height: 48px;
+    position: relative;
+
+    &.display-none {
+        display: none;
     }
 }

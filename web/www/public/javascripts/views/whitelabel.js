@@ -45,8 +45,8 @@ window.WhiteLabelManager = function($, apiService, loaderService) {
             logo: []
         };
 
-            $logoPaths = $('[id^=logoPath_]'),
-            needToSave = false;
+        $logoPaths = $('#whiteLabelSettings [id^=logoPath_]'),
+        needToSave = false;
 
         for (var i = 0, n = $logoPaths.length; i < n; i++) {
             var logotype = $($logoPaths[i]).attr('id').split('_')[1],
@@ -84,7 +84,25 @@ window.WhiteLabelManager = function($, apiService, loaderService) {
 
     function restoreWhiteLabelOptions () {
         Common.loader.show();
-        apiService.post('WhiteLabel/RestoreDefaultLogos?isDefault=' + _isDefault, {})
+
+        var method = 'whitelabel/restoreDefaultLogos?isDefault=' + _isDefault;
+        var data = {};
+
+        if (_isDefault) {
+            method = 'rebranding/restoreSelectedLogos';
+            data = {
+                restoreLogoText: true,
+                logoTypes: []
+            };
+            $logoPaths = $('#whiteLabelSettings [id^=logoPath_]');
+            for(var k = 0, l = $logoPaths.length; k < l;  k++)
+            {
+                var logotype = $($logoPaths[k]).attr('id').split('_')[1];
+                data.logoTypes.push(logotype);
+            }
+        }
+
+        apiService.post(method, data)
             .always(function () {
                 Common.loader.hide();
             })
@@ -143,9 +161,6 @@ window.WhiteLabelManager = function($, apiService, loaderService) {
                         }
                         if (firstTime === true) {
                             $("#formContentWhitelabel").removeClass("display-none");
-                            $('[id^=logoUploader_]').each(function (ind, item) {
-                                $(item).css("width", $(item).parent().children(".button.black").outerWidth());
-                            });
                         } else {
                             toastr.success(_successMsgTest);
                         }

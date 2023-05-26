@@ -22,16 +22,18 @@ div#formContentWhitelabel.display-none
       div.container-with-border
         table
           tr
-            td.paddingBase
+            td.paddingBase(style="padding-right:0;")
               div.logo-img-container
                 img.borderBase.docs-style1-background.logo_4
                 img.borderBase.docs-style2-background.logo_4
                 img.borderBase.docs-style3-background.logo_4
+                img.borderBase.docs-style4-background.logo_4
             
                 canvas#canvas_logo_4_1.borderBase(width="172" height="40" data-fontsize="22" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
                 canvas#canvas_logo_4_2.borderBase(width="172" height="40" data-fontsize="22" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
                 canvas#canvas_logo_4_3.borderBase(width="172" height="40" data-fontsize="22" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
-            td.paddingBase
+                canvas#canvas_logo_4_4.borderBase(width="172" height="40" data-fontsize="22" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase(style="padding-left:0;")
               input#logoPath_4(type="hidden" value="")
               div.logo-change-container
                 input#logoUploader_4(type="file" name="logoUploader_4")
@@ -69,7 +71,7 @@ div#formContentWhitelabel.display-none
                 a.button.black= cpWhiteLabelResource.ChangeLogoButton
 
     div.clear-fix.container-base
-      div.table-header= cpWhiteLabelResource.LogoDarkHdr + " (" + config.logoDarkSize.width + "x" + config.logoDarkSize.height + "):"
+      div.table-header= cpWhiteLabelResource.LogoDarkLogin + " (" + config.logoDarkSize.width + "x" + config.logoDarkSize.height + "):"
       div.container-with-border
         table
           tr
@@ -82,6 +84,22 @@ div#formContentWhitelabel.display-none
               div.logo-change-container
                 input#logoUploader_2(type="file" name="logoUploader_2")
                 a.button.black= cpWhiteLabelResource.ChangeLogoButton
+    
+    div.clear-fix.container-base
+      div.table-header= cpWhiteLabelResource.LogoLightLogin + " (" + config.logoLoginLightSize.width + "x" + config.logoLoginLightSize.height + "):"
+      div.container-with-border
+        table
+          tr
+            td.paddingBase
+              div.logo-img-container
+                img.borderBase.logo_6
+                canvas#canvas_logo_6.borderBase(width="432" height="70" data-fontsize="54" data-fontcolor="#fff")= cpWhiteLabelResource.BrowserNoCanvasSupport
+            td.paddingBase
+              input#logoPath_6(type="hidden" value="")
+              div.logo-change-container
+                input#logoUploader_6(type="file" name="logoUploader_6")
+                a.button.black= cpWhiteLabelResource.ChangeLogoButton
+    
 
     div.clear-fix.container-base
       div.table-header= cpWhiteLabelResource.LogoFavicon + " (" + config.logoFaviconSize.width + "x" + config.logoFaviconSize.height + "):"

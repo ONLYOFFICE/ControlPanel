@@ -131,13 +131,20 @@ function upload(req, res, ext, filePath) {
         res.status(200);
         const uploaded = files["files[]"];
 
-        if (err || !uploaded || !uploaded.name.endsWith(ext)) {
+        if (err || !uploaded) {
             res.send({ success: false });
             res.end();
             return;
         }
 
-        fileManager.moveFile(uploaded.path, filePath)
+        if (!uploaded.originalFilename.endsWith(ext)) {
+            fileManager.deleteFile(uploaded.filepath);
+            res.send({ success: false });
+            res.end();
+            return;
+        }
+
+        fileManager.moveFile(uploaded.filepath, filePath)
             .then(() => {
                 res.send({ success: true, file: filePath });
                 res.end();

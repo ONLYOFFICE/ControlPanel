@@ -62,6 +62,9 @@ nconf.logoDarkSize = new Size(432, 70);
 nconf.logoFaviconSize = new Size(32, 32);
 nconf.logoDocsEditorSize = new Size(172, 40);
 nconf.logoDocsEditorEmbedSize = new Size(172, 40);
+nconf.logoLoginLightSize = new Size(432, 70);
+nconf.logoAboutDarkSize = new Size(432, 70);
+nconf.logoAboutLightSize = new Size(432, 70);
 
 nconf.getSize = function (logotype, general)
 {
@@ -72,6 +75,9 @@ nconf.getSize = function (logotype, general)
         case 3: return this.logoFaviconSize.getSizeByType(general);
         case 4: return this.logoDocsEditorSize.getSizeByType(general);
         case 5: return this.logoDocsEditorEmbedSize.getSizeByType(general);
+        case 6: return this.logoLoginLightSize.getSizeByType(general);
+        case 7: return this.logoAboutDarkSize.getSizeByType(general);
+        case 8: return this.logoAboutLightSize.getSizeByType(general);
     }
     return new Size(0, 0);
 }

@@ -40,16 +40,23 @@ function upload(req, res, ext) {
         form.parse(req, function (err, fields, files) {
             co(function*() {
                 const uploaded = files["backup"];
-                const resPath = path.join(form.uploadDir, uploaded.name);
 
-                yield fileManager.copyFile(uploaded.path, resPath, true);
-                yield fileManager.deleteFile(uploaded.path);
-                
-                if (err || !uploaded || !uploaded.name.endsWith(ext)) {
+                if (err || !uploaded) {
                     res.send({ success: false });
                     res.end();
                     return;
                 }
+
+                if (!uploaded.originalFilename.endsWith(ext)) {
+                    yield fileManager.deleteFile(uploaded.filepath);
+                    res.send({ success: false });
+                    res.end();
+                    return;
+                }
+
+                const resPath = path.join(form.uploadDir, uploaded.originalFilename);
+                yield fileManager.copyFile(uploaded.filepath, resPath, true);
+                yield fileManager.deleteFile(uploaded.filepath);
 
                 res.send({ success: true, file: resPath });
                 res.end();

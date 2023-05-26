@@ -19,7 +19,6 @@ const
     router = require('express').Router(),
     pug = require('pug'),
     path = require('path'),
-    moment = require('moment'),
     co = require('co'),
     url = require('url'),
     Model = require('../model/base.js'),

@@ -1,11 +1,25 @@
+/*
+ *
+ * (c) Copyright Ascensio System Limited 2010-2021
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+*/
+
+
 window.MigrationView = function ($, apiService, loaderService) {
 
 
     var $view = $('#migration-view');
 
-    var $initialImportGoogleBtn = $view.find('#initial-import-google-Btn');
-    var $initialImportNextcloudBtn = $view.find('#initial-import-nextcloud-Btn');
-    var $initialImportOwncloudBtn = $view.find('#initial-import-owncloud-Btn');
     var $initialImportNext = $view.find('#initial-import-next');
     var $checkUsersForImportNext = $view.find('#check-users-for-import-next');
     var $checkUsersWithoutEmailForImportNext = $view.find('#check-users-without-email-for-import-next');
@@ -59,133 +73,245 @@ window.MigrationView = function ($, apiService, loaderService) {
     var canceled = false;
 
     var apiMigration = "";
+    var currentPage = 0;
+    var numberOfPages = 0;
 
     function init() {
-        bindUploader();
         loaderService.showFormBlockLoader($('.layoutRightSide:first'), 0, $(".layoutBody:first").height() / 2 + 100);
         loaderService.hideFormBlockLoader($('.layoutRightSide:first'));
         renderView();
         return;
     }
 
-    function initialImportGoogle() {
-        $archivesUploader.attr('multiple', 'true');
-        $initialImport.show();
-        $choiceOfMigration.hide();
-        $archivesInput.val("");
-        apiMigration = "GoogleWorkspace";
-        $('#select-file-prompt').text(window.Resource.MigrationSelectFilePrompt.format(window.Resource.MigrationGoogleWorkspace));
-    }
-
-    function initialImportNextcloud() {
-        $archivesUploader.removeAttr('multiple');
-        $initialImport.show();
-        $choiceOfMigration.hide();
-        $archivesInput.val("");
-        apiMigration = "NextcloudMigrate";
-        $('#select-file-prompt').text(window.Resource.MigrationSelectFilePrompt.format(window.Resource.MigrationNextcloud));
-    }
-
-    function initialImportOwncloud() {
-        $archivesUploader.removeAttr('multiple');
-        $initialImport.show();
-        $choiceOfMigration.hide();
-        $archivesInput.val("");
-        apiMigration = "OwncloudMigrate";
-        $('#select-file-prompt').text(window.Resource.MigrationSelectFilePrompt.format(window.Resource.MigrationOwncloud));
-    }
-
     function checkUsersForImportNext() {
-        if (!usersCheck)
-            generateBodyCheckUsersWithoutEmailsForImport();
-        $checkUsersNotEmails.show();
         $checkUsersForImport.hide();
+        if (numberOfPages != 5) {
+            if (!usersCheck)
+                generateBodyCheckUsersWithoutEmailsForImport();
+            $checkUsersNotEmails.show();
+        } else {
+            checkUsersWithoutEmailForImport();
+        }
     }
 
     function checkUsersWithoutEmailForImport() {
         generateBodySelectModulesToImport();
-        switch (apiMigration) {
-            case "NextcloudMigrate":
-                $modulesName.text(window.Resource.MigrationNextcloud);
-                break;
-            case "GoogleWorkspace":
-                $modulesName.text(window.Resource.MigrationGoogleWorkspace);
-                break;
-            case "OwncloudMigrate":
-                $modulesName.text(window.Resource.MigrationOwncloud);
-                break;
+        if (numberOfPages != 5) {
+            currentPage = 4;
+        } else {
+            currentPage = 3;
+            $backSelectModulesToImport.off("click");
+            $backSelectModulesToImport.click(function () {
+                switchPage($selectModulesToImport, $checkUsersForImport);
+            });
         }
-        $selectModulesToImport.show();
-        $checkUsersNotEmails.hide();
+        $modulesName.text(window.Resource['Migration' + apiMigration]);
+        $('#migration-step-select-modules').text(window.Resource.MigrationSelectModulesStep.format(currentPage, numberOfPages));
+        switchPage($checkUsersNotEmails, $selectModulesToImport);
+    }
+
+    var infoList = [];
+    var currentMigrator = {};
+    var migrationInfo = {};
+
+    function isEmptyObject(obj) {
+        for (var i in obj) {
+            if (obj.hasOwnProperty(i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    function switchPage($currentPage, $pageToSwitch) {
+        $currentPage.hide();
+        $pageToSwitch.show();
+    }
+
+    function startPage(migratorList) {
+        apiService.post("migration/migratorsInfo", {
+                migratorsName: migratorList
+            })
+            .done(function (migratorsInfo) {
+                migratorsInfo.sort(function (a, b) {
+                    return a.migratorName > b.migratorName ? 1 : -1;
+                });
+                migratorsInfo.forEach(function (migrator) {
+                    var migrationName = window.Resource['Migration' + migrator.migratorName];
+                    var migrationPrompt = window.Resource.MigrationPrompt.format(migrationName);
+                    var nextStepId = "initialImport{0}Btn".format(migrator.migratorName);
+                    infoList.push({
+                        migrationName: migrationName,
+                        migrationPrompt: migrationPrompt,
+                        nextStepId: nextStepId,
+                        migratorName: migrator.migratorName,
+                        numberOfSteps: migrator.numberOfSteps,
+                        archivesIsMultiple: migrator.archivesIsMultiple
+                    });
+                });
+                var $eventsInfo = $('#typeOfMigration').tmpl(infoList);
+                $eventsInfo.appendTo($choiceOfMigration.find('#list-type-of-migration'));
+                infoList.forEach(function (element) {
+                    enableInit(true, element);
+                });
+                $choiceOfMigration.show();
+            });
+    }
+
+    function enableInit(enabled, migratorInfo) {
+        var $initialImportButton = $choiceOfMigration.find('#' + migratorInfo.nextStepId);
+        $initialImportButton.toggleClass("disabled", !enabled);
+
+        if (enabled) {
+            $initialImportButton.on("click", function () {
+                defaultSelectionOfArchivesPage(migratorInfo);
+            });
+        } else {
+            $initialImportButton.off("click");
+        }
+    }
+
+    function defaultSelectionOfArchivesPage(migratorInfo) {
+        currentPage = 1;
+        numberOfPages = migratorInfo.numberOfSteps;
+        currentMigrator = migratorInfo;
+        if (migratorInfo.archivesIsMultiple) {
+            $archivesUploader.attr('multiple', 'true');
+        } else {
+            $archivesUploader.removeAttr('multiple');
+        }
+        switchPage($choiceOfMigration, $initialImport);
+        $archivesInput.val("");
+        apiMigration = migratorInfo.migratorName;
+        $('#migration-step-select-file').text(window.Resource.MigrationSelectFileStep.format(currentPage, numberOfPages));
+        $('#select-file-prompt').text(window.Resource.MigrationSelectFilePrompt.format(window.Resource['Migration' + migratorInfo.migratorName]));
+    }
+
+    function selectionOfArchivesPage(parsingIsFinished, migratorInfo, failedArchives) {
+        currentPage = 1;
+        numberOfPages = migratorInfo.numberOfSteps;
+        apiMigration = migratorInfo.migratorName;
+        $('#migration-step-select-file').text(window.Resource.MigrationSelectFileStep.format(currentPage, numberOfPages));
+        $('#select-file-prompt').text(window.Resource.MigrationSelectFilePrompt.format(window.Resource['Migration' + migratorInfo.migratorName]));
+        switchPage($choiceOfMigration, $initialImport);
+        if (parsingIsFinished) {
+            $backUploadToServer.off("click");
+            $backUploadToServer.on("click", function () {
+                apiService.post('migration/cancel')
+                    .done(function (result) {
+                        apiService.post('migration/finish', {
+                                isSendWelcomeEmail: false
+                            })
+                            .done(function (result) {
+                                window.location.reload();
+                            });
+                    });
+            });
+            checkingArchivesForCorrectness(failedArchives);
+        } else {
+            interimStatusMigration();
+        }
+    }
+
+    function checkUsersForImportPage() {
+        generateBodyCheckUsersForImport();
+        $migrationProgressBox.hide();
+        $checkUsersForImport.show();
+        $initialImport.hide();
+    }
+
+    function finalPage(migrator, isCanceled) {
+        var migratorList = [migrator];
+        apiService.post("migration/migratorsInfo", {
+                migratorsName: migratorList
+            })
+            .done(function (migratorsInfo) {
+                var migratorInfo = migratorsInfo[0];
+                apiMigration = migratorInfo.migratorName;
+                numberOfPages = migratorInfo.numberOfSteps;
+                currentPage = numberOfPages;
+                $('#migration-step-finished-migration').text(window.Resource.MigrationFinishedMigrationStep.format(currentPage, numberOfPages));
+                $resultsDataImport.show();
+                if (isCanceled) {
+                    canceled = true;
+                    $messageShortResult.text(window.Resource.MigrationCanceled.format(window.Resource['Migration' + migratorInfo.migratorName]));
+                    $messageShortResult.addClass('error');
+                } else {
+                    $('#success-message').removeClass('display-none');
+                    $('#success-message').text(window.Resource.MigrationCompleted.format(window.Resource['Migration' + migratorInfo.migratorName]));
+                }
+            });
+    }
+
+    function checkingArchivesForCorrectness(failedArchives) {
+        if (failedArchives.length <= 0) {
+            checkUsersForImportPage();
+        } else {
+            $initialImport.show();
+            $migrationProgressBox.find('.margin-0').hide();
+            $('#warning-incorrect-archives').show();
+            $cancelUploadToServer.hide();
+            $initialImportNext.show();
+            $initialImportNext.removeClass('disabled');
+            $initialImportNext.removeClass('nextStep');
+            $backUploadToServer.show();
+            $backUploadToServer.removeClass('previous-step');
+            $('#download-incorrect-archives').show();
+            $('#download-incorrect-archives').removeClass('p-padding-top');
+            $('#download-incorrect-archives').click(function () {
+                var text = "";
+                failedArchives.forEach(function (element) {
+                    text += element + '%0D%0A';
+                });
+                var link = document.createElement('a');
+                link.setAttribute('href', 'data:text/plain;charset=utf-8,' + text);
+                link.setAttribute('download', 'Incorrect archives.csv');
+                link.click();
+            });
+            $initialImportNext.off("click");
+            $initialImportNext.on("click", checkUsersForImportPage);
+        }
     }
 
     function renderView() {
+        bindUploader();
         apiService.get("migration/status")
             .done(function (data) {
+
                 if (typeof data == "string") {
-                    apiMigration = data;
-                    canceled = true;
-                    $resultsDataImport.show();
-                    switch (apiMigration) {
-                        case "NextcloudMigrate":
-                            $messageShortResult.text(window.Resource.MigrationCanceled.format(window.Resource.MigrationNextcloud));
-                            break;
-                        case "GoogleWorkspace":
-                            $messageShortResult.text(window.Resource.MigrationCanceled.format(window.Resource.MigrationGoogleWorkspace));
-                            break;
-                        case "OwncloudMigrate":
-                            $messageShortResult.text(window.Resource.MigrationCanceled.format(window.Resource.MigrationOwncloud));
-                            break;
-                    }
-                    $messageShortResult.addClass('error');
-                } else if (!data || !data.progress) {
-                    $choiceOfMigration.show();
-                    $('#download-incorrect-archives').hide();
-                    enableGoogleInit(true);
-                    enableNextcloudInit(true);
-                    enableOwncloudInit(true);
-                } else if (data.migrationEnded) {
-                    $choiceOfMigration.hide();
-                    $resultsDataImport.show();
-                    showResultMigration();
-                } else if (!data.migrationEnded) {
-                    if (data.parseResult != null) {
-                        migrationInfo = data.parseResult;
-                        apiMigration = migrationInfo.migratorName;
-                        if (data.progress == 100) {
-                            if (migrationInfo.failedArchives.length > 0) {
-                                $choiceOfMigration.hide();
-                                $initialImport.show();
-                                $backUploadToServer.off("click");
-                                $backUploadToServer.on("click", function () {
-                                    apiService.post('migration/cancel')
-                                        .done(function (result) {
-                                            apiService.post('migration/finish', {
-                                                    isSendWelcomeEmail: false
-                                                })
-                                                .done(function (result) {
-                                                    window.location.reload();
-                                                });
-                                        });
-                                });
-                                checkingAarchivesForCorrectness();
+                    finalPage(data, true); //+
+                } else if (isEmptyObject(data)) {
+                    apiService.get("migration/list")
+                        .done(function (list) {
+                            startPage(list); //+
+                        });
+                } else {
+                    apiService.post("migration/migratorsInfo", {
+                            migratorsName: [data.migratorName]
+                        })
+                        .done(function (migratorsInfo) {
+                            currentMigrator = migratorsInfo[0];
+                            numberOfPages = currentMigrator.numberOfSteps;
+                            if (data.parsingEnded) {
+                                migrationInfo = data.parseResult;
+                                if (data.migrationEnded) {
+                                    finalPage(data.migratorName, false);
+                                } else if (data.progress != 100) {
+                                    apiMigration = data.migratorName;
+                                    processingMigrationHeader();
+                                    switchPage($choiceOfMigration, $migration);
+                                    interimStatus();
+                                } else if (data.parseResult.failedArchives.length > 0) {
+                                    selectionOfArchivesPage(true, currentMigrator, data.parseResult.failedArchives);
+                                } else {
+                                    $choiceOfMigration.hide();
+                                    checkUsersForImportPage();
+                                }
                             } else {
-                                showCheckUSersForImport();
+                                selectionOfArchivesPage(false, currentMigrator, []);
                             }
-                        } else {
-                            $migration.show();
-                            interimStatus();
-                        }
-                    }
-                    if (data.parseResult == null) {
-                        $initialImport.show();
-                        interimStatusMigration();
-                    }
+                        });
                 }
-            })
-            .fail(function (err) {
-                console.log("migration/status error ");
-                console.log(err);
             });
         $checkUsersForImportNext.on("click", checkUsersForImportNext);
 
@@ -194,6 +320,7 @@ window.MigrationView = function ($, apiService, loaderService) {
             usersIsChecked(usersWithEmail);
             usersIsChecked(usersWithoutEmail);
             modulesIsChecked();
+            processingMigrationHeader();
             $migration.show();
             $selectModulesToImport.hide();
             apiService.post('migration/migrate', {
@@ -222,6 +349,12 @@ window.MigrationView = function ($, apiService, loaderService) {
         initCancel();
     }
 
+    function processingMigrationHeader() {
+        currentPage = currentMigrator.numberOfSteps - 1;
+        numberOfPages = currentMigrator.numberOfSteps;
+        $('#migration-step-processing-migration').text(window.Resource.MigrationProcessingMigrationStep.format(currentPage, numberOfPages));
+    }
+
     function generateCsv() {
         var text = "";
         usersWithoutEmail.forEach(function (element) {
@@ -238,12 +371,10 @@ window.MigrationView = function ($, apiService, loaderService) {
             window.location.reload();
         });
         $backCheckUsersWithoutEmailForImport.click(function () {
-            $checkUsersForImport.show();
-            $checkUsersNotEmails.hide();
+            switchPage($checkUsersNotEmails, $checkUsersForImport);
         });
         $backSelectModulesToImport.click(function () {
-            $checkUsersNotEmails.show();
-            $selectModulesToImport.hide();
+            switchPage($selectModulesToImport, $checkUsersNotEmails);
         });
     }
 
@@ -270,18 +401,16 @@ window.MigrationView = function ($, apiService, loaderService) {
         $cancelUploadToServer.click(function () {
             cancel();
             canceled = true;
-            $resultsDataImport.show();
-            $messageShortResult.text(window.Resource.MigrationCanceled.format(apiMigration));
+            $messageShortResult.text(window.Resource.MigrationCanceled.format(window.Resource['Migration' + apiMigration]));
             $messageShortResult.addClass('error');
-            $initialImport.hide();
+            switchPage($initialImport, $resultsDataImport);
         });
         $migrationCancel.click(function () {
             cancel();
             canceled = true;
-            $resultsDataImport.show();
-            $messageShortResult.text(window.Resource.MigrationCanceled.format(apiMigration));
+            $messageShortResult.text(window.Resource.MigrationCanceled.format(window.Resource['Migration' + apiMigration]));
             $messageShortResult.addClass('error');
-            $migration.hide();
+            switchPage($migration, $resultsDataImport);
         });
     }
 
@@ -469,6 +598,8 @@ window.MigrationView = function ($, apiService, loaderService) {
     var usersCheck = false;
 
     function generateBodyCheckUsersWithoutEmailsForImport() {
+        currentPage = 3;
+        $('#migration-step-not-filled-emails').text(window.Resource.MigrationNotFilledEmailsStep.format(currentPage, numberOfPages));
         if (usersWithoutEmail.length <= 0 && usersCheck == false) {
             for (var i = 0; i < migrationInfo.users.length; i++) {
                 if (!migrationInfo.users[i].email) {
@@ -586,6 +717,13 @@ window.MigrationView = function ($, apiService, loaderService) {
     }
 
     function generateBodyCheckUsersForImport() {
+        currentPage = 2;
+        if (numberOfPages == 6) {
+            $('#migration-step-select-users').text(window.Resource.MigrationSelectUsersStep.format(currentPage, numberOfPages));
+        } else if (numberOfPages == 5) {
+            $('#migration-step-select-users').text(window.Resource.MigrationGoogleSelectUsersStep.format(currentPage, numberOfPages));
+            $('#all-users-have-emails').text(window.Resource.MigrationGoogleUserListPrompt.format(window.Resource['Migration' + apiMigration]));
+        }
         if (usersWithEmail.length <= 0) {
             for (var i = 0; i < migrationInfo.users.length; i++) {
                 if (migrationInfo.users[i].email) {
@@ -653,36 +791,6 @@ window.MigrationView = function ($, apiService, loaderService) {
         }
     }
 
-    function enableGoogleInit(enabled) {
-        $initialImportGoogleBtn.toggleClass("disabled", !enabled);
-
-        if (enabled) {
-            $initialImportGoogleBtn.on("click", initialImportGoogle);
-        } else {
-            $initialImportGoogleBtn.off("click");
-        }
-    }
-
-    function enableNextcloudInit(enabled) {
-        $initialImportNextcloudBtn.toggleClass("disabled", !enabled);
-
-        if (enabled) {
-            $initialImportNextcloudBtn.on("click", initialImportNextcloud);
-        } else {
-            $initialImportNextcloudBtn.off("click");
-        }
-    }
-
-    function enableOwncloudInit(enabled) {
-        $initialImportOwncloudBtn.toggleClass("disabled", !enabled);
-
-        if (enabled) {
-            $initialImportOwncloudBtn.on("click", initialImportOwncloud);
-        } else {
-            $initialImportOwncloudBtn.off("click");
-        }
-    }
-
     var numberOfSentArchives = 0;
     var totalSizeArchives = 0;
     var sizeOfSentArchives = 0;
@@ -700,21 +808,6 @@ window.MigrationView = function ($, apiService, loaderService) {
                 showParseProgress(parseInt(Math.round(((data._progress.loaded + sizeOfSentArchives) / totalSizeArchives) * 100)));
             },
             add: function (evt, data) {
-                switch (apiMigration) {
-                    case "NextcloudMigrate":
-                        enableGoogleInit(false);
-                        enableOwncloudInit(false);
-                        break;
-                    case "GoogleWorkspace":
-                        enableNextcloudInit(false);
-                        enableOwncloudInit(false);
-                        break;
-                    case "OwncloudMigrate":
-                        enableNextcloudInit(false);
-                        enableGoogleInit(false);
-                        break;
-                }
-
                 var filesNames = '';
                 data.originalFiles.forEach(function (element) {
                     filesNames += "'" + element.name + "' ";
@@ -755,11 +848,12 @@ window.MigrationView = function ($, apiService, loaderService) {
                             $initialImportNext.removeClass("disabled");
                             $initialImportNext.click(function () {
                                 showParseProgress(parseInt(0));
-                                apiService.post('migration/' + apiMigration, {
+                                apiService.post('migration/init', {
+                                        migrator: apiMigration,
                                         path: pathToArchives,
                                     })
                                     .fail(function (err) {
-                                        console.log('init/' + apiMigration + ' error');
+                                        console.log('init ' + apiMigration + ' error');
                                         console.log(err);
                                     });
                                 interimStatusMigration();
@@ -776,50 +870,6 @@ window.MigrationView = function ($, apiService, loaderService) {
         });
     }
 
-    function showCheckUSersForImport() {
-        generateBodyCheckUsersForImport();
-        $migrationProgressBox.hide();
-        $checkUsersForImport.show();
-        $choiceOfMigration.hide();
-    }
-
-    function uploadToServerNext() {
-        generateBodyCheckUsersForImport();
-        $migrationProgressBox.hide();
-        $checkUsersForImport.show();
-        $initialImport.hide();
-    }
-
-    function checkingAarchivesForCorrectness() {
-        if (migrationInfo.failedArchives.length <= 0) {
-            uploadToServerNext();
-        } else {
-            $initialImport.show();
-            $migrationProgressBox.find('.margin-0').hide();
-            $('#warning-incorrect-archives').show();
-            $cancelUploadToServer.hide();
-            $initialImportNext.show();
-            $initialImportNext.removeClass('disabled');
-            $initialImportNext.removeClass('nextStep');
-            $backUploadToServer.show();
-            $backUploadToServer.removeClass('previous-step');
-            $('#download-incorrect-archives').show();
-            $('#download-incorrect-archives').removeClass('p-padding-top');
-            $('#download-incorrect-archives').click(function () {
-                var text = "";
-                migrationInfo.failedArchives.forEach(function (element) {
-                    text += element + '%0D%0A';
-                });
-                var link = document.createElement('a');
-                link.setAttribute('href', 'data:text/plain;charset=utf-8,' + text);
-                link.setAttribute('download', 'Incorrect archives.csv');
-                link.click();
-            });
-            $initialImportNext.off("click");
-            $initialImportNext.on("click", uploadToServerNext);
-        }
-    }
-
     function interimStatusMigration() {
         $initialImportNext.addClass("display-none");
         $backUploadToServer.addClass("display-none");
@@ -831,7 +881,7 @@ window.MigrationView = function ($, apiService, loaderService) {
                 showParseProgress(parseInt(progress));
                 var status = data.progressStatus ? data.progressStatus : "";
                 $migrationProgressTitle.text(status);
-                if (data.parseResult || data.parseResult != null) {
+                if (data.parsingEnded) {
                     migrationInfo = data.parseResult;
                     console.log(migrationInfo);
                     lastProgress = 0;
@@ -847,7 +897,7 @@ window.MigrationView = function ($, apiService, loaderService) {
                                     });
                             });
                     });
-                    checkingAarchivesForCorrectness();
+                    checkingArchivesForCorrectness(data.parseResult.failedArchives);
                 } else if (canceled == false) {
                     setTimeout(interimStatusMigration, 1000);
                 }
@@ -861,7 +911,6 @@ window.MigrationView = function ($, apiService, loaderService) {
     var lastProgress = 0;
 
     function interimStatus() {
-
         apiService.get("migration/status")
             .done(function (data) {
                 var progress = lastProgress == 0 && data.progress == 100 ? 0 : data.progress;
@@ -871,8 +920,12 @@ window.MigrationView = function ($, apiService, loaderService) {
                 if (data.progress == 100 && data.migrationEnded == true) {
                     $migration.hide();
                     $resultsDataImport.show();
+                    currentPage = numberOfPages;
                     $('#sendWelcomeEmail').removeClass('display-none');
-                    showResultMigration();
+                    $('#success-message').removeClass('display-none');
+                    $('#success-message').text(window.Resource.MigrationCompleted.format(window.Resource['Migration' + apiMigration]));
+                    $('#migration-step-finished-migration').text(window.Resource.MigrationFinishedMigrationStep.format(currentPage, numberOfPages));
+                    //showResultMigration(); //see implementation finalPage !isCanceled
                 } else if (canceled == false) {
                     setTimeout(interimStatus, 1000);
                 }
@@ -892,21 +945,6 @@ window.MigrationView = function ($, apiService, loaderService) {
                 link.setAttribute('download', 'migration.log.txt');
                 link.click();
             });
-    }
-
-    function showResultMigration() {
-        $('#success-message').removeClass('display-none');
-        switch (apiMigration) {
-            case "NextcloudMigrate":
-                $('#success-message').text(window.Resource.MigrationCompleted.format(window.Resource.MigrationNextcloud));
-                break;
-            case "GoogleWorkspace":
-                $('#success-message').text(window.Resource.MigrationCompleted.format(window.Resource.MigrationGoogleWorkspace));
-                break;
-            case "OwncloudMigrate":
-                $('#success-message').text(window.Resource.MigrationCompleted.format(window.Resource.MigrationOwncloud));
-                break;
-        }
     }
 
     function showMigrateProgress(progress) {
@@ -936,15 +974,9 @@ window.MigrationView = function ($, apiService, loaderService) {
     }
 
     var $pagination;
-
-
     var $pageListTop;
-
     var $pageListBottom;
-
-
     var $userTablePagination;
-
     var activeTablePage = 1;
 
     function generateMassShowOnPage(usersLength) {

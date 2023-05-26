@@ -17,8 +17,8 @@ if [[ -z "$1" ]]; then
 	exit 0;
 fi
 
-binds=$(sudo docker inspect --format='{{range $p,$conf:=.HostConfig.Binds}}{{$conf}};{{end}}' $1)
-volumes=$(sudo docker inspect --format='{{range $p,$conf:=.Config.Volumes}}{{$p}};{{end}}' $1)
+binds=$(docker inspect --format='{{range $p,$conf:=.HostConfig.Binds}}{{$conf}};{{end}}' $1)
+volumes=$(docker inspect --format='{{range $p,$conf:=.Config.Volumes}}{{$p}};{{end}}' $1)
 arrBinds=$(echo $binds | tr ";" "\n")
 arrVolumes=$(echo $volumes | tr ";" "\n")
 bindsCorrect=1
