@@ -1,5 +1,14 @@
 # Change log
 
+## 3.5.2
+
+* Added the ability to restrict access rights to the application files for the Others group (Bug 61602).
+* Fixed issue with redirect to the portal main page when opening Control Panel after a day on Ubuntu 22.10 (Bug 62076).
+* Fixed retrieving data error when opening the backup page (Bug 63163).
+* Fixed issue when backup with Mail is not performed after disabling and enabling encryption (added text about stopping services and the instruction to the Help Center) (Bug 64223).
+* Fixed issue when features are not saved to the new tariff when setting a quota for the portal (Bug 65324).
+* Edited sources build.
+
 ## 3.5.0
 
 * Changed API methods for migration, implemented progressQueue.

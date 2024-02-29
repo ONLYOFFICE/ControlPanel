@@ -128,7 +128,7 @@ window.BackupView = function ($, apiService, loaderService) {
             makeRequest('backup/getFoldersInCommonFolder'),
             makeRequest('backup/getStorages'),
             makeRequest('backup/getAllThirdParty'),
-            makeRequest('storage/getAmazonS3Regions', true)],
+            makeRequest('backup/getAmazonS3Regions', true)],
             function (textStatus, res) {
                 if (apiService.unloaded || textStatus != null && textStatus === "abort") { return; }
 

@@ -49,6 +49,7 @@ window.StorageView = function ($, apiService, loaderService) {
     var $CdnForm = $view.find("#CDNForm");
     var $encryptionBox = $view.find("#encryptionBox");
     var $encryptionSettingsNotify = $view.find("#encryptionSettingsNotify");
+    var $encryptionSettingsAgreement = $view.find("#encryptionSettingsAgreement");
     var storagesMass = {};
     var id;
     var currentStorageProps;
@@ -77,7 +78,7 @@ window.StorageView = function ($, apiService, loaderService) {
             makeRequest('storage/getAllStorages'),
             makeRequest('storage/getAllCdnStorages'),
             makeRequest('storage/encryptionSettings', true),
-            makeRequest('storage/getAmazonS3Regions', true)],
+            makeRequest('backup/getAmazonS3Regions', true)],
             function (textStatus, res) {
                 if (apiService.unloaded || textStatus != null && textStatus === "abort") { return; }
 
@@ -174,6 +175,7 @@ window.StorageView = function ($, apiService, loaderService) {
         $connectBtn.on(clickEvent, connectWithStorage);
         currentStorageProps.on(changeEvent, enableConnectBtn);
         currentCdnProps.on(changeEvent, enableConnectBtn);
+        $encryptionSettingsAgreement.on(clickEvent, enableEncryptionBtn);
         $encryptionButton.on(clickEvent, showEncryptionConfirmDialog);
         $encryptionConfirmButton.on(clickEvent, encryptionStart);
     }
@@ -451,10 +453,18 @@ window.StorageView = function ($, apiService, loaderService) {
         }
 
         $encryptionBox.removeClass(displayNoneClass);
-        $encryptionSettingsNotify.toggleClass(disabledClass, !encryptionAvailable);
-        $encryptionButton.toggleClass(disabledClass, !encryptionAvailable).text(settings.status == 0 || settings.status == 1 ? window.Resource.EncryptionEncryptStorage : window.Resource.EncryptionDecryptStorage);
+        $encryptionSettingsAgreement.toggleClass(checked, false).toggleClass(disabledClass, !encryptionAvailable);
+        $encryptionSettingsNotify.toggleClass(checked, settings.notifyUsers).toggleClass(disabledClass, !encryptionAvailable);
+        $encryptionButton.toggleClass(disabledClass, true).text(settings.status == 0 || settings.status == 1 ? window.Resource.EncryptionEncryptStorage : window.Resource.EncryptionDecryptStorage);
         $encryptionBox.find(".green-ticket").toggle(settings.status != 0);
-        $encryptionSettingsNotify.toggleClass(checked, settings.notifyUsers);
+    }
+
+    function enableEncryptionBtn() {
+        if ($encryptionSettingsAgreement.hasClass(disabledClass)) return;
+
+        setTimeout(function () {
+            $encryptionButton.toggleClass(disabledClass, !$encryptionSettingsAgreement.hasClass(checked));
+        }, 0);
     }
 
     function showEncryptionConfirmDialog() {

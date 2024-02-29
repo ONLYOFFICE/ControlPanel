@@ -50,11 +50,19 @@ block rightSide
               span.attention-icon
               = controlPanelResource.AttentionBlockHeader
             p.attention-text!= controlPanelResource.format("EncryptionWarningMsg", "<br/>")
+            p.attention-text
+              b= controlPanelResource.EncryptionServicesWarningMsg
+            -if (helpcenter) {
+            p.attention-text!= controlPanelResource.format("EncryptionServicesInstruction", "<a class=\"link underline instructionLink\" href=\"" + controlPanelResource.format("EncryptionHelpCenterUrl", helpcenter) + "\" target=\"_blank\">", "</a>")
+            -}
 
             div#encryptionForm
               div#encryptionSettingsNotify.checkBox
                 button.icon
                 span=controlPanelResource.EncryptionNotifyUsers
+              div#encryptionSettingsAgreement.checkBox
+                button.icon
+                span=controlPanelResource.EncryptionServicesAgreement
 
               div.middle-button-container
                   button#encryptionButton.button.green

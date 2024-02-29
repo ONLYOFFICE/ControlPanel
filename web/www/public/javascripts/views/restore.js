@@ -90,7 +90,7 @@ window.RestoreView = function($, apiService, loaderService) {
             makeRequest('restore/getProgress'),
             makeRequest('backup/getStorages'),
             makeRequest('backup/getAllThirdParty'),
-            makeRequest('storage/getAmazonS3Regions', true)],
+            makeRequest('backup/getAmazonS3Regions', true)],
             function (textStatus, res) {
                 if (apiService.unloaded || textStatus != null && textStatus === "abort") { return; }
 

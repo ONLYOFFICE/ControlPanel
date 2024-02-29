@@ -39,6 +39,7 @@ router
         baseController.get('files/folder/' + req.query.folderId + '/path.json', req, res);
     })
     .get("/getStorages", baseController.get.bind(baseController, 'settings/storage/backup.json'))
+    .get("/getAmazonS3Regions", baseController.get.bind(baseController, 'settings/storage/s3/regions.json'))
     .get("/getAllThirdParty", baseController.get.bind(baseController, 'files/thirdparty/capabilities.json'))
     .post("/createSchedule", baseController.post.bind(baseController, 'portal/createbackupschedule.json'))
     .post("/start", baseController.post.bind(baseController, 'portal/startbackup.json'))

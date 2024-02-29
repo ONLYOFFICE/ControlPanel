@@ -46,7 +46,6 @@ router
     })
     .get("/getAllStorages", baseController.get.bind(baseController, 'settings/storage.json'))
     .get("/getAllCdnStorages", baseController.get.bind(baseController, 'settings/storage/cdn.json'))
-    .get("/getAmazonS3Regions", baseController.get.bind(baseController, 'settings/storage/s3/regions.json'))
     .get("/encryptionSettings", baseController.get.bind(baseController, 'settings/encryption/settings.json'))
     .get("/getLinkedPortals", (req, res) => {
         apiSystemManager.get("portal/get", req)
@@ -54,6 +53,8 @@ router
             .catch((error) => { onError(res, error); });
     })
     .put("/quota", (req, res) => {
+        req.body.features = req.session.quota.features;
+
         apiSystemManager.put("tariff/set", req)
             .then((result) => { onSuccess(res, result); })
             .catch((error) => { onError(res, error); });
