@@ -15,7 +15,7 @@ else
    APP_CORE_MACHINEKEY=$(head -n 1 ${APP_PRIVATE_DATA_DIR}/machinekey)
 fi
 
-find "www/config" -type f -name "*.json" -exec sed -i "s_\(\"core.machinekey\":\).*,_\1 \"${APP_CORE_MACHINEKEY}\",_" {} \;
+find "www/config" -type f -name "*.json" -exec sed -i "s/\(\"core.machinekey\":\).*,/\1 \"${APP_CORE_MACHINEKEY}\",/" {} \;
 
 if [[ ${HIDDEN_COMPONENTS} ]]; then
   sed "/hiddenControllers/s/\"hiddenControllers\".*/\"hiddenControllers\":\[${HIDDEN_COMPONENTS}\],/" -i www/config/production.json;

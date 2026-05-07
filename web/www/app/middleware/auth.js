@@ -64,22 +64,43 @@ module.exports = function (req, res, next) {
     const getWhiteLabelSettings = apiRequestManager.get("settings/companywhitelabel.json", req);
     const getControlPanelSettings = apiRequestManager.get("settings/controlpanel.json", req);
 
-    Promise.all([getUser, getPortal, getWhiteLabelSettings])
-        .then(([user, portal, whiteLabelSettings]) => {
+    Promise.allSettled([getUser, getPortal, getWhiteLabelSettings, getControlPanelSettings])
+        .then(([user, portal, whiteLabelSettings, controlPanelSettings]) => {
+            if (user.status == 'fulfilled') {
+                user =  user.value;
+            } else {
+                throw new Error(user.reason)
+            }
+
+            if (portal.status == 'fulfilled') {
+                portal =  portal.value;
+            } else {
+                throw new Error(portal.reason)
+            }
+
+            if (whiteLabelSettings.status == 'fulfilled') {
+                whiteLabelSettings =  whiteLabelSettings.value;
+            } else {
+                throw new Error(whiteLabelSettings.reason)
+            }
+
+            if (controlPanelSettings.status == 'fulfilled') {
+                controlPanelSettings =  controlPanelSettings.value;
+            } else {
+                if (controlPanelSettings.reason == 404) {
+                    controlPanelSettings = { limitedAccess: false };
+                } else {
+                    throw new Error(controlPanelSettings.reason);
+                }
+            }
+
             if (!user.cultureName) {
                 user.cultureName = portal.language;
             }
 
             req.session.user = user;
             req.session.whiteLabelSettings = whiteLabelSettings;
-
-            return getControlPanelSettings
-                .then((controlPanelSettings) => {
-                    req.session.controlPanelSettings = controlPanelSettings;
-                }).catch((err) => {
-                    let methodNotFound = err == 404;
-                    req.session.controlPanelSettings = { limitedAccess: !methodNotFound };
-                });
+            req.session.controlPanelSettings = controlPanelSettings;
         })
         .then(() => {
             checkIsAdminAndPortalUrl(req.session.user, req, res, next);

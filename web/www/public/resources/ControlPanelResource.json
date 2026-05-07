@@ -76,6 +76,7 @@
   "BackupMachinekeyHelpCenterUrl": "{0}/administration/control-panel-backup.aspx",
   "BackupMakeCopyBtn": "Make backup",
   "BackupMakeWithMail": "Include Mail in backup",
+  "BackupForMigration": "Backup for migration to Docspace",
   "BackupReadyText": "You can download the backup to your local drive using the link below. The link will be active for 24 hours after the time it was requested.",
   "BackupScheduleDeletedMsg": "Backup schedule is deleted",
   "BackupScheduleSavedMsg": "Backup schedule is saved",

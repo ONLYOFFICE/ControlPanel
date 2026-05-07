@@ -30,6 +30,7 @@ RUN apt-get -y update && \
                         curl \
                         htop \
                         nano \
+                        ca-certificates \
                         apt-transport-https \
                         gnupg2 \
                         dnsutils \
@@ -42,10 +43,14 @@ RUN apt-get -y update && \
     echo "deb [signed-by=/usr/share/keyrings/nodesource.gpg] https://deb.nodesource.com/node_16.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list && \
     curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --no-default-keyring --keyring gnupg-ring:/usr/share/keyrings/nodesource.gpg --import && \
     chmod 644 /usr/share/keyrings/nodesource.gpg && \
+    install -m 0755 -d /etc/apt/keyrings && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    chmod a+r /etc/apt/keyrings/docker.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo ${VERSION_CODENAME}) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get -y update && \
     apt-get install -yq nodejs \
                         supervisor \
-                        docker.io && \
+                        docker-ce-cli && \
     chmod -R a+x ${ONLYOFFICE_ROOT_DIR}/www/executables && \
     chmod a+x ${ONLYOFFICE_ROOT_DIR}/run-controlpanel.sh && \
     apt-get clean && \

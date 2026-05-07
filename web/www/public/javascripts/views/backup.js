@@ -38,6 +38,24 @@ window.BackupView = function ($, apiService, loaderService) {
     var $backupTeamlabStorage = $backupStorageBox.find('#backupTeamlabStorage');
 
     var $backupWithMailCheck = $backupBox.find('#backupWithMailCheck');
+    var $backupForMigrationCheck = $backupBox.find('#backupForMigrationCheck');
+
+    CheckForMigration = function () {
+
+        if (!$(this).hasClass("checked") && $($backupWithMailCheck).hasClass("checked")) {
+            $($backupWithMailCheck).toggleClass("checked");
+        }
+    }
+    
+    CheckMail = function () {
+
+        if (!$(this).hasClass("checked") && $($backupForMigrationCheck).hasClass("checked")) {
+            $($backupForMigrationCheck).toggleClass("checked");
+        }
+    }
+
+    $backupForMigrationCheck.on("click", CheckForMigration);
+    $backupWithMailCheck.on("click", CheckMail);
 
     var $startBackupBtn = $backupBox.find('#startBackupBtn');
 
@@ -304,13 +322,19 @@ window.BackupView = function ($, apiService, loaderService) {
     }
 
     function handleStartedBackup(backupProgress) {
-        var backupStarted = backupProgress && backupProgress.isCompleted === false;
-        if (backupStarted) {
+        if (!backupProgress) {
+            return;
+        }
+        if (backupProgress.isCompleted === false) {
             setTimeout(function () {
                 loaderService.showFormBlockLoader($backupForm);
                 $backupProgressBox.show();
                 renderBackupProgress(backupProgress);
             }, 200);
+        } else {
+            if (backupProgress.link) {
+                showBackupResult(backupProgress.link)
+            }
         }
     }
 
@@ -561,14 +585,15 @@ window.BackupView = function ($, apiService, loaderService) {
         }
 
         var withMail = $backupWithMailCheck.is('.checked');
-
+        var dump = !$backupForMigrationCheck.is('.checked');
         loaderService.showFormBlockLoader($backupForm);
         showBackupProgress(0);
 
         var data = {
             'storageType': storage.id,
             'storageParams': storage.params,
-            'backupMail': withMail
+            'backupMail': withMail,
+            'dump': dump
         };
         apiService.post('backup/start', data)
             .done(function (resp) {
@@ -577,6 +602,19 @@ window.BackupView = function ($, apiService, loaderService) {
             .fail(function (jqXHR, textStatus, errorThrown) {
                 renderBackupErrors(jqXHR.responseText);
             });
+    }
+
+    function showBackupResult(link) {
+        var pat = /^https?:\/\//i;
+
+        if (pat.test(link)) {
+            $backupResultLink.attr('href', link);
+        }
+        else {
+            $backupResultLink.attr('href', currentPortal + link);
+        }
+
+        $backupResultLinkBox.show();
     }
 
     function renderBackupProgress(backupProgress) {
@@ -588,17 +626,7 @@ window.BackupView = function ($, apiService, loaderService) {
             loaderService.hideFormBlockLoader($backupForm);
 
             if (backupProgress.link) {
-
-                var pat = /^https?:\/\//i;
-
-                if (pat.test(backupProgress.link)) {
-                    $backupResultLink.attr('href', backupProgress.link);
-                }
-                else {
-                    $backupResultLink.attr('href', currentPortal + backupProgress.link);
-                }
-
-                $backupResultLinkBox.show();
+                showBackupResult(backupProgress.link)
             }
 
             toastr.success(window.Resource.BackupCompletedMsg);

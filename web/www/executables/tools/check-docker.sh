@@ -12,10 +12,6 @@
 # limitations under the License.
 
 
-check_proc () {
-  awk -F/ '$2 == "docker"' /proc/1/cgroup | read
-}
-
 check_file () {
     if [ -f /.dockerenv ]; then
         return 0;
@@ -24,7 +20,7 @@ check_file () {
     fi
 }
 
-if check_proc || check_file; then
+if check_file; then
     echo true;
 else
     echo false;
