@@ -17,7 +17,9 @@
 
 const apiBasePath = "/api/2.0/",
     portalManager = require('./portalManager.js'),
-    request = require('request'),
+    fs = require('fs'),
+    path = require('path'),
+    mime = require('mime-types'),
     config = require('../config'),
     crypto = require('crypto'),
     moment = require('moment'),
@@ -26,6 +28,51 @@ const apiBasePath = "/api/2.0/",
 const skey = config.get("core.machinekey");
 const log = require("./log.js");
 
+// formData files (fs.ReadStream values) are read lazily while the request is sent:
+// the file must not be deleted or modified until makeRequest settles,
+// otherwise the request fails with NotReadableError "The blob could not be read"
+function createFetchOptions(options) {
+    const headers = Object.assign({}, options.headers);
+    const fetchOptions = { method: options.method || "GET", headers };
+
+    if (options.json) {
+        headers["accept"] = "application/json";
+    }
+
+    if (options.formData) {
+        const entries = Object.entries(options.formData).map(([key, value]) => {
+            if (value instanceof fs.ReadStream) {
+                const name = value.name || path.basename(value.path);
+                const filePath = value.path;
+                // part content-type as form-data did it: by name, then by path
+                const type = mime.lookup(name) || mime.lookup(filePath) || "application/octet-stream";
+                value.destroy();
+                // file-backed Blob: no in-memory copy of the file before sending (fetch still buffers the body while sending)
+                return fs.openAsBlob(filePath, { type })
+                    .then((blob) => [key, blob, name]);
+            }
+            return Promise.resolve([key, value]);
+        });
+        return Promise.all(entries).then((fields) => {
+            const form = new FormData();
+            fields.forEach((field) => form.append(...field));
+            fetchOptions.body = form;
+            return fetchOptions;
+        });
+    }
+
+    if (typeof options.body !== "undefined") {
+        if (options.json && !Buffer.isBuffer(options.body)) {
+            headers["content-type"] = "application/json";
+            fetchOptions.body = JSON.stringify(options.body);
+        } else {
+            fetchOptions.body = options.body;
+        }
+    }
+
+    return Promise.resolve(fetchOptions);
+}
+
 class RequestManager {
     constructor() { }
 
@@ -33,47 +80,46 @@ class RequestManager {
         return "";
     }
     makeRequest(apiMethod, req, options) {
-        return new Promise((resolve, reject) => {
+        var absolutePathRegex = /^https?:\/\//i;
+        var basePath = absolutePathRegex.test(apiMethod) ? "" : this.getBasePath();
+        options.uri = basePath + apiMethod;
 
-            var absolutePathRegex = /^https?:\/\//i;
-            var basePath = absolutePathRegex.test(apiMethod) ? "" : this.getBasePath();
-            options.uri = basePath + apiMethod;
-
-            request(options, (error, response, body) => {
-                if (!error) {
-                    if (body === "Unauthorized") {
-                        log.error(options.uri, "Unauthorized");
-                        if (req.session) {
-                            req.session.destroy(() => { reject(401); });
-                        } else {
-                            reject(401);
-                        }
-                        return;
+        return createFetchOptions(options)
+            .then((fetchOptions) => fetch(options.uri, fetchOptions))
+            .then((response) => response.text().then((body) => ({ response, body })))
+            .catch((error) => {
+                log.error(options.uri, error.cause || error);
+                throw error;
+            })
+            .then(({ response, body }) => new Promise((resolve, reject) => {
+                if (body === "Unauthorized") {
+                    log.error(options.uri, "Unauthorized");
+                    if (req.session) {
+                        req.session.destroy(() => { reject(401); });
+                    } else {
+                        reject(401);
                     }
-                    let result = {};
-                    try {
-                        result = typeof body === "string" ? JSON.parse(body) : body;
-                        if (result.error && result.error.message) {
-                            reject(result.error.message);
-                            return;
-                        }
-                    } catch (err) {
-                        // err.message += (" \n" + body);
-                        log.error(options.uri, err);
-                    }
-
-                    if (response.statusCode > 400) {
-                        reject(response.statusCode);
-                        return;
-                    }
-
-                    resolve(result.response ? result.response : result);
-                } else {
-                    log.error(options.uri, error);
-                    reject(error);
+                    return;
                 }
-            });
-        });
+                let result = {};
+                try {
+                    result = JSON.parse(body);
+                    if (result.error && result.error.message) {
+                        reject(result.error.message);
+                        return;
+                    }
+                } catch (err) {
+                    // err.message += (" \n" + body);
+                    log.error(options.uri, err);
+                }
+
+                if (response.status > 400) {
+                    reject(response.status);
+                    return;
+                }
+
+                resolve(result.response ? result.response : result);
+            }));
     }
     get(apiMethod, req) {
         return this.makeRequest(apiMethod, req, { method: "GET" });

@@ -21,7 +21,7 @@ const express = require('express'),
     logger = require('morgan'),
     cookieParser = require('cookie-parser'),
     bodyParser = require('body-parser'),
-    { v4: uuidv4 } = require('uuid'),
+    crypto = require('crypto'),
     session = require('express-session'),
     MemoryStore = require('memorystore')(session),
     fs = require('fs'),
@@ -43,13 +43,13 @@ app.use(favicon(__dirname + '/public/stylesheets/images/favicon.ico'))
     .use(bodyParser.urlencoded({ extended: false }))
     .use(cookieParser())
     .use(session({
-        secret: uuidv4(),
+        secret: crypto.randomBytes(32).toString('hex'),
         resave: false,
         saveUninitialized: false,
         cookie: { maxAge: 60000 },
         store: new MemoryStore({ checkPeriod: 600000 })
     }))
-    .use(config.makePath(), require('less-middleware')(path.join(__dirname, 'public')));
+    .use(config.makePath(), require('less-middleware')(path.join(__dirname, 'public'), { render: { math: 'always' } }));
 
 app.use(config.makePath(), express.static(path.join(__dirname, 'public')));
 

@@ -47,14 +47,14 @@ function upload(req, res, ext) {
                     return;
                 }
 
-                if (!uploaded.originalFilename.endsWith(ext)) {
+                const resPath = fileManager.getSafeFilePath(form.uploadDir, uploaded.originalFilename);
+                if (!resPath || !resPath.endsWith(ext)) {
                     yield fileManager.deleteFile(uploaded.filepath);
                     res.send({ success: false });
                     res.end();
                     return;
                 }
 
-                const resPath = path.join(form.uploadDir, uploaded.originalFilename);
                 yield fileManager.copyFile(uploaded.filepath, resPath, true);
                 yield fileManager.deleteFile(uploaded.filepath);
 
@@ -71,8 +71,12 @@ function upload(req, res, ext) {
 
 function uploadComplete(req, res) {
         co(function*() {
+            const uploadDir = yield fileManager.getDataDirPath(restoreFolder);
+            const uploadedPath = fileManager.getSafeFilePath(uploadDir, req.body.file);
+            if (!uploadedPath) {
+                throw new Error("invalid file path");
+            }
             const tmpPath = yield apiRequestManager.get("portal/backuptmp", req);
-            const uploadedPath = req.body.file;
             const uploadedName = path.basename(uploadedPath);
 
             let to = path.join(tmpPath, uploadedName);

@@ -18,7 +18,6 @@
 const co = require("co"),
       dns = require('dns'),
       url = require('url'),
-      publicIp = require('public-ip'),
       config = require('../config');
 
 function checkDomainName(domainName, controlPanelResource) {
@@ -64,7 +63,7 @@ function getHostIp(rewriteUrl) {
     }
 
     return co(function* () {
-        return publicIp.v4();
+        return import('public-ip').then(({ publicIpv4 }) => publicIpv4());
     });
 }
 

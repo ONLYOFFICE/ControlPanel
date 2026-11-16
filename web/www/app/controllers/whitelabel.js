@@ -25,7 +25,7 @@ const
     quota = require('../quota.js'),
     path = require('path'),
     whiteLabelCompiled = pug.compileFile(path.join(__dirname, '..', '..', 'views', 'whitelabel.pug')),
-    sizeOf = require('image-size'),
+    { imageSizeFromFile } = require('image-size/fromFile'),
     conf = require('../../config'),
     fs = require('fs'),
     co = require('co');
@@ -33,20 +33,15 @@ const
 let uploadDir;
 
 function checkSize(imagePath, requiredSize, errorImageSize) {
-    return new Promise((resolve, reject) => {
-        sizeOf(imagePath,
-        (err, dimension) => {
-            if (err) {
-                reject(err.message);
-                return;
-            }
+    return imageSizeFromFile(imagePath)
+        .catch((err) => {
+            throw err.message;
+        })
+        .then((dimension) => {
             if (dimension.width !== requiredSize.width || dimension.height !== requiredSize.height) {
-                reject(errorImageSize);
-                return;
+                throw errorImageSize;
             }
-            resolve();
         });
-    });
 }
 
 function getLogosHandler(req, res) {
@@ -99,7 +94,8 @@ function uploadLogo(req, res) {
         function (err, fields, files) {
             const uploaded = files["logoUploader_" + logotype];
 
-            if (err || !uploaded) {
+            if (err || !uploaded || !/^\d+$/.test(logotype)) {
+                if (uploaded) fileManager.deleteFile(uploaded.filepath);
                 res.send({ success: false });
                 res.end();
                 return;
@@ -148,7 +144,8 @@ function saveLogos(req, res) {
                 return;
             }
 
-            files.push(path.join(uploadDir, item.value));
+            const filePath = fileManager.getSafeFilePath(uploadDir, item.value);
+            if (filePath) files.push(filePath);
         });
     }
     co(function*() {

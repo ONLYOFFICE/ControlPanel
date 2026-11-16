@@ -24,7 +24,6 @@ const updateActionFactory = require('./updateAction.js');
 const log = require("../log.js");
 const fileManager = require("../fileManager.js");
 const apiRequestManager = require("../apiRequestManager.js").apiManager;
-const request = require("request");
 const co = require("co");
 
 let imagePath = "";
@@ -402,35 +401,35 @@ class UpdateItemWin extends UpdateItemBase {
             var options = {
                 uri: url
             }
-            request(options,
-                (error, response, body) => {
-                    if (!error) {
-                        if (body === "Unauthorized") {
-                            log.error(options.uri, "Unauthorized");
-                            reject(400);
-                            return;
-                        }
-                        let result = {};
-                        try {
-                            result = typeof body === "string" ? JSON.parse(body.substr(body.indexOf("{"))) : body;
-                            if (result.error && result.error.message) {
-                                reject(result.error.message);
-                                return;
-                            }
-                        } catch (err) {
-                            log.error(options.uri, err);
-                        }
-
-                        if (response.statusCode > 400) {
-                            reject(response.statusCode);
-                            return;
-                        }
-
-                        resolve(result);
-                    } else {
-                        log.error(options.uri, error);
-                        reject(error);
+            fetch(options.uri)
+                .then((response) => response.text().then((body) => ({ response, body })))
+                .then(({ response, body }) => {
+                    if (body === "Unauthorized") {
+                        log.error(options.uri, "Unauthorized");
+                        reject(400);
+                        return;
                     }
+                    let result = {};
+                    try {
+                        result = JSON.parse(body.substr(body.indexOf("{")));
+                        if (result.error && result.error.message) {
+                            reject(result.error.message);
+                            return;
+                        }
+                    } catch (err) {
+                        log.error(options.uri, err);
+                    }
+
+                    if (response.status > 400) {
+                        reject(response.status);
+                        return;
+                    }
+
+                    resolve(result);
+                })
+                .catch((error) => {
+                    log.error(options.uri, error);
+                    reject(error);
                 });
         });
 

@@ -61,9 +61,8 @@
             params.formData.metadata = fs.createReadStream(files.metadata.filepath);
             params.formData.metadata.name = files.metadata.originalFilename;
 
-            fileManager.deleteFile(files.metadata.filepath);
-
             apiRequestManager.makeRequest(portalManager.getAbsolutePortalUrl('sso/uploadmetadata'), req, params)
+                .finally(() => fileManager.deleteFile(files.metadata.filepath))
                 .then(onSuccess.bind(null, res))
                 .catch(onError.bind(null, res));
         }

@@ -60,6 +60,10 @@ memorystore - A session store implementation for Express using lru-cache. (https
 License:        MIT License
 License File:   memorystore.license
 
+mime-types - The ultimate javascript content-type utility. (https://github.com/jshttp/mime-types/blob/master/LICENSE)
+License:        MIT License
+License File:   mime-types.license
+
 moment - A lightweight JavaScript date library for parsing, validating, manipulating, and formatting dates. (https://github.com/moment/moment/blob/develop/LICENSE)
 License:        MIT License
 License File:   moment.license
@@ -84,10 +88,6 @@ pug - Pug is a high performance template engine heavily influenced byHaml and i
 License:        MIT License
 License File:   pug.license
 
-request -  Simplified HTTP request client. (https://github.com/request/request/blob/master/LICENSE)
-License:        Apache License 2.0
-License File:   request.license
-
 semver - The semver parser for node (the one npm uses) (https://github.com/npm/node-semver/blob/master/LICENSE)
 License:        ISC License
 License File:   semver.license
@@ -103,10 +103,6 @@ License File:   uglify-js.license
 url - This module has utilities for URL resolution and parsing meant to have feature parity with node.js core url module. (https://github.com/defunctzombie/node-url/blob/master/LICENSE)
 License:        MIT License
 License File:   url.license
-
-uuid - Simple, fast generation of RFC4122 UUIDS. (https://github.com/uuidjs/uuid/blob/main/LICENSE.md)
-License:        MIT License
-License File:   uuid.license
 
 winston - A logger for just about everything. (https://github.com/winstonjs/winston/blob/master/LICENSE)
 License:        MIT License

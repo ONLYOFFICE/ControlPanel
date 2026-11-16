@@ -16,8 +16,7 @@
 
 
 const config = require('../config'),
-    app = require('express')(),
-    request = require('request');
+    app = require('express')();
 
 let portalUrl = '';
     
@@ -39,16 +38,25 @@ function setPortalUrl({portal}) {
             return;
         }
 
-        request(portal,
-            function(error, response, body) {
-                if (!error) {
-                    portalUrl = response.req._headers.referer;
-                    resolve();
-                } else {
-                    reject();
-                }
-            });
+        getLastRedirectReferer(portal)
+            .then((referer) => {
+                portalUrl = referer;
+                resolve();
+            })
+            .catch(() => reject());
     });
+}
+
+// follows redirects and returns the url that issued the last redirect
+function getLastRedirectReferer(url, referer, redirectsLeft = 10) {
+    return fetch(url, { redirect: 'manual' })
+        .then((response) => {
+            const location = response.headers.get('location');
+            if (response.status >= 300 && response.status < 400 && location && redirectsLeft > 0) {
+                return getLastRedirectReferer(new URL(location, url).href, url, redirectsLeft - 1);
+            }
+            return referer;
+        });
 }
 
 function getExternalPortalUrl(req) {

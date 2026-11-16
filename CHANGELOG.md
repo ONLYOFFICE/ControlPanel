@@ -1,5 +1,13 @@
 # Change log
 
+## 3.6.0
+
+* Updated npm dependencies to fix 29 known vulnerabilities (3 critical, 7 high).
+* Replaced the deprecated `request` package with the built-in `fetch`; removed `uuid`.
+* Fixed path traversal in file uploads on the Restore, Data Import and Branding pages.
+* Node.js 24 or higher is now required; the Windows installer installs Node.js 24.22.2, the Docker image uses Node.js 24.
+* Updated third-party licenses.
+
 ## 3.5.5
 
 * Fixed the issue with restore. When loading a backup file as a computer file, the error "An error occurred while performing the operation" occurred. (Bug 80461).

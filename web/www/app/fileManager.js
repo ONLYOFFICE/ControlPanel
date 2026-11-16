@@ -18,7 +18,8 @@
 const fs = require('fs'),
       path = require('path'),
       co = require("co"),
-      request = require("request");
+      http = require("http"),
+      https = require("https");
 
 const log = require("./log.js"),
       config = require('../config'),
@@ -140,21 +141,46 @@ function deleteFile(pathToFile) {
         });
 }
 
-function downloadFile(uri, filePath) {
+// returns the path of fileName inside dir, or null if the name tries to leave dir
+function getSafeFilePath(dir, fileName) {
+    if (typeof fileName !== "string") return null;
+
+    const name = path.basename(fileName);
+    if (!name || name === "." || name === ".." || name.includes("\0")) return null;
+
+    const target = path.resolve(dir, name);
+    if (path.dirname(target) !== path.resolve(dir)) return null;
+
+    return target;
+}
+
+function downloadFile(uri, filePath, redirectsLeft = 10) {
     return new Promise((resolve, reject) => {
-            const data = request
-                .get(uri, { rejectUnauthorized: false })
-                .on('error', (err) => { 
-                    reject(err); 
+            const client = uri.toLowerCase().startsWith("https:") ? https : http;
+            client
+                .get(uri, { rejectUnauthorized: false }, (response) => {
+                    const location = response.headers.location;
+                    if (response.statusCode >= 300 && response.statusCode < 400 && location && redirectsLeft > 0) {
+                        response.resume();
+                        resolve(downloadFile(new URL(location, uri).href, filePath, redirectsLeft - 1));
+                        return;
+                    }
+                    response
+                        .on('error', (err) => {
+                            reject(err);
+                        })
+                        .pipe(fs.createWriteStream(filePath))
+                        .on('error', (err) => {
+                            reject(err);
+                        })
+                        .on('finish', () => {
+                            resolve(filePath);
+                        });
                 })
-                .pipe(fs.createWriteStream(filePath))
-                .on('error', (err) => { 
+                .on('error', (err) => {
                     reject(err);
-                })
-                .on('finish', () => { 
-                    resolve(filePath); 
                 });
         });
 }
 
-module.exports = { checkFileExist, createDir, copyFile, moveFile, deleteFile, getDataDirPath, downloadFile };
+module.exports = { checkFileExist, createDir, copyFile, moveFile, deleteFile, getDataDirPath, downloadFile, getSafeFilePath };
